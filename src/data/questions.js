@@ -47,17 +47,17 @@ export const QUESTIONS = [
       { id: 'q5a', text: '大勢の前で目立つこと', scores: { tsunenokatachi: 2, komuso: 1 } },
       { id: 'q5b', text: 'じっと待つこと', scores: { hokashi: 2, bushi: 1 } },
       { id: 'q5c', text: '人を騙すこと', scores: { bushi: 2, shukke: 1 } },
-      { id: 'q5d', text: '一箇所に留まり続けること', scores: { kusuriya: 2, akindo: 1 } },
+      { id: 'q5d', text: '損得を抜きにして動くこと', scores: { kusuriya: 2, akindo: 1 } },
     ],
   },
   {
     id: 'q6',
-    text: '得意な武器・道具は?',
+    text: '敵の懐へ忍び込む。どうやって入り込む?',
     choices: [
-      { id: 'q6a', text: '短刀など接近戦向けの小道具', scores: { shikaku: 2 } },
-      { id: 'q6b', text: '情報網・通信手段', scores: { kanja: 2, akindo: 1 } },
-      { id: 'q6c', text: '刀', scores: { bushi: 2 } },
-      { id: 'q6d', text: '薬や毒の調合知識', scores: { kusushi: 2, kusuriya: 1 } },
+      { id: 'q6a', text: '物売りを装い、荷を担いで堂々と門をくぐる', scores: { akindo: 2, tsunenokatachi: 1 } },
+      { id: 'q6b', text: '芸を披露して人目を引きつけ、その隙に紛れ込む', scores: { hokashi: 2, sarugakushi: 1 } },
+      { id: 'q6c', text: '病人や怪我人の手当てを買って出て、内へ入る', scores: { kusushi: 2, kusuriya: 1 } },
+      { id: 'q6d', text: '夜陰に紛れ、誰にも気づかれぬまま忍び込む', scores: { shikaku: 2 } },
     ],
   },
   {
