@@ -1,0 +1,33 @@
+:root {
+  --color-sumi: #1a1a22;
+  --color-sumi-deep: #101014;
+  --color-washi: #ede6d6;
+  --color-washi-soft: #f4f0e6;
+  --color-beni: #b23a2e;
+  --color-beni-bright: #d0483a;
+  --color-kondo: #c9a227;
+  --color-ainezu: #3e4a5c;
+  --color-text-light: #f4f0e6;
+  --color-text-dark: #221f1a;
+
+  --font-heading: 'Shippori Mincho', serif;
+  --font-body: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+
+  --radius-md: 10px;
+  --radius-lg: 18px;
+
+  --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+  --transition-fast: 180ms ease;
+  --transition-base: 320ms ease;
+
+  --max-width: 30rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+}
