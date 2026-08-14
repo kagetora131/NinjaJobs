@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import TypeGallery from './TypeGallery.jsx'
 
 export default function ResultCard({ ninjaType, onRetry }) {
   const reduceMotion = useReducedMotion()
@@ -79,6 +80,14 @@ export default function ResultCard({ ninjaType, onRetry }) {
         </div>
 
         <div className="rod rod--capped" aria-hidden="true" />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: d(0.6), delay: d(2.4) }}
+      >
+        <TypeGallery resultId={ninjaType.id} />
       </motion.div>
 
       <div className="result-screen__actions">
