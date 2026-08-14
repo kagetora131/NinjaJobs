@@ -1,28 +1,50 @@
 :root {
+  /* 墨 */
   --color-sumi: #1a1a22;
-  --color-sumi-deep: #101014;
+  --color-sumi-deep: #0d0d12;
+  --color-sumi-soft: #262633;
+
+  /* 和紙 */
   --color-washi: #ede6d6;
   --color-washi-soft: #f4f0e6;
+  --color-washi-aged: #ddd2b8;
+
+  /* 朱・金・藍鼠 */
   --color-beni: #b23a2e;
   --color-beni-bright: #d0483a;
+  --color-beni-deep: #8c2a21;
   --color-kondo: #c9a227;
+  --color-kondo-soft: #e0c15c;
   --color-ainezu: #3e4a5c;
+
+  /* 木(巻物の軸・木札) */
+  --color-wood: #3b2e25;
+  --color-wood-light: #6b5647;
+  --color-wood-dark: #1e1712;
+
   --color-text-light: #f4f0e6;
   --color-text-dark: #221f1a;
 
   --font-heading: 'Shippori Mincho', serif;
   --font-body: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
 
+  --radius-sm: 4px;
   --radius-md: 10px;
   --radius-lg: 18px;
 
-  --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
-  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 22px 50px rgba(0, 0, 0, 0.55);
+  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.35);
 
   --transition-fast: 180ms ease;
   --transition-base: 320ms ease;
 
   --max-width: 30rem;
+
+  /* 和紙・墨の紙目テクスチャ(外部リソース不要のSVGノイズ) */
+  --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* 手裏剣の形(木札の行頭記号などに流用) */
+  --clip-shuriken: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
 }
 
 @media (prefers-reduced-motion: reduce) {

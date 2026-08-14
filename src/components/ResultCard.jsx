@@ -2,86 +2,83 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 export default function ResultCard({ ninjaType, onRetry }) {
   const reduceMotion = useReducedMotion()
+  const d = (seconds) => (reduceMotion ? 0 : seconds)
 
-  const cardVariants = {
-    hidden: { opacity: 0, scale: reduceMotion ? 1 : 0.92 },
+  const scrollVariants = {
+    hidden: { opacity: 0, scaleY: reduceMotion ? 1 : 0.35 },
     visible: {
       opacity: 1,
-      scale: 1,
-      transition: { duration: reduceMotion ? 0 : 0.6, ease: 'easeOut' },
+      scaleY: 1,
+      transition: { duration: d(0.75), ease: [0.16, 1, 0.3, 1] },
     },
   }
 
   const imageVariants = {
     hidden: { opacity: 0, y: reduceMotion ? 0 : 14 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduceMotion ? 0 : 0.55, delay: reduceMotion ? 0 : 0.25 },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: d(0.55), delay: d(0.55) } },
   }
 
+  // 毛筆で書かれるように左から現れる
   const titleVariants = {
     hidden: { clipPath: reduceMotion ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)' },
     visible: {
       clipPath: 'inset(0 0% 0 0)',
-      transition: { duration: reduceMotion ? 0 : 0.85, delay: reduceMotion ? 0 : 0.7, ease: 'easeInOut' },
+      transition: { duration: d(0.9), delay: d(1.0), ease: 'easeInOut' },
     },
   }
 
   const bodyVariants = {
     hidden: { opacity: 0, y: reduceMotion ? 0 : 8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduceMotion ? 0 : 0.5, delay: reduceMotion ? 0 : 1.35 },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: d(0.5), delay: d(1.7) } },
   }
 
+  // 落款印が「ポン」と押される
   const sealVariants = {
-    hidden: { opacity: 0, scale: reduceMotion ? 1 : 1.8, rotate: reduceMotion ? -6 : -24 },
+    hidden: { opacity: 0, scale: reduceMotion ? 1 : 2.2, rotate: reduceMotion ? -7 : -28 },
     visible: {
       opacity: 1,
       scale: 1,
-      rotate: -6,
-      transition: {
-        delay: reduceMotion ? 0 : 1.7,
-        duration: reduceMotion ? 0 : 0.4,
-        type: reduceMotion ? 'tween' : 'spring',
-        stiffness: 320,
-        damping: 14,
-      },
+      rotate: -7,
+      transition: reduceMotion
+        ? { duration: 0 }
+        : { delay: 2.1, type: 'spring', stiffness: 340, damping: 13 },
     },
   }
 
   return (
     <div className="screen result-screen">
       <motion.div
-        className="result-card"
+        className="kakejiku"
         style={{ '--accent': ninjaType.accentColor }}
         initial="hidden"
         animate="visible"
-        variants={cardVariants}
+        variants={scrollVariants}
       >
-        <motion.div className="result-card__frame" variants={imageVariants}>
-          <img className="result-card__image" src={ninjaType.imagePath} alt={ninjaType.name} />
-        </motion.div>
+        <div className="rod rod--capped" aria-hidden="true" />
 
-        <p className="result-card__eyebrow">お前の忍びの道は――</p>
+        <div className="kakejiku__body washi">
+          <p className="result-card__eyebrow">お前の忍びの道は――</p>
 
-        <motion.h2 className="result-card__title" variants={titleVariants}>
-          {ninjaType.name}
-        </motion.h2>
-        <span className="result-card__title-en">{ninjaType.nameEn}</span>
+          <motion.div className="result-card__frame" variants={imageVariants}>
+            <img className="result-card__image" src={ninjaType.imagePath} alt={ninjaType.name} />
+          </motion.div>
 
-        <motion.div variants={bodyVariants}>
-          <span className="result-card__keyword">{ninjaType.keyword}</span>
-          <p className="result-card__description">{ninjaType.description}</p>
-        </motion.div>
+          <motion.h2 className="result-card__title" variants={titleVariants}>
+            {ninjaType.name}
+          </motion.h2>
+          <span className="result-card__title-en">{ninjaType.nameEn}</span>
 
-        <motion.div className="result-card__seal" variants={sealVariants}>
-          {ninjaType.name.slice(0, 2)}
-        </motion.div>
+          <motion.div variants={bodyVariants}>
+            <span className="result-card__keyword">{ninjaType.keyword}</span>
+            <p className="result-card__description">{ninjaType.description}</p>
+          </motion.div>
+
+          <motion.div className="result-card__seal" variants={sealVariants} aria-hidden="true">
+            {ninjaType.name.slice(0, 2)}
+          </motion.div>
+        </div>
+
+        <div className="rod rod--capped" aria-hidden="true" />
       </motion.div>
 
       <div className="result-screen__actions">
