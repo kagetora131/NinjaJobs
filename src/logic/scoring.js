@@ -1,56 +1,77 @@
-import { NINJA_TYPES } from '../data/ninjaTypes.js'
+import { SYSTEMS, SYSTEM_MAP, SYSTEM_TIE_ORDER } from '../data/systems.js'
+import { BRANCH_QUESTIONS } from '../data/questions.js'
 
-/**
- * 同点時に勝つ順(先頭ほど強い)。
- * 定義順(=表示順)で決めると先頭の虚無僧ばかりが有利になり出現率が偏るため、
- * 出にくいタイプほど優先されるよう別途並べている。
- * 武士は「最もレアなタイプ」という設計意図のため、同点時は必ず最後に回す。
- */
-const TIE_BREAK_ORDER = [
-  'yamabushi',
-  'sarugakushi',
-  'kusuriya',
-  'shikaku',
-  'komuso',
-  'hokashi',
-  'tsunenokatachi',
-  'kusushi',
-  'kanja',
-  'shukke',
-  'akindo',
-  'bushi',
-]
-
-// タイプを追加した際にTIE_BREAK_ORDERへの追記を忘れると、そのタイプが
-// 永久に結果として出なくなる(静かに壊れる)ため、開発時に検知する。
+// 系統やタイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に出なくなる)ため、
+// 開発時に検知する。
 if (import.meta.env?.DEV) {
-  const missing = NINJA_TYPES.map((t) => t.id).filter((id) => !TIE_BREAK_ORDER.includes(id))
+  const missing = SYSTEMS.map((s) => s.id).filter((id) => !SYSTEM_TIE_ORDER.includes(id))
   if (missing.length) {
-    throw new Error(`TIE_BREAK_ORDER に未登録のタイプがあります: ${missing.join(', ')}`)
+    throw new Error(`SYSTEM_TIE_ORDER に未登録の系統があります: ${missing.join(', ')}`)
+  }
+  for (const s of SYSTEMS) {
+    if (s.typeIds.length !== s.branchWeights.length) {
+      throw new Error(`${s.id}: typeIds と branchWeights の数が一致しません`)
+    }
+    for (const q of BRANCH_QUESTIONS[s.id] ?? []) {
+      if (q.choices.length !== s.typeIds.length) {
+        throw new Error(`${q.id}: 選択肢の数が ${s.id} のタイプ数と一致しません`)
+      }
+    }
   }
 }
 
 /**
- * @param {Array<Record<string, number>>} answerScores 各質問で選んだ選択肢のscoresオブジェクトの配列
- * @returns {{ resultId: string, scores: Record<string, number> }}
+ * 共通問の回答から系統を決める。
+ * @param {Array<Record<string, number>>} answerScores 選んだ選択肢の scores の配列
  */
-export function calculateResult(answerScores) {
-  const scores = Object.fromEntries(NINJA_TYPES.map((type) => [type.id, 0]))
+export function resolveSystem(answerScores) {
+  const scores = Object.fromEntries(SYSTEMS.map((s) => [s.id, 0]))
 
   for (const choiceScores of answerScores) {
-    for (const [typeId, points] of Object.entries(choiceScores)) {
-      scores[typeId] = (scores[typeId] ?? 0) + points
+    for (const [systemId, points] of Object.entries(choiceScores)) {
+      scores[systemId] = (scores[systemId] ?? 0) + points
     }
   }
 
-  let resultId = TIE_BREAK_ORDER[0]
+  let systemId = SYSTEM_TIE_ORDER[0]
   let best = -Infinity
-  for (const typeId of TIE_BREAK_ORDER) {
-    if (scores[typeId] > best) {
-      best = scores[typeId]
-      resultId = typeId
+  for (const id of SYSTEM_TIE_ORDER) {
+    if (scores[id] > best) {
+      best = scores[id]
+      systemId = id
     }
   }
 
-  return { resultId, scores }
+  return { systemId, scores }
+}
+
+/**
+ * 系統内の分岐回答からタイプを決める。
+ * @param {string} systemId
+ * @param {number[]} picks 各分岐問で選んだ選択肢のindex(= typeIds のindex)
+ */
+export function resolveType(systemId, picks) {
+  const system = SYSTEM_MAP[systemId]
+  const points = system.typeIds.map(() => 0)
+
+  for (const pick of picks) {
+    points[pick] += system.branchWeights[pick]
+  }
+
+  const best = Math.max(...points)
+  const tied = points.reduce((acc, v, i) => (v === best ? [...acc, i] : acc), [])
+
+  if (tied.length === 1) {
+    return { typeId: system.typeIds[tied[0]], points }
+  }
+
+  // 同点は「最後に選んだ側」を決め手にする。
+  // 先頭固定にすると特定タイプだけが同点を総取りして出現率が跳ね上がるため。
+  for (let i = picks.length - 1; i >= 0; i -= 1) {
+    if (tied.includes(picks[i])) {
+      return { typeId: system.typeIds[picks[i]], points }
+    }
+  }
+
+  return { typeId: system.typeIds[tied[0]], points }
 }
