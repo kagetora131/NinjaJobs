@@ -1,3 +1,8 @@
+// イラスト原本(カード/)をweb用webpに変換する一回限りの補助スクリプト。
+// 原本はリポジトリに含めていない(gitignore)ため、本番ビルドでは使わない。
+// sharpは重いネイティブ依存で、依存に常駐させるとデプロイのたびに入って無駄なので、
+// 実行するときだけ入れる:
+//   npm i --no-save sharp && node scripts/optimize-characters.mjs
 import sharp from 'sharp'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
