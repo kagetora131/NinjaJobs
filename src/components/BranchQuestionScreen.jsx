@@ -29,7 +29,7 @@ export default function BranchQuestionScreen({
       <ul className="choice-list">
         {question.choices.map((choice, index) => (
           <li key={choice.id}>
-            <button type="button" className="choice-button" onClick={() => onAnswer(index)}>
+            <button type="button" className="choice-button" onClick={() => onAnswer(index, choice)}>
               {choice.text}
             </button>
           </li>

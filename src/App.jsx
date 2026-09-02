@@ -21,40 +21,50 @@ export default function App() {
   const [systemId, setSystemId] = useState(null)
   const [branchPicks, setBranchPicks] = useState([])
   const [resultId, setResultId] = useState(null)
+  // それまでの全回答(共通問+分岐問)から集めた「除外フラグ」。
+  // 系統の判定には使わず、系統内で最終タイプを絞り込む段階でのみ使う(scoring.js参照)。
+  const [excludedTypeIds, setExcludedTypeIds] = useState([])
 
   function handleStart() {
     setCommonAnswers([])
     setBranchPicks([])
     setSystemId(null)
     setResultId(null)
+    setExcludedTypeIds([])
     setPhase(PHASE.COMMON)
   }
 
   function handleCommonAnswer(choice) {
     const next = [...commonAnswers, choice.scores]
+    const nextExcluded = choice.excludes ? [...excludedTypeIds, ...choice.excludes] : excludedTypeIds
 
     if (next.length < COMMON_QUESTIONS.length) {
       setCommonAnswers(next)
+      setExcludedTypeIds(nextExcluded)
       return
     }
 
     // 共通問を終えた時点で系統が決まり、以降はその系統専用の問いに入る
     const { systemId: resolved } = resolveSystem(next)
     setCommonAnswers(next)
+    setExcludedTypeIds(nextExcluded)
     setSystemId(resolved)
     setPhase(PHASE.BRANCH)
   }
 
-  function handleBranchAnswer(choiceIndex) {
+  function handleBranchAnswer(choiceIndex, choice) {
     const next = [...branchPicks, choiceIndex]
+    const nextExcluded = choice?.excludes ? [...excludedTypeIds, ...choice.excludes] : excludedTypeIds
 
     if (next.length < BRANCH_COUNT) {
       setBranchPicks(next)
+      setExcludedTypeIds(nextExcluded)
       return
     }
 
-    const { typeId } = resolveType(systemId, next)
+    const { typeId } = resolveType(systemId, next, nextExcluded)
     setBranchPicks(next)
+    setExcludedTypeIds(nextExcluded)
     setResultId(typeId)
     setPhase(PHASE.RESULT)
   }
