@@ -2,56 +2,63 @@
  * 前半5問(共通)。「目立つ/目立たない」の二択軸にのみ加点する。
  * 各問4択、目立つ+2の選択肢2つ／目立たない+2の選択肢2つで構成。
  * axis は 'medatsu'(目立つ) または 'medatanai'(目立たない)。
+ *
+ * 質問文・選択肢は、新ロジック仕様書のドラフト(軸を直接言い切る文言で
+ * あからさまだった)から、旧5系統版の質問集の文言を極力流用する形に
+ * 組み替えたもの。各選択肢がもともと想定していたタイプ(例:「気配を殺し、
+ * 遠間から標的を見定める」なら刺客)を読み取り、そのタイプが新方式の
+ * どちらの陣営に属するかで軸を再割り当てしている(旧5系統の枠組みとは
+ * 系統単位で綺麗に対応しないため、選択肢単位で判定した)。
  */
 export const FRONT_QUESTIONS = [
   {
     id: 'f1',
-    text: 'どう潜入する?',
+    text: '仲間が窮地に陥った。どうする?',
     choices: [
-      { id: 'f1a', text: '大道芸や口上を使い、人目を集めながら入り込む', axis: 'medatsu' },
-      { id: 'f1b', text: '商いのふりをして、愛想よく人前で立ち回る', axis: 'medatsu' },
-      { id: 'f1c', text: '気配を断ち、闇に紛れて忍び込む', axis: 'medatanai' },
-      { id: 'f1d', text: '何でもない顔で、誰の記憶にも残らぬように紛れ込む', axis: 'medatanai' },
+      { id: 'f1a', text: '我が身を顧みず、助けに向かう', axis: 'medatsu' },
+      { id: 'f1b', text: '手当てをし、まず命を繋ぐ', axis: 'medatanai' },
+      { id: 'f1c', text: '場を茶化して空気を変え、隙を作る', axis: 'medatsu' },
+      { id: 'f1d', text: '損得を計り、最も確実な手を打つ', axis: 'medatanai' },
     ],
   },
   {
     id: 'f2',
-    text: '潜入先で怪しまれそうになった。どうする?',
+    text: '初対面の相手には、どう接する?',
     choices: [
-      { id: 'f2a', text: '芸を見せたり大袈裟に笑って場を沸かせ、注目ごと逸らす', axis: 'medatsu' },
-      { id: 'f2b', text: '堂々と名乗り、正面から向き合う', axis: 'medatsu' },
-      { id: 'f2c', text: 'その場に溶け込み、気配を消す', axis: 'medatanai' },
-      { id: 'f2d', text: '静かにその場を離れ、姿をくらます', axis: 'medatanai' },
+      { id: 'f2a', text: '多くを語らず、まず心の内で祈りを捧げる', axis: 'medatanai' },
+      { id: 'f2b', text: 'すぐに打ち解けるよう働きかける', axis: 'medatsu' },
+      { id: 'f2c', text: '友人になりきり、心を開かせる', axis: 'medatsu' },
+      { id: 'f2d', text: 'さりげなく様子を窺い、力になれることはないか考える', axis: 'medatanai' },
     ],
   },
   {
     id: 'f3',
     text: '休息の日、何をして過ごす?',
     choices: [
-      { id: 'f3a', text: '街に出て、人と交わり賑やかに過ごす', axis: 'medatsu' },
-      { id: 'f3b', text: '新しい芸や技を人前で磨く', axis: 'medatsu' },
-      { id: 'f3c', text: '一人静かに、心身を鍛える', axis: 'medatanai' },
+      { id: 'f3a', text: '山に入り、法螺貝を吹き鳴らして身を清める', axis: 'medatsu' },
+      { id: 'f3b', text: '人知れず、市中の噂の出所を探る', axis: 'medatanai' },
+      { id: 'f3c', text: '芸や技を、人前で磨く', axis: 'medatsu' },
       { id: 'f3d', text: '薬草を摘み、静かに調合を試す', axis: 'medatanai' },
     ],
   },
   {
     id: 'f4',
-    text: '大切にしている信条は?',
+    text: '任務の成否は、何で決まると思う?',
     choices: [
-      { id: 'f4a', text: '人を楽しませ、場を明るくすること', axis: 'medatsu' },
-      { id: 'f4b', text: '己の名と誇りを、隠さず示すこと', axis: 'medatsu' },
-      { id: 'f4c', text: '執着を捨て、心を平らかに保つこと', axis: 'medatanai' },
-      { id: 'f4d', text: '気配を悟らせず、目的だけを果たすこと', axis: 'medatanai' },
+      { id: 'f4a', text: '力と技の冴え', axis: 'medatsu' },
+      { id: 'f4b', text: '積み重ねた鍛錬と、揺るがぬ信心', axis: 'medatanai' },
+      { id: 'f4c', text: '場の空気を読む機転', axis: 'medatsu' },
+      { id: 'f4d', text: '病や毒への備え', axis: 'medatanai' },
     ],
   },
   {
     id: 'f5',
-    text: '仲間が窮地に陥った。どうする?',
+    text: '潜入先で怪しまれそうになった。どうする?',
     choices: [
-      { id: 'f5a', text: '場を茶化し、明るく振る舞って気を紛らわせる', axis: 'medatsu' },
-      { id: 'f5b', text: '迷わず助けに向かい、多少の無茶も厭わない', axis: 'medatsu' },
-      { id: 'f5c', text: 'こっそり裏から手を回し、悟られず解決する', axis: 'medatanai' },
-      { id: 'f5d', text: '手当てをし、物静かに命を繋ぐ', axis: 'medatanai' },
+      { id: 'f5a', text: 'その場に溶け込む', axis: 'medatanai' },
+      { id: 'f5b', text: '大袈裟に笑い、芸を見せて気を逸らす', axis: 'medatsu' },
+      { id: 'f5c', text: '堂々と名乗り、正面から相対する', axis: 'medatsu' },
+      { id: 'f5d', text: '音もなく身を引き、姿をくらます', axis: 'medatanai' },
     ],
   },
 ]
