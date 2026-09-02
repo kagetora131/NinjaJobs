@@ -47,5 +47,8 @@ export const SYSTEM_MAP = Object.fromEntries(SYSTEMS.map((s) => [s.id, s]))
 /**
  * 系統が同点になった場合に勝つ順(先頭ほど強い)。
  * 出現率を総当たりで測りながら、5系統が均等に近づくよう並べてある。
+ * 共通問を7問→6問に減らした際、質問数が減って同点が起きやすくなった分だけ
+ * 最下位(=同点で必ず負ける)の系統が実出現率で沈み込む影響が強く出た。
+ * 医療系がその影響を最も受けていたため先頭に上げてある。
  */
-export const SYSTEM_TIE_ORDER = ['kyudo', 'butou', 'geino', 'shomin', 'iryo']
+export const SYSTEM_TIE_ORDER = ['iryo', 'kyudo', 'butou', 'geino', 'shomin']

@@ -1,5 +1,5 @@
 /**
- * 共通7問。まずどの系統かを判定する。
+ * 共通6問。まずどの系統かを判定する。
  * scores は { 主系統: 2, 副系統: 1 }。配点は総当たりで出現率を測りながら調整済み(詳細はCLAUDE.md 7章)。
  */
 export const COMMON_QUESTIONS = [
@@ -50,7 +50,6 @@ export const COMMON_QUESTIONS = [
       { id: 'c5a', text: '多くを語らず、まず己を保つ', scores: { kyudo: 2 } },
       { id: 'c5b', text: '愛想よく、すぐに打ち解ける', scores: { shomin: 2, geino: 1 } },
       { id: 'c5c', text: '隙がないか、間合いを測る', scores: { butou: 2 } },
-      { id: 'c5d', text: '顔色と身体の具合をまず見る', scores: { iryo: 2 } },
     ],
   },
   {
@@ -61,16 +60,6 @@ export const COMMON_QUESTIONS = [
       { id: 'c6b', text: '手当てをし、まず命を繋ぐ', scores: { iryo: 2 } },
       { id: 'c6c', text: '場を茶化して空気を変え、隙を作る', scores: { geino: 2 } },
       { id: 'c6d', text: '損得を計り、最も確実な手を打つ', scores: { shomin: 2, iryo: 1 } },
-    ],
-  },
-  {
-    id: 'c7',
-    text: '自分を一言で表すなら?',
-    choices: [
-      { id: 'c7a', text: '「道」―― 己の道を求める', scores: { kyudo: 2 } },
-      { id: 'c7b', text: '「果」―― 果たすべきを果たす', scores: { butou: 2 } },
-      { id: 'c7c', text: '「戯」―― 人を楽しませる', scores: { geino: 2 } },
-      { id: 'c7d', text: '「実」―― 実を取る', scores: { shomin: 2, iryo: 1 } },
     ],
   },
 ]
