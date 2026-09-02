@@ -1,35 +1,36 @@
 /**
- * 共通6問。まずどの系統かを判定する。
- * scores は { 主系統: 2, 副系統: 1 }。配点は総当たりで出現率を測りながら調整済み(詳細はCLAUDE.md 7章)。
+ * 共通7問。まずどの系統かを判定する。
+ * scores は系統への加点。1つの選択肢が複数系統に加点する場合もある(第1問B等)。
  * excludes は任意。「この選択をした場合、系統内の最終タイプ候補から除外するタイプID」の配列。
  * 系統別3問の選択肢にも同じ形で付けられる(汎用的な仕組み。詳細はCLAUDE.md 7章「除外フラグ」)。
+ * 質問文・選択肢・配点は「診断ロジック修正依頼書」の確定版に準拠(詳細はCLAUDE.md 6章)。
  */
 export const COMMON_QUESTIONS = [
   {
     id: 'c1',
-    text: '任務を与えられた。まず何をする?',
+    text: 'どう潜入する?',
     choices: [
       {
         id: 'c1a',
-        text: '気配を殺し、遠間から標的を見定める',
-        scores: { butou: 2, kyudo: 1 },
+        text: '気配を断ち、闇に溶けて忍び込む',
+        scores: { butou: 1 },
         // 正面から堂々と立ち合う「武士」とは信条が相容れないため、武闘系に
-        // 決まった場合でも武士だけは最終候補から外す(修正依頼書「診断ロジック除外フラグ」)。
+        // 決まった場合でも武士だけは最終候補から外す。
         excludes: ['bushi'],
       },
-      { id: 'c1b', text: '人に紛れ、世間話から探りを入れる', scores: { shomin: 2, geino: 1 } },
-      { id: 'c1c', text: 'まず心を静め、己を整える', scores: { kyudo: 2 } },
-      { id: 'c1d', text: '皆の身体と備えを検める', scores: { iryo: 2 } },
+      { id: 'c1b', text: '何でもない顔で、堂々と正面から入り込む', scores: { butou: 2, shomin: 2 } },
+      { id: 'c1c', text: '芸や愛想を武器に、招かれるようにして入り込む', scores: { geino: 2, shomin: 1 } },
+      { id: 'c1d', text: '加持祈祷を捧げ、機が満ちるのを待つ', scores: { kyudo: 2 } },
     ],
   },
   {
     id: 'c2',
     text: '潜入先で怪しまれそうになった。どうする?',
     choices: [
-      { id: 'c2a', text: '当たり前の顔で、その場の景色に成りきる', scores: { shomin: 2, kyudo: 1 } },
+      { id: 'c2a', text: 'その場に溶け込む', scores: { shomin: 2, kyudo: 1 } },
       { id: 'c2b', text: '大袈裟に笑い、芸を見せて気を逸らす', scores: { geino: 2 } },
       { id: 'c2c', text: '堂々と名乗り、正面から相対する', scores: { butou: 2 } },
-      { id: 'c2d', text: '手当てを申し出て、役に立つ者として振る舞う', scores: { iryo: 2 } },
+      { id: 'c2d', text: '商売を通じて、役に立つ者として振る舞う', scores: { shomin: 2, iryo: 1 } },
     ],
   },
   {
@@ -38,7 +39,7 @@ export const COMMON_QUESTIONS = [
     choices: [
       { id: 'c3a', text: '山に入り、身を清めて鍛える', scores: { kyudo: 2 } },
       { id: 'c3b', text: '街へ出て、人と交わり噂を集める', scores: { shomin: 2, geino: 1 } },
-      { id: 'c3c', text: '新しい芸や技を磨く', scores: { geino: 2 } },
+      { id: 'c3c', text: '芸や技を磨く', scores: { geino: 2 } },
       { id: 'c3d', text: '薬草を摘み、調合を試す', scores: { iryo: 2 } },
     ],
   },
@@ -46,19 +47,20 @@ export const COMMON_QUESTIONS = [
     id: 'c4',
     text: '大切にしている信条は?',
     choices: [
-      { id: 'c4a', text: '己を律し、迷いを断つこと', scores: { kyudo: 2 } },
-      { id: 'c4b', text: '果たすと決めたことを、必ず果たすこと', scores: { butou: 2 } },
-      { id: 'c4c', text: '人を楽しませ、場を明るくすること', scores: { geino: 2, shomin: 1 } },
-      { id: 'c4d', text: '実を取り、暮らしを立てること', scores: { shomin: 2, iryo: 1 } },
+      { id: 'c4a', text: '忍び、ひたすらに耐え忍ぶこと', scores: { shomin: 2 } },
+      { id: 'c4b', text: '九字を切り、心を鎮め澄ませること', scores: { kyudo: 2 } },
+      { id: 'c4c', text: '摩利支天に祈り、姿を消して勝ちを得ること', scores: { butou: 2 } },
+      { id: 'c4d', text: '儒の教えに則り、正しき心のままに施すこと', scores: { iryo: 2 } },
     ],
   },
   {
     id: 'c5',
     text: '初対面の相手には、どう接する?',
     choices: [
-      { id: 'c5a', text: '多くを語らず、まず己を保つ', scores: { kyudo: 2 } },
-      { id: 'c5b', text: '愛想よく、すぐに打ち解ける', scores: { shomin: 2, geino: 1 } },
-      { id: 'c5c', text: '隙がないか、間合いを測る', scores: { butou: 2 } },
+      { id: 'c5a', text: '多くを語らず、まず心の内で祈りを捧げる', scores: { kyudo: 2 } },
+      { id: 'c5b', text: 'すぐに打ち解けるよう働きかける', scores: { shomin: 2 } },
+      { id: 'c5c', text: '友人になりきり、心を開かせる', scores: { geino: 2 } },
+      { id: 'c5d', text: 'さりげなく様子を窺い、力になれることはないか考える', scores: { iryo: 2 } },
     ],
   },
   {
@@ -69,6 +71,16 @@ export const COMMON_QUESTIONS = [
       { id: 'c6b', text: '手当てをし、まず命を繋ぐ', scores: { iryo: 2 } },
       { id: 'c6c', text: '場を茶化して空気を変え、隙を作る', scores: { geino: 2 } },
       { id: 'c6d', text: '損得を計り、最も確実な手を打つ', scores: { shomin: 2, iryo: 1 } },
+    ],
+  },
+  {
+    id: 'c7',
+    text: '任務の成否は、何で決まると思う?',
+    choices: [
+      { id: 'c7a', text: '力と技の冴え', scores: { butou: 2 } },
+      { id: 'c7b', text: '積み重ねた鍛錬と、揺るがぬ信心', scores: { kyudo: 2, butou: 1 } },
+      { id: 'c7c', text: '場の空気を読む機転', scores: { geino: 2 } },
+      { id: 'c7d', text: '病や毒への備え', scores: { iryo: 2 } },
     ],
   },
 ]
