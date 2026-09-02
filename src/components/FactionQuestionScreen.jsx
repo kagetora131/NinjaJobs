@@ -1,8 +1,8 @@
 import ProgressBar from './ProgressBar.jsx'
 
-export default function BranchQuestionScreen({
+export default function FactionQuestionScreen({
   question,
-  system,
+  faction,
   questionNumber,
   totalQuestions,
   onAnswer,
@@ -11,11 +11,11 @@ export default function BranchQuestionScreen({
     <div key={question.id} className="screen question-screen">
       <ProgressBar current={questionNumber} total={totalQuestions} />
 
-      {/* ここから先はこの系統の者だけに出される問い */}
+      {/* ここから先はこの陣営の者だけに出される問い */}
       <div className="system-banner">
         <span className="system-banner__label">見極めるは</span>
-        <span className="system-banner__name">{system.name}</span>
-        <span className="system-banner__summary">{system.summary}</span>
+        <span className="system-banner__name">{faction.name}</span>
+        <span className="system-banner__summary">{faction.summary}</span>
       </div>
 
       <div className="scroll">
@@ -29,7 +29,11 @@ export default function BranchQuestionScreen({
       <ul className="choice-list">
         {question.choices.map((choice, index) => (
           <li key={choice.id}>
-            <button type="button" className="choice-button" onClick={() => onAnswer(index, choice)}>
+            <button
+              type="button"
+              className="choice-button"
+              onClick={() => onAnswer(faction.typeIds[index])}
+            >
               {choice.text}
             </button>
           </li>

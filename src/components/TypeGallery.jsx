@@ -1,4 +1,4 @@
-import { SYSTEMS } from '../data/systems.js'
+import { FACTIONS } from '../data/factions.js'
 import { NINJA_TYPE_MAP } from '../data/ninjaTypes.js'
 
 export default function TypeGallery({ resultId }) {
@@ -8,15 +8,16 @@ export default function TypeGallery({ resultId }) {
         <span className="gallery__heading-text">十二の忍びの道</span>
       </h3>
 
-      {SYSTEMS.map((system) => (
-        <div key={system.id} className="gallery__group">
-          <p className="gallery__group-name">{system.name}</p>
-          <p className="gallery__group-summary">{system.summary}</p>
+      {FACTIONS.map((faction) => (
+        <div key={faction.id} className="gallery__group">
+          <p className="gallery__group-name">{faction.name}</p>
+          <p className="gallery__group-summary">{faction.summary}</p>
 
           <ul className="gallery__list">
-            {system.typeIds.map((typeId) => {
+            {faction.typeIds.map((typeId) => {
               const type = NINJA_TYPE_MAP[typeId]
               const isResult = typeId === resultId
+              const isExtreme = typeId === faction.extremeTypeId
               return (
                 <li
                   key={typeId}
@@ -32,6 +33,7 @@ export default function TypeGallery({ resultId }) {
                     <p className="gallery__name">
                       {type.name}
                       <span className="gallery__name-en">{type.nameEn}</span>
+                      {isExtreme && <span className="gallery__extreme-badge">激レア</span>}
                     </p>
                     <p className="gallery__keyword">{type.keyword}</p>
                     <p className="gallery__desc">{type.description}</p>

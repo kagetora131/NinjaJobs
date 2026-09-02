@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import TypeGallery from './TypeGallery.jsx'
 
-export default function ResultCard({ ninjaType, system, onRetry }) {
+export default function ResultCard({ ninjaType, faction, onRetry }) {
   const reduceMotion = useReducedMotion()
   const d = (seconds) => (reduceMotion ? 0 : seconds)
 
@@ -59,7 +59,7 @@ export default function ResultCard({ ninjaType, system, onRetry }) {
 
         <div className="kakejiku__body washi">
           <p className="result-card__eyebrow">
-            {system ? `${system.name} ―― お前の忍びの道は` : 'お前の忍びの道は――'}
+            {faction ? `${faction.name} ―― お前の忍びの道は` : 'お前の忍びの道は――'}
           </p>
 
           <motion.div className="result-card__frame" variants={imageVariants}>

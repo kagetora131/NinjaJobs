@@ -1,114 +1,87 @@
-import { SYSTEMS, SYSTEM_MAP, SYSTEM_TIE_ORDER } from '../data/systems.js'
-import { COMMON_QUESTIONS, BRANCH_QUESTIONS } from '../data/questions.js'
+import { FACTIONS, FACTION_MAP } from '../data/factions.js'
+import { BACK_QUESTIONS } from '../data/questions.js'
 
-// 系統やタイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に出なくなる)ため、
+// 陣営やタイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に出なくなる)ため、
 // 開発時に検知する。
 if (import.meta.env?.DEV) {
-  const missing = SYSTEMS.map((s) => s.id).filter((id) => !SYSTEM_TIE_ORDER.includes(id))
-  if (missing.length) {
-    throw new Error(`SYSTEM_TIE_ORDER に未登録の系統があります: ${missing.join(', ')}`)
-  }
-  const allTypeIds = new Set(SYSTEMS.flatMap((s) => s.typeIds))
-  for (const s of SYSTEMS) {
-    if (s.typeIds.length !== s.branchWeights.length) {
-      throw new Error(`${s.id}: typeIds と branchWeights の数が一致しません`)
+  for (const f of FACTIONS) {
+    if (!f.typeIds.includes(f.extremeTypeId)) {
+      throw new Error(`${f.id}: extremeTypeId「${f.extremeTypeId}」がtypeIdsに含まれていません`)
     }
-    for (const q of BRANCH_QUESTIONS[s.id] ?? []) {
-      if (q.choices.length !== s.typeIds.length) {
-        throw new Error(`${q.id}: 選択肢の数が ${s.id} のタイプ数と一致しません`)
+    const q = BACK_QUESTIONS[f.id]
+    if (!q) {
+      throw new Error(`${f.id}: BACK_QUESTIONS に定義がありません`)
+    }
+    for (const question of q) {
+      if (question.choices.length !== f.typeIds.length) {
+        throw new Error(`${question.id}: 選択肢の数が ${f.id} のタイプ数と一致しません`)
       }
-    }
-  }
-
-  // excludes(除外フラグ)の設定ミスを検知する。
-  const allChoices = [
-    ...COMMON_QUESTIONS.flatMap((q) => q.choices),
-    ...Object.values(BRANCH_QUESTIONS).flat().flatMap((q) => q.choices),
-  ]
-  for (const choice of allChoices) {
-    const excludeSet = new Set(choice.excludes ?? [])
-    if (excludeSet.size === 0) continue
-
-    for (const typeId of excludeSet) {
-      if (!allTypeIds.has(typeId)) {
-        throw new Error(`${choice.id}: excludes に未知のタイプID「${typeId}」があります`)
-      }
-    }
-    // 1系統の全タイプを1つの選択で除外すると、常にフォールバック(除外を無視)が
-    // 発動して除外フラグが実質無意味になるため、設定ミスとして検知する。
-    const wiped = SYSTEMS.find((s) => s.typeIds.every((id) => excludeSet.has(id)))
-    if (wiped) {
-      throw new Error(`${choice.id}: excludes が ${wiped.id} の全タイプを含んでおり、常にフォールバックしてしまいます`)
     }
   }
 }
 
 /**
- * 共通問の回答から系統を決める。
- * @param {Array<Record<string, number>>} answerScores 選んだ選択肢の scores の配列
+ * 前半5問の回答から陣営を決める。
+ * @param {string[]} axisAnswers 各問で選んだ選択肢の axis('medatsu'|'medatanai')の配列
+ * @param {string} firstAxis 第1問で選んだ axis(同点時のタイブレークに使う)
  */
-export function resolveSystem(answerScores) {
-  const scores = Object.fromEntries(SYSTEMS.map((s) => [s.id, 0]))
-
-  for (const choiceScores of answerScores) {
-    for (const [systemId, points] of Object.entries(choiceScores)) {
-      scores[systemId] = (scores[systemId] ?? 0) + points
-    }
+export function resolveFaction(axisAnswers, firstAxis) {
+  const totals = { medatsu: 0, medatanai: 0 }
+  for (const axis of axisAnswers) {
+    totals[axis] += 2
   }
 
-  let systemId = SYSTEM_TIE_ORDER[0]
-  let best = -Infinity
-  for (const id of SYSTEM_TIE_ORDER) {
-    if (scores[id] > best) {
-      best = scores[id]
-      systemId = id
-    }
+  if (totals.medatsu === totals.medatanai) {
+    // 各問が必ずどちらか一方に+2する等ウェイト方式・5問(奇数)構成のため、
+    // 理論上この同点は起こり得ない。それでも結果が出ない事態を避けるため、
+    // 第1問の回答軸で決着させるフォールバックを用意しておく。
+    return { factionId: firstAxis, totals }
   }
 
-  return { systemId, scores }
+  return { factionId: totals.medatsu > totals.medatanai ? 'medatsu' : 'medatanai', totals }
 }
 
 /**
- * 系統内の分岐回答からタイプを決める。
+ * 後半5問の回答から最終タイプを決める。
  *
- * 除外フラグ(excludes)：特定の選択(例:「気配を断ち、忍び込む」)をした人物が、
- * 信条の相容れないタイプ(例:「武士」)に至るのは矛盾するため、そうした選択肢には
- * `excludes: ['bushi']` のように最終候補から外すタイプIDを持たせられる。
- * 得点計算そのものは変えず、**系統内で最終タイプを1つに絞り込む段階でのみ**適用する。
- * 除外した結果、系統内の候補が0件になる場合は矛盾を避けるため除外を無視する
- * (通常は起こらない。1つの系統の全タイプを除外するような矛盾した設定をしない限り)。
+ * 陣営ごとに1タイプだけ「妥協のない極致」(激レア)が存在する。後半5問**すべて**を
+ * その激レアタイプの選択肢で貫き通した場合のみ、結果が激レアタイプになる。
+ * 1問でも他のタイプを選んだ時点でそのタイプは候補から完全に外れ、
+ * 激レアタイプへの回答は「無効票」として扱われる(他のどのタイプにもカウントされない)。
+ * 5問中4問だけ激レアタイプ、のような惜しい結果は存在しない、白か黒かの仕様。
  *
- * @param {string} systemId
- * @param {number[]} picks 各分岐問で選んだ選択肢のindex(= typeIds のindex)
- * @param {string[]} [excludedTypeIds] それまでの全回答(共通問+分岐問)から集めた除外タイプID
+ * @param {string} factionId
+ * @param {string[]} typeAnswers 各問で選んだ選択肢のtypeIdの配列(5つ)
  */
-export function resolveType(systemId, picks, excludedTypeIds = []) {
-  const system = SYSTEM_MAP[systemId]
-  const points = system.typeIds.map(() => 0)
+export function resolveType(factionId, typeAnswers) {
+  const faction = FACTION_MAP[factionId]
+  const extremeId = faction.extremeTypeId
 
-  for (const pick of picks) {
-    points[pick] += system.branchWeights[pick]
+  if (typeAnswers.every((id) => id === extremeId)) {
+    return { typeId: extremeId, counts: null }
   }
 
-  const excluded = new Set(excludedTypeIds)
-  const fullPool = system.typeIds.map((_, i) => i)
-  const restrictedPool = fullPool.filter((i) => !excluded.has(system.typeIds[i]))
-  const pool = restrictedPool.length > 0 ? restrictedPool : fullPool
+  const counts = Object.fromEntries(faction.typeIds.map((id) => [id, 0]))
+  for (const id of typeAnswers) {
+    if (id === extremeId) continue // 無効票(このタイプは候補から外れているため)
+    counts[id] += 1
+  }
 
-  const best = Math.max(...pool.map((i) => points[i]))
-  const tied = pool.filter((i) => points[i] === best)
+  const candidates = faction.typeIds.filter((id) => id !== extremeId)
+  const best = Math.max(...candidates.map((id) => counts[id]))
+  const tied = candidates.filter((id) => counts[id] === best)
 
   if (tied.length === 1) {
-    return { typeId: system.typeIds[tied[0]], points }
+    return { typeId: tied[0], counts }
   }
 
-  // 同点は「最後に選んだ側」を決め手にする。
-  // 先頭固定にすると特定タイプだけが同点を総取りして出現率が跳ね上がるため。
-  for (let i = picks.length - 1; i >= 0; i -= 1) {
-    if (tied.includes(picks[i])) {
-      return { typeId: system.typeIds[picks[i]], points }
+  // 同点は「最後に選んだ側」を決め手にする。先頭固定にすると特定タイプが
+  // 同点を総取りしてしまうため(これまでの分岐判定と同じ方針)。
+  for (let i = typeAnswers.length - 1; i >= 0; i -= 1) {
+    if (typeAnswers[i] !== extremeId && tied.includes(typeAnswers[i])) {
+      return { typeId: typeAnswers[i], counts }
     }
   }
 
-  return { typeId: system.typeIds[tied[0]], points }
+  return { typeId: tied[0], counts }
 }
