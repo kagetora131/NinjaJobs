@@ -13,12 +13,12 @@ export const COMMON_QUESTIONS = [
       {
         id: 'c1a',
         text: '気配を断ち、闇に溶けて忍び込む',
-        scores: { butou: 1 },
+        scores: { butou: 2 },
         // 正面から堂々と立ち合う「武士」とは信条が相容れないため、武闘系に
         // 決まった場合でも武士だけは最終候補から外す。
         excludes: ['bushi'],
       },
-      { id: 'c1b', text: '何でもない顔で、堂々と正面から入り込む', scores: { butou: 2, shomin: 2 } },
+      { id: 'c1b', text: '何でもない顔で、堂々と正面から入り込む', scores: { butou: 3, shomin: 2 } },
       { id: 'c1c', text: '芸や愛想を武器に、招かれるようにして入り込む', scores: { geino: 2, shomin: 1 } },
       { id: 'c1d', text: '加持祈祷を捧げ、機が満ちるのを待つ', scores: { kyudo: 2 } },
     ],
@@ -27,10 +27,10 @@ export const COMMON_QUESTIONS = [
     id: 'c2',
     text: '潜入先で怪しまれそうになった。どうする?',
     choices: [
-      { id: 'c2a', text: 'その場に溶け込む', scores: { shomin: 2, kyudo: 1 } },
+      { id: 'c2a', text: 'その場に溶け込む', scores: { shomin: 1, kyudo: 1 } },
       { id: 'c2b', text: '大袈裟に笑い、芸を見せて気を逸らす', scores: { geino: 2 } },
       { id: 'c2c', text: '堂々と名乗り、正面から相対する', scores: { butou: 2 } },
-      { id: 'c2d', text: '商売を通じて、役に立つ者として振る舞う', scores: { shomin: 2, iryo: 1 } },
+      { id: 'c2d', text: '商売を通じて、役に立つ者として振る舞う', scores: { shomin: 1, iryo: 1 } },
     ],
   },
   {
@@ -67,7 +67,7 @@ export const COMMON_QUESTIONS = [
     id: 'c6',
     text: '仲間が窮地に陥った。どうする?',
     choices: [
-      { id: 'c6a', text: '我が身を顧みず、助けに向かう', scores: { butou: 2, kyudo: 1 } },
+      { id: 'c6a', text: '我が身を顧みず、助けに向かう', scores: { butou: 3, kyudo: 1 } },
       { id: 'c6b', text: '手当てをし、まず命を繋ぐ', scores: { iryo: 2 } },
       { id: 'c6c', text: '場を茶化して空気を変え、隙を作る', scores: { geino: 2 } },
       { id: 'c6d', text: '損得を計り、最も確実な手を打つ', scores: { shomin: 2, iryo: 1 } },
@@ -77,7 +77,7 @@ export const COMMON_QUESTIONS = [
     id: 'c7',
     text: '任務の成否は、何で決まると思う?',
     choices: [
-      { id: 'c7a', text: '力と技の冴え', scores: { butou: 2 } },
+      { id: 'c7a', text: '力と技の冴え', scores: { butou: 3 } },
       { id: 'c7b', text: '積み重ねた鍛錬と、揺るがぬ信心', scores: { kyudo: 2, butou: 1 } },
       { id: 'c7c', text: '場の空気を読む機転', scores: { geino: 2 } },
       { id: 'c7d', text: '病や毒への備え', scores: { iryo: 2 } },
