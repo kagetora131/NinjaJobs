@@ -48,16 +48,24 @@ export function factionOfType(typeId) {
  * typeIds の並び順が最終2択の選択肢A/Bの並びと対応する。
  * extremeTypeId を持つグループ(武闘派閥・忍び)だけが激レアの仕組みを持つ
  * (詳細はCLAUDE.md 7章)。
+ *
+ * weight: グループ決定3問で1票選んだ時に加算するポイント(既定1)。
+ * 武闘派閥・忍びは激レア判定(3問すべて選び通したか)があるため1のまま固定し、
+ * それ以外の4グループには2を与えて「僅差では武闘派閥・忍びに競り負けない」
+ * ようにしている。山伏・間者(激レアでない側の相方)が「グループ自体が
+ * 選ばれた回数」に引っ張られて他タイプの約2倍に膨らんでいた偏りを、
+ * resolveGroup/resolveFinalTypeの判定方法自体は変えずに緩和するための調整
+ * (詳細はCLAUDE.md 7章、weight=2の根拠は総当たりで実測済み)。
  */
 export const BACK_GROUPS = {
   medatsu: [
-    { id: 'geino', name: '芸能系', typeIds: ['sarugakushi', 'hokashi'] },
-    { id: 'shobai', name: '商売系', typeIds: ['kusuriya', 'akindo'] },
+    { id: 'geino', name: '芸能系', typeIds: ['sarugakushi', 'hokashi'], weight: 2 },
+    { id: 'shobai', name: '商売系', typeIds: ['kusuriya', 'akindo'], weight: 2 },
     { id: 'butouha', name: '武闘派閥', typeIds: ['yamabushi', 'bushi'], extremeTypeId: 'bushi' },
   ],
   medatanai: [
-    { id: 'kyudo', name: '求道系', typeIds: ['komuso', 'shukke'] },
-    { id: 'shomin', name: '庶民系', typeIds: ['tsunenokatachi', 'kusushi'] },
+    { id: 'kyudo', name: '求道系', typeIds: ['komuso', 'shukke'], weight: 2 },
+    { id: 'shomin', name: '庶民系', typeIds: ['tsunenokatachi', 'kusushi'], weight: 2 },
     { id: 'shinobi', name: '忍び', typeIds: ['kanja', 'shikaku'], extremeTypeId: 'shikaku' },
   ],
 }

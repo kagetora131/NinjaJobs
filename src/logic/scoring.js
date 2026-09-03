@@ -82,6 +82,14 @@ export function resolveFaction(answerScores, firstAxis) {
  * 似たタイプ2つを1つの選択肢に統合しているため、後半の選択肢数を
  * 6→3(最終問のみ2)に減らせている(詳細はCLAUDE.md 6章)。
  *
+ * 各グループのweight(既定1、BACK_GROUPS参照)をポイントとして加算する。
+ * 武闘派閥・忍びはweight未設定(=1)のまま、他4グループはweight2を持つため、
+ * 際どい票の割れ方(例: 武闘派閥2票・他グループ1票)では他グループ側が
+ * 勝ちやすくなる。ただし「3問すべて同じグループを選んだか」で決まる
+ * unanimousの判定は、この重み付けとは無関係にgroupPicks(生の選択index)
+ * だけを見て決めているため、激レア(武士・刺客)の判定条件はweightの値に
+ * 一切左右されない(詳細はCLAUDE.md 7章)。
+ *
  * @param {string} factionId
  * @param {number[]} groupPicks 各問で選んだ選択肢のindex(= BACK_GROUPS[faction] のindex)の配列(3つ)
  */
@@ -89,7 +97,7 @@ export function resolveGroup(factionId, groupPicks) {
   const groups = BACK_GROUPS[factionId]
   const counts = groups.map(() => 0)
   for (const pick of groupPicks) {
-    counts[pick] += 1
+    counts[pick] += groups[pick].weight ?? 1
   }
 
   const best = Math.max(...counts)
