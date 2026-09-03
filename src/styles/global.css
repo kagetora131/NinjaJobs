@@ -313,6 +313,28 @@ button {
   }
 }
 
+/* 1つ前の問いに戻るボタン。答えの選択肢より目立たせない */
+.question-screen__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0 0 1.1rem;
+  padding: 0.3rem 0.2rem;
+  border: none;
+  background: none;
+  color: rgba(244, 240, 230, 0.45);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.question-screen__back:hover,
+.question-screen__back:focus-visible {
+  color: var(--color-kondo);
+}
+
 /* 巻物・掛軸に共通の軸木 */
 .rod {
   position: relative;

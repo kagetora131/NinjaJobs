@@ -22,67 +22,86 @@ import {
 
 const PHASE = { START: 'start', FRONT: 'front', BACK_GROUP: 'back_group', BACK_FINAL: 'back_final', RESULT: 'result' }
 
+/**
+ * 「戻る」を安全に成立させるため、画面(phase)や陣営・グループ・結果は
+ * すべて回答の配列(frontScores/groupPicks/finalPick)から毎回導出する。
+ * 個別にsetPhase・setFactionId...のように命令的に管理すると、1問戻った時に
+ * 導出済みの値(陣営やグループ)が古いまま残ってズレる恐れがあるため。
+ */
+function deriveState(started, frontScores, groupPicks, finalPick) {
+  if (!started) {
+    return { phase: PHASE.START }
+  }
+
+  const frontDone = frontScores.length >= FRONT_QUESTIONS.length
+  if (!frontDone) {
+    return { phase: PHASE.FRONT }
+  }
+
+  const { factionId } = resolveFaction(frontScores, dominantAxis(frontScores[0]))
+
+  const groupDone = groupPicks.length >= BACK_GROUP_COUNT
+  if (!groupDone) {
+    return { phase: PHASE.BACK_GROUP, factionId }
+  }
+
+  const { group, unanimous } = resolveGroup(factionId, groupPicks)
+
+  if (finalPick === null) {
+    return { phase: PHASE.BACK_FINAL, factionId, group, unanimous }
+  }
+
+  const rawTypeId = resolveFinalType(group, unanimous, finalPick)
+  // 前半6問が「目立つ/目立たない」どちらかに純粋でなかった場合、
+  // 武士/刺客はここで別のタイプに差し替わる(詳細はscoring.js参照)
+  const resultId = applyFrontPurityOverride(rawTypeId, frontScores)
+
+  return { phase: PHASE.RESULT, factionId, group, unanimous, resultId }
+}
+
 export default function App() {
-  const [phase, setPhase] = useState(PHASE.START)
+  const [started, setStarted] = useState(false)
   const [frontScores, setFrontScores] = useState([])
-  const [factionId, setFactionId] = useState(null)
   const [groupPicks, setGroupPicks] = useState([])
-  const [group, setGroup] = useState(null)
-  const [groupUnanimous, setGroupUnanimous] = useState(false)
-  const [resultId, setResultId] = useState(null)
+  const [finalPick, setFinalPick] = useState(null)
+
+  const { phase, factionId, group, resultId } = deriveState(started, frontScores, groupPicks, finalPick)
 
   function handleStart() {
     setFrontScores([])
     setGroupPicks([])
-    setFactionId(null)
-    setGroup(null)
-    setGroupUnanimous(false)
-    setResultId(null)
-    setPhase(PHASE.FRONT)
+    setFinalPick(null)
+    setStarted(true)
   }
 
   function handleFrontAnswer(choice) {
-    const next = [...frontScores, choice.scores]
-
-    if (next.length < FRONT_QUESTIONS.length) {
-      setFrontScores(next)
-      return
-    }
-
-    // 前半6問を終えた時点で陣営が決まり、以降はその陣営専用の問いに入る
-    const { factionId: resolved } = resolveFaction(next, dominantAxis(next[0]))
-    setFrontScores(next)
-    setFactionId(resolved)
-    setPhase(PHASE.BACK_GROUP)
+    setFrontScores((prev) => [...prev, choice.scores])
   }
 
   function handleGroupAnswer(groupIndex) {
-    const next = [...groupPicks, groupIndex]
-
-    if (next.length < BACK_GROUP_COUNT) {
-      setGroupPicks(next)
-      return
-    }
-
-    // グループ決定3問を終えた時点でグループが決まり、最終1問に入る
-    const { group: resolvedGroup, unanimous } = resolveGroup(factionId, next)
-    setGroupPicks(next)
-    setGroup(resolvedGroup)
-    setGroupUnanimous(unanimous)
-    setPhase(PHASE.BACK_FINAL)
+    setGroupPicks((prev) => [...prev, groupIndex])
   }
 
   function handleFinalAnswer(typeIndex) {
-    const rawTypeId = resolveFinalType(group, groupUnanimous, typeIndex)
-    // 前半6問が「目立つ/目立たない」どちらかに純粋でなかった場合、
-    // 武士/間者/刺客はここで別のタイプに差し替わる(詳細はscoring.js参照)
-    const typeId = applyFrontPurityOverride(rawTypeId, frontScores)
-    setResultId(typeId)
-    setPhase(PHASE.RESULT)
+    setFinalPick(typeIndex)
   }
 
   function handleRetry() {
-    setPhase(PHASE.START)
+    setStarted(false)
+  }
+
+  // 常に「1つ前の回答を取り消す」だけを行う。取り消した結果として
+  // どの画面に戻るかはderiveStateが回答配列から自動的に導き出す。
+  function handleBack() {
+    if (phase === PHASE.RESULT) {
+      setFinalPick(null)
+    } else if (phase === PHASE.BACK_FINAL || (phase === PHASE.BACK_GROUP && groupPicks.length > 0)) {
+      setGroupPicks((prev) => prev.slice(0, -1))
+    } else if (phase === PHASE.BACK_GROUP || (phase === PHASE.FRONT && frontScores.length > 0)) {
+      setFrontScores((prev) => prev.slice(0, -1))
+    } else if (phase === PHASE.FRONT) {
+      setStarted(false)
+    }
   }
 
   return (
@@ -95,6 +114,7 @@ export default function App() {
           questionNumber={frontScores.length + 1}
           totalQuestions={TOTAL_QUESTIONS}
           onAnswer={handleFrontAnswer}
+          onBack={handleBack}
         />
       )}
 
@@ -104,6 +124,7 @@ export default function App() {
           questionNumber={FRONT_QUESTIONS.length + groupPicks.length + 1}
           totalQuestions={TOTAL_QUESTIONS}
           onAnswer={handleGroupAnswer}
+          onBack={handleBack}
         />
       )}
 
@@ -113,6 +134,7 @@ export default function App() {
           questionNumber={FRONT_QUESTIONS.length + BACK_GROUP_COUNT + 1}
           totalQuestions={TOTAL_QUESTIONS}
           onAnswer={handleFinalAnswer}
+          onBack={handleBack}
         />
       )}
 

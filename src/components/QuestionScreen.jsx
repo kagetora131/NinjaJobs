@@ -1,9 +1,15 @@
 import ProgressBar from './ProgressBar.jsx'
 
-export default function QuestionScreen({ question, questionNumber, totalQuestions, onAnswer }) {
+export default function QuestionScreen({ question, questionNumber, totalQuestions, onAnswer, onBack }) {
   return (
     <div key={question.id} className="screen question-screen">
       <ProgressBar current={questionNumber} total={totalQuestions} />
+
+      {onBack && (
+        <button type="button" className="question-screen__back" onClick={onBack}>
+          ← 一つ前の問いに戻る
+        </button>
+      )}
 
       {/* 巻物に記された問い */}
       <div className="scroll">

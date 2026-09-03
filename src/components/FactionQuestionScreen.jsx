@@ -6,10 +6,16 @@ import ProgressBar from './ProgressBar.jsx'
  * (indexの意味はApp.jsx側の呼び出し方で決まる: グループ決定問ならグループのindex、
  * 最終問ならグループ内タイプのindex)。
  */
-export default function FactionQuestionScreen({ question, questionNumber, totalQuestions, onAnswer }) {
+export default function FactionQuestionScreen({ question, questionNumber, totalQuestions, onAnswer, onBack }) {
   return (
     <div key={question.id} className="screen question-screen">
       <ProgressBar current={questionNumber} total={totalQuestions} />
+
+      {onBack && (
+        <button type="button" className="question-screen__back" onClick={onBack}>
+          ← 一つ前の問いに戻る
+        </button>
+      )}
 
       <div className="scroll">
         <div className="rod" aria-hidden="true" />
