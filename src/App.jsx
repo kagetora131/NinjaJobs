@@ -11,8 +11,14 @@ import {
   TOTAL_QUESTIONS,
 } from './data/questions.js'
 import { NINJA_TYPE_MAP } from './data/ninjaTypes.js'
-import { FACTION_MAP } from './data/factions.js'
-import { resolveFaction, resolveGroup, resolveFinalType, dominantAxis } from './logic/scoring.js'
+import { factionOfType } from './data/factions.js'
+import {
+  resolveFaction,
+  resolveGroup,
+  resolveFinalType,
+  applyFrontPurityOverride,
+  dominantAxis,
+} from './logic/scoring.js'
 
 const PHASE = { START: 'start', FRONT: 'front', BACK_GROUP: 'back_group', BACK_FINAL: 'back_final', RESULT: 'result' }
 
@@ -67,7 +73,10 @@ export default function App() {
   }
 
   function handleFinalAnswer(typeIndex) {
-    const typeId = resolveFinalType(group, groupUnanimous, typeIndex)
+    const rawTypeId = resolveFinalType(group, groupUnanimous, typeIndex)
+    // 前半6問が「目立つ/目立たない」どちらかに純粋でなかった場合、
+    // 武士/間者/刺客はここで別のタイプに差し替わる(詳細はscoring.js参照)
+    const typeId = applyFrontPurityOverride(rawTypeId, frontScores)
     setResultId(typeId)
     setPhase(PHASE.RESULT)
   }
@@ -110,7 +119,9 @@ export default function App() {
       {phase === PHASE.RESULT && resultId && (
         <ResultCard
           ninjaType={NINJA_TYPE_MAP[resultId]}
-          faction={FACTION_MAP[factionId]}
+          // 前半純度による上書きで前半の陣営とは別の陣営のタイプになりうるため、
+          // 表示する陣営は必ず最終タイプの実際の所属先から求め直す
+          faction={factionOfType(resultId)}
           onRetry={handleRetry}
         />
       )}

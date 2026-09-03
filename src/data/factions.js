@@ -27,6 +27,19 @@ export const FACTIONS = [
 export const FACTION_MAP = Object.fromEntries(FACTIONS.map((f) => [f.id, f]))
 
 /**
+ * タイプIDから、そのタイプが所属する陣営を逆引きする。
+ * 前半の「純度」による差し替え(scoring.js の applyFrontPurityOverride)で、
+ * 前半に判定した陣営(medatsu/medatanai)とは別の陣営のタイプに最終結果が
+ * 差し替わることがあるため、結果画面には前半で判定した陣営IDをそのまま使わず、
+ * 必ずこの関数で最終タイプの実際の所属陣営を求め直すこと
+ * (でないと「目立つ陣営の忍び」なのに虚無僧が出る、といった矛盾が起こる)。
+ * @param {string} typeId
+ */
+export function factionOfType(typeId) {
+  return FACTIONS.find((f) => f.typeIds.includes(typeId))
+}
+
+/**
  * 各陣営の6タイプを3グループ(2タイプずつ)にまとめたもの。
  * 「似たタイプを1つの選択肢に統合して後半の選択肢数を減らす」ための単位。
  * グループ決定3問で最も選ばれたグループが確定し、最終1問(2択)で
