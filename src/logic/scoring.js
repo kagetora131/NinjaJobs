@@ -164,17 +164,23 @@ export function resolveFrontPurity(frontAnswerScores) {
  * 前半6問の「純度」による最終タイプの上書き。
  *
  * - 武士は前半6問で一度でも「目立たない」に加点していたら、代わりに虚無僧になる
- * - 間者・刺客は前半6問で一度でも「目立つ」に加点していたら、代わりに
- *   それぞれ商人・山伏になる
+ * - 刺客は前半6問で一度でも「目立つ」に加点していたら、代わりに山伏になる
+ *
+ * 武士・刺客の2タイプを「2大レア職業」にするための仕組み。当初は間者にも
+ * 同じ条件(不純なら商人に差し替え)を課していたが、後半で忍びグループに
+ * 辿り着いた人の大半は前半が完全に一色ではない(6問すべてを1つの軸だけで
+ * 貫く「純粋」な回答は少数派)ため、間者のほぼ全員が商人に飲み込まれて
+ * 商人が全タイプ中最多(24.05%)になってしまった。間者への適用をやめて
+ * 元の頻度に戻し、武士・刺客の2タイプだけをこの仕組みで際立たせている。
  *
  * 前半6問の判定(resolveFaction)・後半の激レア判定(resolveGroup/resolveFinalType)
  * とは独立した、最終結果に対する追加の上書きレイヤー。そのため後半で激レア条件
  * (グループ決定3問すべて選び通した上で最終問でも選ぶ)を満たしていても、前半が
  * 純粋でなければここで別のタイプに差し替わる。
  *
- * 差し替え先(虚無僧・商人・山伏)は上書き元(武士・間者・刺客)とは別の陣営に
- * 属することがあるため、結果画面では必ず `factionOfType` で最終タイプの
- * 実際の所属陣営を求め直すこと(前半で判定した陣営IDをそのまま使わない)。
+ * 差し替え先(虚無僧・山伏)は上書き元(武士・刺客)とは別の陣営に属することが
+ * あるため、結果画面では必ず `factionOfType` で最終タイプの実際の所属陣営を
+ * 求め直すこと(前半で判定した陣営IDをそのまま使わない)。
  *
  * @param {string} resultId resolveFinalTypeが返した結果
  * @param {Array<Record<string, number>>} frontAnswerScores 前半6問で選んだ選択肢の scores の配列
@@ -183,7 +189,6 @@ export function applyFrontPurityOverride(resultId, frontAnswerScores) {
   const { pureMedatsu, pureMedatanai } = resolveFrontPurity(frontAnswerScores)
 
   if (resultId === 'bushi' && !pureMedatsu) return 'komuso'
-  if (resultId === 'kanja' && !pureMedatanai) return 'akindo'
   if (resultId === 'shikaku' && !pureMedatanai) return 'yamabushi'
 
   return resultId

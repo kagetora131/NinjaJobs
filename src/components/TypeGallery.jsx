@@ -37,6 +37,7 @@ export default function TypeGallery({ resultId }) {
                   {isExtreme && <span className="gallery__extreme-badge">激レア</span>}
                 </p>
                 <p className="gallery__keyword">{type.keyword}</p>
+                <p className="gallery__desc">{type.description}</p>
               </div>
             </li>
           )
