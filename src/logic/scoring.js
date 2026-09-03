@@ -1,20 +1,44 @@
-import { FACTIONS, FACTION_MAP } from '../data/factions.js'
-import { BACK_QUESTIONS } from '../data/questions.js'
+import { FACTIONS, FACTION_MAP, BACK_GROUPS } from '../data/factions.js'
+import { BACK_GROUP_QUESTIONS, BACK_FINAL_QUESTIONS } from '../data/questions.js'
 
-// 陣営やタイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に出なくなる)ため、
-// 開発時に検知する。
+// 陣営・グループ・タイプを増減させた際の登録漏れは静かに壊れる(そのタイプが
+// 永久に出なくなる)ため、開発時に検知する。
 if (import.meta.env?.DEV) {
   for (const f of FACTIONS) {
-    if (!f.typeIds.includes(f.extremeTypeId)) {
-      throw new Error(`${f.id}: extremeTypeId「${f.extremeTypeId}」がtypeIdsに含まれていません`)
+    const groups = BACK_GROUPS[f.id]
+    if (!groups) {
+      throw new Error(`${f.id}: BACK_GROUPS に定義がありません`)
     }
-    const q = BACK_QUESTIONS[f.id]
-    if (!q) {
-      throw new Error(`${f.id}: BACK_QUESTIONS に定義がありません`)
+
+    const groupedTypeIds = groups.flatMap((g) => g.typeIds)
+    const missing = f.typeIds.filter((id) => !groupedTypeIds.includes(id))
+    if (missing.length) {
+      throw new Error(`${f.id}: BACK_GROUPS に含まれないタイプがあります: ${missing.join(', ')}`)
     }
-    for (const question of q) {
-      if (question.choices.length !== f.typeIds.length) {
-        throw new Error(`${question.id}: 選択肢の数が ${f.id} のタイプ数と一致しません`)
+    if (!groups.some((g) => g.extremeTypeId === f.extremeTypeId)) {
+      throw new Error(`${f.id}: extremeTypeId「${f.extremeTypeId}」を持つグループがありません`)
+    }
+
+    const groupQuestions = BACK_GROUP_QUESTIONS[f.id]
+    if (!groupQuestions) {
+      throw new Error(`${f.id}: BACK_GROUP_QUESTIONS に定義がありません`)
+    }
+    for (const q of groupQuestions) {
+      if (q.choices.length !== groups.length) {
+        throw new Error(`${q.id}: 選択肢の数が ${f.id} のグループ数と一致しません`)
+      }
+    }
+
+    for (const group of groups) {
+      const finalQ = BACK_FINAL_QUESTIONS[f.id]?.[group.id]
+      if (!finalQ) {
+        throw new Error(`${f.id}/${group.id}: BACK_FINAL_QUESTIONS に定義がありません`)
+      }
+      if (finalQ.choices.length !== group.typeIds.length) {
+        throw new Error(`${finalQ.id}: 選択肢の数が ${group.id} のタイプ数と一致しません`)
+      }
+      if (group.extremeTypeId && !group.typeIds.includes(group.extremeTypeId)) {
+        throw new Error(`${group.id}: extremeTypeId「${group.extremeTypeId}」がtypeIdsに含まれていません`)
       }
     }
   }
@@ -54,46 +78,65 @@ export function resolveFaction(answerScores, firstAxis) {
 }
 
 /**
- * 後半5問の回答から最終タイプを決める。
- *
- * 陣営ごとに1タイプだけ「妥協のない極致」(激レア)が存在する。後半5問**すべて**を
- * その激レアタイプの選択肢で貫き通した場合のみ、結果が激レアタイプになる。
- * 1問でも他のタイプを選んだ時点でそのタイプは候補から完全に外れ、
- * 激レアタイプへの回答は「無効票」として扱われる(他のどのタイプにもカウントされない)。
- * 5問中4問だけ激レアタイプ、のような惜しい結果は存在しない、白か黒かの仕様。
+ * グループ決定3問の回答からグループを決める。
+ * 似たタイプ2つを1つの選択肢に統合しているため、後半の選択肢数を
+ * 6→3(最終問のみ2)に減らせている(詳細はCLAUDE.md 6章)。
  *
  * @param {string} factionId
- * @param {string[]} typeAnswers 各問で選んだ選択肢のtypeIdの配列(5つ)
+ * @param {number[]} groupPicks 各問で選んだ選択肢のindex(= BACK_GROUPS[faction] のindex)の配列(3つ)
  */
-export function resolveType(factionId, typeAnswers) {
-  const faction = FACTION_MAP[factionId]
-  const extremeId = faction.extremeTypeId
-
-  if (typeAnswers.every((id) => id === extremeId)) {
-    return { typeId: extremeId, counts: null }
+export function resolveGroup(factionId, groupPicks) {
+  const groups = BACK_GROUPS[factionId]
+  const counts = groups.map(() => 0)
+  for (const pick of groupPicks) {
+    counts[pick] += 1
   }
 
-  const counts = Object.fromEntries(faction.typeIds.map((id) => [id, 0]))
-  for (const id of typeAnswers) {
-    if (id === extremeId) continue // 無効票(このタイプは候補から外れているため)
-    counts[id] += 1
-  }
+  const best = Math.max(...counts)
+  const tied = counts.reduce((acc, v, i) => (v === best ? [...acc, i] : acc), [])
 
-  const candidates = faction.typeIds.filter((id) => id !== extremeId)
-  const best = Math.max(...candidates.map((id) => counts[id]))
-  const tied = candidates.filter((id) => counts[id] === best)
-
-  if (tied.length === 1) {
-    return { typeId: tied[0], counts }
-  }
-
-  // 同点は「最後に選んだ側」を決め手にする。先頭固定にすると特定タイプが
-  // 同点を総取りしてしまうため(これまでの分岐判定と同じ方針)。
-  for (let i = typeAnswers.length - 1; i >= 0; i -= 1) {
-    if (typeAnswers[i] !== extremeId && tied.includes(typeAnswers[i])) {
-      return { typeId: typeAnswers[i], counts }
+  let groupIndex = tied[0]
+  if (tied.length > 1) {
+    // 同点は「最後に選んだ側」を決め手にする(これまでの分岐判定と同じ方針)
+    for (let i = groupPicks.length - 1; i >= 0; i -= 1) {
+      if (tied.includes(groupPicks[i])) {
+        groupIndex = groupPicks[i]
+        break
+      }
     }
   }
 
-  return { typeId: tied[0], counts }
+  // 3問すべてで同じグループを選び通したか(激レア判定に使う)
+  const unanimous = groupPicks.every((pick) => pick === groupIndex)
+
+  return { group: groups[groupIndex], unanimous }
+}
+
+/**
+ * 最終1問の回答から、グループ内の2タイプのどちらになるかを決める。
+ *
+ * 武闘派閥(山伏/武士)・忍び(間者/刺客)には「妥協のない極致」(激レア)が
+ * 1タイプずつ存在する。**グループ決定3問すべてでそのグループを選び通した上で、
+ * 最終問でも激レア側を選んだ場合のみ**激レアタイプに至る。1問でも他グループを
+ * 選んでいた場合(グループ自体は点数で押し切って確定したが選び通してはいない)は、
+ * 最終問で激レア側を選んでも無効票として扱われ、グループ内のもう一方の
+ * タイプに決まる(旧・後半5問時代の「全問一致でなければ無効票」という
+ * 白か黒かの仕様を、グループ制のもとでもそのまま踏襲している)。
+ *
+ * @param {import('../data/factions.js').FACTIONS[number]} group resolveGroupが返したグループ
+ * @param {boolean} groupUnanimous resolveGroupが返した「選び通したか」
+ * @param {number} finalPickIndex 最終問で選んだ選択肢のindex(= group.typeIds のindex)
+ */
+export function resolveFinalType(group, groupUnanimous, finalPickIndex) {
+  const pickedTypeId = group.typeIds[finalPickIndex]
+
+  if (!group.extremeTypeId) {
+    return pickedTypeId
+  }
+
+  if (pickedTypeId === group.extremeTypeId && groupUnanimous) {
+    return group.extremeTypeId
+  }
+
+  return group.typeIds.find((id) => id !== group.extremeTypeId)
 }

@@ -77,143 +77,140 @@ export const FRONT_QUESTIONS = [
 ]
 
 /**
- * 後半5問。陣営が確定した後に出す、その陣営の6タイプに対応する6択。
- * choices の並びは FACTIONS[].typeIds と同じ順(typeIndex としてそのまま使う)。
- * 選んだ分だけそのタイプに+1する(等ウェイト)。
- *
- * 問1のみ、前半→後半の切り替わりを滑らかにするため、両陣営で問い文を
- * 共通にしてある(選択肢の中身はそれぞれの陣営のまま)。
+ * 後半・グループ決定3問。陣営が確定した後に出す、3グループ(6タイプを
+ * 2つずつまとめたもの)から1つに絞り込むための設問。
+ * choices の並びは BACK_GROUPS[faction] と同じ順(groupIndexとしてそのまま使う)。
+ * 選んだグループに+2する。似たタイプ2つを1つの選択肢に統合することで、
+ * 後半の選択肢数を6→3(最終問のみ2)に減らしている。
  */
-export const BACK_QUESTIONS = {
-  // 放下師 / 猿楽師 / 商人 / 薬屋 / 山伏 / 武士(激レア)
+export const BACK_GROUP_QUESTIONS = {
+  // 芸能系(猿楽師/放下師) / 商売系(薬屋/商人) / 武闘派閥(山伏/武士・激レア)
   medatsu: [
     {
-      id: 'medatsu1',
+      id: 'medatsu_g1',
       text: 'お前が最も"己"を出せるのは、どんな時だ?',
       choices: [
-        { id: 'medatsu1a', text: '芸や曲芸で沸かせる時' },
-        { id: 'medatsu1b', text: '別人に成りきり、演じきる時' },
-        { id: 'medatsu1c', text: '巧みな話で、取引をまとめる時' },
-        { id: 'medatsu1d', text: '効能を説き、薬を売り歩く時' },
-        { id: 'medatsu1e', text: '法螺貝を吹き鳴らし、山を歩く時' },
-        { id: 'medatsu1f', text: '名を名乗り、刀を掲げる時' },
+        { id: 'medatsu_g1a', text: '人前で、芸や役を演じきる時' },
+        { id: 'medatsu_g1b', text: '駆け引きの末、取引をまとめる時' },
+        { id: 'medatsu_g1c', text: '力を示し、堂々と名乗りを上げる時' },
       ],
     },
     {
-      id: 'medatsu2',
-      text: 'お前の"目立ち方"の本質は?',
-      choices: [
-        { id: 'medatsu2a', text: '身ひとつで、場を回すこと' },
-        { id: 'medatsu2b', text: '面をつけ、心を隠すこと' },
-        { id: 'medatsu2c', text: '値を付け、話をまとめること' },
-        { id: 'medatsu2d', text: '呼び込みの声で、人を集めること' },
-        { id: 'medatsu2e', text: '荒行と法螺貝の響きで、存在を示すこと' },
-        { id: 'medatsu2f', text: '隠す気など端からなく、堂々と生きること' },
-      ],
-    },
-    {
-      id: 'medatsu3',
+      id: 'medatsu_g2',
       text: '人々から求められるのは何だ?',
       choices: [
-        { id: 'medatsu3a', text: '笑いと驚き' },
-        { id: 'medatsu3b', text: '忘れられぬ舞台' },
-        { id: 'medatsu3c', text: '良い品と良い話' },
-        { id: 'medatsu3d', text: '効く薬' },
-        { id: 'medatsu3e', text: '山の知恵と力' },
-        { id: 'medatsu3f', text: '義と正しさ' },
+        { id: 'medatsu_g2a', text: '笑いと、忘れられぬ舞台' },
+        { id: 'medatsu_g2b', text: '良い品と、確かな信頼' },
+        { id: 'medatsu_g2c', text: '力と、義のある生き方' },
       ],
     },
     {
-      id: 'medatsu4',
+      id: 'medatsu_g3',
       text: '一番大切にしているものは?',
       choices: [
-        { id: 'medatsu4a', text: '軽業と手妻の腕' },
-        { id: 'medatsu4b', text: '芸の奥深さ' },
-        { id: 'medatsu4c', text: '信頼と評判' },
-        { id: 'medatsu4d', text: '薬と商いの才' },
-        { id: 'medatsu4e', text: '鍛え上げた心身' },
-        { id: 'medatsu4f', text: '己の筋を通しきること' },
-      ],
-    },
-    {
-      id: 'medatsu5',
-      text: '素顔を見せるのは?',
-      choices: [
-        { id: 'medatsu5a', text: '求められれば、いつでも' },
-        { id: 'medatsu5b', text: 'ほとんど誰にも見せぬ' },
-        { id: 'medatsu5c', text: '商いの席では常に愛想よく' },
-        { id: 'medatsu5d', text: '薬を売る時はいつも笑顔で' },
-        { id: 'medatsu5e', text: '山にいる時だけ、素のまま' },
-        { id: 'medatsu5f', text: '常に素顔のまま、隠さない' },
+        { id: 'medatsu_g3a', text: '磨き上げた芸の腕' },
+        { id: 'medatsu_g3b', text: '商いの才と、人脈' },
+        { id: 'medatsu_g3c', text: '鍛えた心身と、己の筋' },
       ],
     },
   ],
 
-  // 虚無僧 / 出家 / 常の形 / 間者 / 刺客(激レア) / 薬師
+  // 求道系(虚無僧/出家) / 庶民系(常の形/薬師) / 忍び(間者/刺客・激レア)
   medatanai: [
     {
-      id: 'medatanai1',
+      id: 'medatanai_g1',
       text: 'お前が最も"己"を出せるのは、どんな時だ?',
       choices: [
-        { id: 'medatanai1a', text: '一管の尺八を吹き、静寂に包まれる時' },
-        { id: 'medatanai1b', text: '経を誦し、祈りを捧げる時' },
-        { id: 'medatanai1c', text: '誰にも気づかれず、日常に紛れている時' },
-        { id: 'medatanai1d', text: '物事の裏側を、静かに読み解く時' },
-        { id: 'medatanai1e', text: '気配を断ち、闇に溶け込む時' },
-        { id: 'medatanai1f', text: '薬箱を前に、黙々と調合する時' },
+        { id: 'medatanai_g1a', text: '静寂の中、心を澄ませる時' },
+        { id: 'medatanai_g1b', text: '誰にも気づかれず、日常に紛れる時' },
+        { id: 'medatanai_g1c', text: '物事の裏側を、静かに読み解く時' },
       ],
     },
     {
-      id: 'medatanai2',
-      text: 'お前の"隠れ方"の本質は?',
-      choices: [
-        { id: 'medatanai2a', text: '深編笠の下で、心の内に籠ること' },
-        { id: 'medatanai2b', text: '人を救う行いの中に、己を紛れさせること' },
-        { id: 'medatanai2c', text: '何者でもない顔で、居続けること' },
-        { id: 'medatanai2d', text: '耳と眼だけを、研ぎ澄ますこと' },
-        { id: 'medatanai2e', text: '刃と共に、気配そのものを消すこと' },
-        { id: 'medatanai2f', text: '言葉少なに、施しだけを行うこと' },
-      ],
-    },
-    {
-      id: 'medatanai3',
+      id: 'medatanai_g2',
       text: '人からどう思われたいか?',
       choices: [
-        { id: 'medatanai3a', text: '何も語らぬ、謎めいた者として' },
-        { id: 'medatanai3b', text: '慎み深く、徳のある者として' },
-        { id: 'medatanai3c', text: '記憶にも残らぬ、ただの人として' },
-        { id: 'medatanai3d', text: '何を考えているか分からぬ者として' },
-        { id: 'medatanai3e', text: '存在した痕跡すら残さぬ者として' },
-        { id: 'medatanai3f', text: '物静かで頼れる者として' },
+        { id: 'medatanai_g2a', text: '慎み深く、徳のある者として' },
+        { id: 'medatanai_g2b', text: '記憶にも残らぬ、ただの人として' },
+        { id: 'medatanai_g2c', text: '何を考えているか分からぬ者として' },
       ],
     },
     {
-      id: 'medatanai4',
+      id: 'medatanai_g3',
       text: '一番大切にしているものは?',
       choices: [
-        { id: 'medatanai4a', text: '深い静寂と、内省の時間' },
-        { id: 'medatanai4b', text: '執着を捨てた、平らかな心' },
-        { id: 'medatanai4c', text: '誰にも踏み込まれない、日常' },
-        { id: 'medatanai4d', text: '知るべきことを、全て知ること' },
-        { id: 'medatanai4e', text: '命じられた一事を、必ず果たすこと' },
-        { id: 'medatanai4f', text: '人を救うための、確かな理' },
-      ],
-    },
-    {
-      id: 'medatanai5',
-      text: 'お前にとって"消える"とは?',
-      choices: [
-        { id: 'medatanai5a', text: '音を絶ち、心を無にすること' },
-        { id: 'medatanai5b', text: '我を捨て、人のために生きること' },
-        { id: 'medatanai5c', text: 'ただの人として、群れに紛れること' },
-        { id: 'medatanai5d', text: '姿を見せず、真実だけを持ち帰ること' },
-        { id: 'medatanai5e', text: '気配も、痕跡も、何一つ残さぬこと' },
-        { id: 'medatanai5f', text: '名も告げず、ただ施しを行うこと' },
+        { id: 'medatanai_g3a', text: '深い静寂と、平らかな心' },
+        { id: 'medatanai_g3b', text: '誰にも踏み込まれない、日常' },
+        { id: 'medatanai_g3c', text: '知るべきことを、全て知ること' },
       ],
     },
   ],
 }
 
+/**
+ * 後半・最終1問。グループが確定した後に出す、そのグループ内の2タイプを
+ * 決める最後の2択。BACK_GROUPS[faction][groupIndex].typeIds の順と対応する。
+ *
+ * 武闘派閥(山伏/武士)と忍び(間者/刺客)は、グループ決定3問すべてで
+ * そのグループを選び通した上でこの最終問でも激レア側を選んだ場合のみ、
+ * 激レアタイプ(武士/刺客)に至る(詳細はCLAUDE.md 7章)。
+ */
+export const BACK_FINAL_QUESTIONS = {
+  medatsu: {
+    geino: {
+      id: 'medatsu_f_geino',
+      text: '素顔を見せるのは?',
+      choices: [
+        { id: 'medatsu_f_geino_a', text: 'ほとんど誰にも見せぬ' }, // 猿楽師
+        { id: 'medatsu_f_geino_b', text: '求められれば、いつでも' }, // 放下師
+      ],
+    },
+    shobai: {
+      id: 'medatsu_f_shobai',
+      text: 'お前の"目立ち方"の本質は?',
+      choices: [
+        { id: 'medatsu_f_shobai_a', text: '呼び込みの声で、人を集めること' }, // 薬屋
+        { id: 'medatsu_f_shobai_b', text: '値を付け、話をまとめること' }, // 商人
+      ],
+    },
+    butouha: {
+      id: 'medatsu_f_butouha',
+      text: 'お前の"目立ち方"の本質は?',
+      choices: [
+        { id: 'medatsu_f_butouha_a', text: '荒行と法螺貝の響きで、存在を示すこと' }, // 山伏
+        { id: 'medatsu_f_butouha_b', text: '隠す気など端からなく、堂々と生きること' }, // 武士(激レア)
+      ],
+    },
+  },
+  medatanai: {
+    kyudo: {
+      id: 'medatanai_f_kyudo',
+      text: 'お前の"隠れ方"の本質は?',
+      choices: [
+        { id: 'medatanai_f_kyudo_a', text: '深編笠の下で、心の内に籠ること' }, // 虚無僧
+        { id: 'medatanai_f_kyudo_b', text: '人を救う行いの中に、己を紛れさせること' }, // 出家
+      ],
+    },
+    shomin: {
+      id: 'medatanai_f_shomin',
+      text: 'お前にとって"消える"とは?',
+      choices: [
+        { id: 'medatanai_f_shomin_a', text: 'ただの人として、群れに紛れること' }, // 常の形
+        { id: 'medatanai_f_shomin_b', text: '名も告げず、ただ施しを行うこと' }, // 薬師
+      ],
+    },
+    shinobi: {
+      id: 'medatanai_f_shinobi',
+      text: 'お前の"隠れ方"の本質は?',
+      choices: [
+        { id: 'medatanai_f_shinobi_a', text: '耳と眼だけを、研ぎ澄ますこと' }, // 間者
+        { id: 'medatanai_f_shinobi_b', text: '刃と共に、気配そのものを消すこと' }, // 刺客(激レア)
+      ],
+    },
+  },
+}
+
 export const FRONT_COUNT = FRONT_QUESTIONS.length
-export const BACK_COUNT = 5
-export const TOTAL_QUESTIONS = FRONT_COUNT + BACK_COUNT
+export const BACK_GROUP_COUNT = 3
+export const BACK_FINAL_COUNT = 1
+export const TOTAL_QUESTIONS = FRONT_COUNT + BACK_GROUP_COUNT + BACK_FINAL_COUNT
