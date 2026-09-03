@@ -92,7 +92,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatsu_g1a', text: '人前で、芸や役を演じきる時' },
         { id: 'medatsu_g1b', text: '駆け引きの末、取引をまとめる時' },
-        { id: 'medatsu_g1c', text: '力を示し、堂々と名乗りを上げる時' },
+        { id: 'medatsu_g1c', text: '力を示し、己を鍛え抜く時' },
       ],
     },
     {
@@ -101,7 +101,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatsu_g2a', text: '笑いと、忘れられぬ舞台' },
         { id: 'medatsu_g2b', text: '良い品と、確かな信頼' },
-        { id: 'medatsu_g2c', text: '力と、義のある生き方' },
+        { id: 'medatsu_g2c', text: '確かな力と、揺るがぬ心' },
       ],
     },
     {
@@ -110,7 +110,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatsu_g3a', text: '磨き上げた芸の腕' },
         { id: 'medatsu_g3b', text: '商いの才と、人脈' },
-        { id: 'medatsu_g3c', text: '鍛えた心身と、己の筋' },
+        { id: 'medatsu_g3c', text: '鍛え抜いた力と、己を貫く強さ' },
       ],
     },
   ],
@@ -123,7 +123,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatanai_g1a', text: '静寂の中、心を澄ませる時' },
         { id: 'medatanai_g1b', text: '誰にも気づかれず、日常に紛れる時' },
-        { id: 'medatanai_g1c', text: '物事の裏側を、静かに読み解く時' },
+        { id: 'medatanai_g1c', text: '気配を消し、物事の深部に迫る時' },
       ],
     },
     {
@@ -132,7 +132,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatanai_g2a', text: '慎み深く、徳のある者として' },
         { id: 'medatanai_g2b', text: '記憶にも残らぬ、ただの人として' },
-        { id: 'medatanai_g2c', text: '何を考えているか分からぬ者として' },
+        { id: 'medatanai_g2c', text: '何も語らず、正体の知れぬ者として' },
       ],
     },
     {
@@ -141,7 +141,7 @@ export const BACK_GROUP_QUESTIONS = {
       choices: [
         { id: 'medatanai_g3a', text: '深い静寂と、平らかな心' },
         { id: 'medatanai_g3b', text: '誰にも踏み込まれない、日常' },
-        { id: 'medatanai_g3c', text: '知るべきことを、全て知ること' },
+        { id: 'medatanai_g3c', text: '知恵と技を、静かに研ぎ澄ますこと' },
       ],
     },
   ],
@@ -150,61 +150,65 @@ export const BACK_GROUP_QUESTIONS = {
 /**
  * 後半・最終1問。グループが確定した後に出す、そのグループ内の2タイプを
  * 決める最後の2択。BACK_GROUPS[faction][groupIndex].typeIds の順と対応する。
+ * 全グループ共通で「最後は何を信じるか?」を問う(旧・各グループ別の問い文
+ * だと2グループで文言が偶然重複したため、あえて統一した)。
  *
  * 武闘派閥(山伏/武士)と忍び(間者/刺客)は、グループ決定3問すべてで
  * そのグループを選び通した上でこの最終問でも激レア側を選んだ場合のみ、
  * 激レアタイプ(武士/刺客)に至る(詳細はCLAUDE.md 7章)。
  */
+const FINAL_QUESTION_TEXT = '最後は何を信じるか?'
+
 export const BACK_FINAL_QUESTIONS = {
   medatsu: {
     geino: {
       id: 'medatsu_f_geino',
-      text: '素顔を見せるのは?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatsu_f_geino_a', text: 'ほとんど誰にも見せぬ' }, // 猿楽師
-        { id: 'medatsu_f_geino_b', text: '求められれば、いつでも' }, // 放下師
+        { id: 'medatsu_f_geino_a', text: '人を欺く、巧みな技を信じる' }, // 猿楽師
+        { id: 'medatsu_f_geino_b', text: '人を沸かせる、確かな芸を信じる' }, // 放下師
       ],
     },
     shobai: {
       id: 'medatsu_f_shobai',
-      text: 'お前の"目立ち方"の本質は?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatsu_f_shobai_a', text: '呼び込みの声で、人を集めること' }, // 薬屋
-        { id: 'medatsu_f_shobai_b', text: '値を付け、話をまとめること' }, // 商人
+        { id: 'medatsu_f_shobai_a', text: '効き目のある、確かな品を信じる' }, // 薬屋
+        { id: 'medatsu_f_shobai_b', text: '人と人との、確かな縁を信じる' }, // 商人
       ],
     },
     butouha: {
       id: 'medatsu_f_butouha',
-      text: 'お前の"目立ち方"の本質は?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatsu_f_butouha_a', text: '荒行と法螺貝の響きで、存在を示すこと' }, // 山伏
-        { id: 'medatsu_f_butouha_b', text: '隠す気など端からなく、堂々と生きること' }, // 武士(激レア)
+        { id: 'medatsu_f_butouha_a', text: '鍛え抜いた、己の力を信じる' }, // 山伏
+        { id: 'medatsu_f_butouha_b', text: '何より、義を信じる' }, // 武士(激レア)
       ],
     },
   },
   medatanai: {
     kyudo: {
       id: 'medatanai_f_kyudo',
-      text: 'お前の"隠れ方"の本質は?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatanai_f_kyudo_a', text: '深編笠の下で、心の内に籠ること' }, // 虚無僧
-        { id: 'medatanai_f_kyudo_b', text: '人を救う行いの中に、己を紛れさせること' }, // 出家
+        { id: 'medatanai_f_kyudo_a', text: '何もない、静寂の境地を信じる' }, // 虚無僧
+        { id: 'medatanai_f_kyudo_b', text: '人のために生きる、己の心を信じる' }, // 出家
       ],
     },
     shomin: {
       id: 'medatanai_f_shomin',
-      text: 'お前にとって"消える"とは?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatanai_f_shomin_a', text: 'ただの人として、群れに紛れること' }, // 常の形
-        { id: 'medatanai_f_shomin_b', text: '名も告げず、ただ施しを行うこと' }, // 薬師
+        { id: 'medatanai_f_shomin_a', text: '変わらぬ、日々の暮らしを信じる' }, // 常の形
+        { id: 'medatanai_f_shomin_b', text: '人を救う、確かな理を信じる' }, // 薬師
       ],
     },
     shinobi: {
       id: 'medatanai_f_shinobi',
-      text: 'お前の"隠れ方"の本質は?',
+      text: FINAL_QUESTION_TEXT,
       choices: [
-        { id: 'medatanai_f_shinobi_a', text: '耳と眼だけを、研ぎ澄ますこと' }, // 間者
-        { id: 'medatanai_f_shinobi_b', text: '刃と共に、気配そのものを消すこと' }, // 刺客(激レア)
+        { id: 'medatanai_f_shinobi_a', text: '知ることこそが、力だと信じる' }, // 間者
+        { id: 'medatanai_f_shinobi_b', text: '為すべきを為す、己の刃を信じる' }, // 刺客(激レア)
       ],
     },
   },
