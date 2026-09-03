@@ -1,73 +1,77 @@
 /**
  * 前半6問(共通)。「目立つ/目立たない」の二択軸にのみ加点する。
- * 各問4択、目立つ+2の選択肢2つ／目立たない+2の選択肢2つで構成。
- * axis は 'medatsu'(目立つ) または 'medatanai'(目立たない)。
+ * 各問4択。choices[].scores は { medatsu?: 2, medatanai?: 2 } のように
+ * 加点する軸を持つ。通常は片方だけに+2する単軸の選択肢だが、第4問Aのように
+ * 両軸に+2する「中立」の選択肢を混ぜることもある(あからさまさを消すため)。
  *
  * 質問はできるだけ最後まで軸が読めないよう、以下の工夫をしている
  * (詳細はCLAUDE.md 6章):
  * - 選択肢は「目立つ/気配を消す」と直接言い切らず、具体的な行動の描写に留める
  * - 忍者の職務(任務・潜入)ばかりが続くと「適性診断」の構えが透けるため、
- *   第3問に日常の場面(贈り物選び)を挟んで毛色を変えている
+ *   日常の場面(贈り物選び)を挟んで毛色を変えている
+ * - 一部の選択肢は両軸に加点する「中立」の選択肢にして、4択を機械的に
+ *   2:2で読めないようにしている
  */
 export const FRONT_QUESTIONS = [
   {
     id: 'f1',
     text: '任務を与えられた。まず何をする?',
     choices: [
-      { id: 'f1a', text: '皆の前で役割を言い渡し、士気を高める', axis: 'medatsu' },
-      { id: 'f1b', text: '一人で黙々と、身支度と得物を整える', axis: 'medatanai' },
-      { id: 'f1c', text: 'まず情報を集めようと、あちこちに顔を出す', axis: 'medatsu' },
-      { id: 'f1d', text: '気配を殺し、誰にも知られぬ内に動き出す', axis: 'medatanai' },
+      { id: 'f1a', text: '皆の前で役割を言い渡し、士気を高める', scores: { medatsu: 2 } },
+      { id: 'f1b', text: '一人で黙々と、身支度と得物を整える', scores: { medatanai: 2 } },
+      { id: 'f1c', text: 'まず情報を集めようと、あちこちに顔を出す', scores: { medatsu: 2 } },
+      { id: 'f1d', text: '気配を殺し、誰にも知られぬ内に動き出す', scores: { medatanai: 2 } },
     ],
   },
   {
     id: 'f2',
     text: 'どう潜入する?',
     choices: [
-      { id: 'f2a', text: '声をかけながら、堂々と門をくぐる', axis: 'medatsu' },
-      { id: 'f2b', text: '誰かの陰に紛れ、そっと敷地に入り込む', axis: 'medatanai' },
-      { id: 'f2c', text: '話題を振りまき、注意を逸らしながら進む', axis: 'medatsu' },
-      { id: 'f2d', text: '足音を殺し、闇と一つになって進む', axis: 'medatanai' },
+      { id: 'f2a', text: '声をかけながら、堂々と門をくぐる', scores: { medatsu: 2 } },
+      { id: 'f2b', text: '誰かの陰に紛れ、そっと敷地に入り込む', scores: { medatanai: 2 } },
+      { id: 'f2c', text: '話題を振りまき、注意を逸らしながら進む', scores: { medatsu: 2 } },
+      { id: 'f2d', text: '足音を殺し、闇と一つになって進む', scores: { medatanai: 2 } },
     ],
   },
   {
     id: 'f3',
-    text: '贈り物を選ぶなら、どうする?',
+    text: '初対面の相手には、どう接する?',
     choices: [
-      { id: 'f3a', text: '皆で盛り上がれる、賑やかな品を選ぶ', axis: 'medatsu' },
-      { id: 'f3b', text: '相手の心にそっと寄り添う品を選ぶ', axis: 'medatanai' },
-      { id: 'f3c', text: '誰もが目を引く、とびきりの品を探す', axis: 'medatsu' },
-      { id: 'f3d', text: '誰にも気づかれぬよう、そっと届ける', axis: 'medatanai' },
+      { id: 'f3a', text: 'すぐに打ち解けるよう働きかける', scores: { medatsu: 2 } },
+      { id: 'f3b', text: '多くを語らず、まず心の内で祈りを捧げる', scores: { medatanai: 2 } },
+      { id: 'f3c', text: '友人になりきり、心を開かせる', scores: { medatsu: 2 } },
+      { id: 'f3d', text: 'さりげなく様子を窺い、力になれることはないか考える', scores: { medatanai: 2 } },
     ],
   },
   {
     id: 'f4',
-    text: '初対面の相手には、どう接する?',
+    text: '休息の日、何をして過ごす?',
     choices: [
-      { id: 'f4a', text: 'すぐに打ち解けるよう働きかける', axis: 'medatsu' },
-      { id: 'f4b', text: '多くを語らず、まず心の内で祈りを捧げる', axis: 'medatanai' },
-      { id: 'f4c', text: '友人になりきり、心を開かせる', axis: 'medatsu' },
-      { id: 'f4d', text: 'さりげなく様子を窺い、力になれることはないか考える', axis: 'medatanai' },
+      // 「目立つ」だけに寄りすぎず、瞑想は求道・修行どちらの気質にも通じるため中立
+      { id: 'f4a', text: '瞑想して過ごす', scores: { medatsu: 2, medatanai: 2 } },
+      { id: 'f4b', text: '人知れず、市中の噂の出所を探る', scores: { medatanai: 2 } },
+      { id: 'f4c', text: '芸や技を、人前で磨く', scores: { medatsu: 2 } },
+      { id: 'f4d', text: '薬草を摘み、静かに調合を試す', scores: { medatanai: 2 } },
     ],
   },
   {
     id: 'f5',
-    text: '休息の日、何をして過ごす?',
+    text: '贈り物を選ぶなら、どうする?',
     choices: [
-      { id: 'f5a', text: '山に入り、法螺貝を吹き鳴らして身を清める', axis: 'medatsu' },
-      { id: 'f5b', text: '人知れず、市中の噂の出所を探る', axis: 'medatanai' },
-      { id: 'f5c', text: '芸や技を、人前で磨く', axis: 'medatsu' },
-      { id: 'f5d', text: '薬草を摘み、静かに調合を試す', axis: 'medatanai' },
+      { id: 'f5a', text: '皆で盛り上がれる、賑やかな品を選ぶ', scores: { medatsu: 2 } },
+      { id: 'f5b', text: '相手の心にそっと寄り添う品を選ぶ', scores: { medatanai: 2 } },
+      { id: 'f5c', text: '誰もが目を引く、とびきりの品を探す', scores: { medatsu: 2 } },
+      { id: 'f5d', text: '誰にも気づかれぬよう、そっと届ける', scores: { medatanai: 2 } },
     ],
   },
   {
     id: 'f6',
     text: '潜入先で怪しまれそうになった。どうする?',
     choices: [
-      { id: 'f6a', text: '大袈裟に笑い、芸を見せて気を逸らす', axis: 'medatsu' },
-      { id: 'f6b', text: 'その場に溶け込む', axis: 'medatanai' },
-      { id: 'f6c', text: '堂々と名乗り、正面から相対する', axis: 'medatsu' },
-      { id: 'f6d', text: '音もなく身を引き、姿をくらます', axis: 'medatanai' },
+      { id: 'f6a', text: '大袈裟に笑い、芸を見せて気を逸らす', scores: { medatsu: 2 } },
+      { id: 'f6b', text: 'その場に溶け込む', scores: { medatanai: 2 } },
+      { id: 'f6c', text: '堂々と名乗り、正面から相対する', scores: { medatsu: 2 } },
+      { id: 'f6d', text: '音もなく身を引き、姿をくらます', scores: { medatanai: 2 } },
     ],
   },
 ]

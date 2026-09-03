@@ -6,19 +6,19 @@ import ResultCard from './components/ResultCard.jsx'
 import { FRONT_QUESTIONS, BACK_QUESTIONS, BACK_COUNT, TOTAL_QUESTIONS } from './data/questions.js'
 import { NINJA_TYPE_MAP } from './data/ninjaTypes.js'
 import { FACTION_MAP } from './data/factions.js'
-import { resolveFaction, resolveType } from './logic/scoring.js'
+import { resolveFaction, resolveType, dominantAxis } from './logic/scoring.js'
 
 const PHASE = { START: 'start', FRONT: 'front', BACK: 'back', RESULT: 'result' }
 
 export default function App() {
   const [phase, setPhase] = useState(PHASE.START)
-  const [frontAxes, setFrontAxes] = useState([])
+  const [frontScores, setFrontScores] = useState([])
   const [factionId, setFactionId] = useState(null)
   const [backPicks, setBackPicks] = useState([])
   const [resultId, setResultId] = useState(null)
 
   function handleStart() {
-    setFrontAxes([])
+    setFrontScores([])
     setBackPicks([])
     setFactionId(null)
     setResultId(null)
@@ -26,16 +26,16 @@ export default function App() {
   }
 
   function handleFrontAnswer(choice) {
-    const next = [...frontAxes, choice.axis]
+    const next = [...frontScores, choice.scores]
 
     if (next.length < FRONT_QUESTIONS.length) {
-      setFrontAxes(next)
+      setFrontScores(next)
       return
     }
 
-    // 前半5問を終えた時点で陣営が決まり、以降はその陣営専用の問いに入る
-    const { factionId: resolved } = resolveFaction(next, next[0])
-    setFrontAxes(next)
+    // 前半6問を終えた時点で陣営が決まり、以降はその陣営専用の問いに入る
+    const { factionId: resolved } = resolveFaction(next, dominantAxis(next[0]))
+    setFrontScores(next)
     setFactionId(resolved)
     setPhase(PHASE.BACK)
   }
@@ -64,8 +64,8 @@ export default function App() {
 
       {phase === PHASE.FRONT && (
         <QuestionScreen
-          question={FRONT_QUESTIONS[frontAxes.length]}
-          questionNumber={frontAxes.length + 1}
+          question={FRONT_QUESTIONS[frontScores.length]}
+          questionNumber={frontScores.length + 1}
           totalQuestions={TOTAL_QUESTIONS}
           onAnswer={handleFrontAnswer}
         />
