@@ -13,7 +13,7 @@ export default function StartScreen({ onStart }) {
         </h1>
 
         <p className="start-screen__lead">
-          全十問の問いに答えよ。
+          全十一問の問いに答えよ。
           <br />
           虚無僧、出家、山伏、商人、刺客——
           <br />

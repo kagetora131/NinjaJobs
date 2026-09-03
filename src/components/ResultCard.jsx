@@ -58,9 +58,7 @@ export default function ResultCard({ ninjaType, faction, onRetry }) {
         <div className="rod rod--capped" aria-hidden="true" />
 
         <div className="kakejiku__body washi">
-          <p className="result-card__eyebrow">
-            {faction ? `${faction.name} ―― お前の忍びの道は` : 'お前の忍びの道は――'}
-          </p>
+          <p className="result-card__eyebrow">お前の忍びの道は――</p>
 
           <motion.div className="result-card__frame" variants={imageVariants}>
             <img className="result-card__image" src={ninjaType.imagePath} alt={ninjaType.name} />
@@ -74,6 +72,7 @@ export default function ResultCard({ ninjaType, faction, onRetry }) {
           <motion.div variants={bodyVariants}>
             <span className="result-card__keyword">{ninjaType.keyword}</span>
             <p className="result-card__description">{ninjaType.description}</p>
+            {faction && <p className="result-card__faction">{faction.name}の忍び</p>}
           </motion.div>
 
           <motion.div className="result-card__seal" variants={sealVariants} aria-hidden="true">

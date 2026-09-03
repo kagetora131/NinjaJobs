@@ -1,64 +1,73 @@
 /**
- * 前半5問(共通)。「目立つ/目立たない」の二択軸にのみ加点する。
+ * 前半6問(共通)。「目立つ/目立たない」の二択軸にのみ加点する。
  * 各問4択、目立つ+2の選択肢2つ／目立たない+2の選択肢2つで構成。
  * axis は 'medatsu'(目立つ) または 'medatanai'(目立たない)。
  *
- * 質問文・選択肢は、新ロジック仕様書のドラフト(軸を直接言い切る文言で
- * あからさまだった)から、旧5系統版の質問集の文言を極力流用する形に
- * 組み替えたもの。各選択肢がもともと想定していたタイプ(例:「気配を殺し、
- * 遠間から標的を見定める」なら刺客)を読み取り、そのタイプが新方式の
- * どちらの陣営に属するかで軸を再割り当てしている(旧5系統の枠組みとは
- * 系統単位で綺麗に対応しないため、選択肢単位で判定した)。
+ * 質問はできるだけ最後まで軸が読めないよう、以下の工夫をしている
+ * (詳細はCLAUDE.md 6章):
+ * - 選択肢は「目立つ/気配を消す」と直接言い切らず、具体的な行動の描写に留める
+ * - 忍者の職務(任務・潜入)ばかりが続くと「適性診断」の構えが透けるため、
+ *   第3問に日常の場面(贈り物選び)を挟んで毛色を変えている
  */
 export const FRONT_QUESTIONS = [
   {
     id: 'f1',
-    text: '仲間が窮地に陥った。どうする?',
+    text: '任務を与えられた。まず何をする?',
     choices: [
-      { id: 'f1a', text: '我が身を顧みず、助けに向かう', axis: 'medatsu' },
-      { id: 'f1b', text: '手当てをし、まず命を繋ぐ', axis: 'medatanai' },
-      { id: 'f1c', text: '場を茶化して空気を変え、隙を作る', axis: 'medatsu' },
-      { id: 'f1d', text: '損得を計り、最も確実な手を打つ', axis: 'medatanai' },
+      { id: 'f1a', text: '皆の前で役割を言い渡し、士気を高める', axis: 'medatsu' },
+      { id: 'f1b', text: '一人で黙々と、身支度と得物を整える', axis: 'medatanai' },
+      { id: 'f1c', text: 'まず情報を集めようと、あちこちに顔を出す', axis: 'medatsu' },
+      { id: 'f1d', text: '気配を殺し、誰にも知られぬ内に動き出す', axis: 'medatanai' },
     ],
   },
   {
     id: 'f2',
-    text: '初対面の相手には、どう接する?',
+    text: 'どう潜入する?',
     choices: [
-      { id: 'f2a', text: '多くを語らず、まず心の内で祈りを捧げる', axis: 'medatanai' },
-      { id: 'f2b', text: 'すぐに打ち解けるよう働きかける', axis: 'medatsu' },
-      { id: 'f2c', text: '友人になりきり、心を開かせる', axis: 'medatsu' },
-      { id: 'f2d', text: 'さりげなく様子を窺い、力になれることはないか考える', axis: 'medatanai' },
+      { id: 'f2a', text: '声をかけながら、堂々と門をくぐる', axis: 'medatsu' },
+      { id: 'f2b', text: '誰かの陰に紛れ、そっと敷地に入り込む', axis: 'medatanai' },
+      { id: 'f2c', text: '話題を振りまき、注意を逸らしながら進む', axis: 'medatsu' },
+      { id: 'f2d', text: '足音を殺し、闇と一つになって進む', axis: 'medatanai' },
     ],
   },
   {
     id: 'f3',
-    text: '休息の日、何をして過ごす?',
+    text: '贈り物を選ぶなら、どうする?',
     choices: [
-      { id: 'f3a', text: '山に入り、法螺貝を吹き鳴らして身を清める', axis: 'medatsu' },
-      { id: 'f3b', text: '人知れず、市中の噂の出所を探る', axis: 'medatanai' },
-      { id: 'f3c', text: '芸や技を、人前で磨く', axis: 'medatsu' },
-      { id: 'f3d', text: '薬草を摘み、静かに調合を試す', axis: 'medatanai' },
+      { id: 'f3a', text: '皆で盛り上がれる、賑やかな品を選ぶ', axis: 'medatsu' },
+      { id: 'f3b', text: '相手の心にそっと寄り添う品を選ぶ', axis: 'medatanai' },
+      { id: 'f3c', text: '誰もが目を引く、とびきりの品を探す', axis: 'medatsu' },
+      { id: 'f3d', text: '誰にも気づかれぬよう、そっと届ける', axis: 'medatanai' },
     ],
   },
   {
     id: 'f4',
-    text: '任務の成否は、何で決まると思う?',
+    text: '初対面の相手には、どう接する?',
     choices: [
-      { id: 'f4a', text: '力と技の冴え', axis: 'medatsu' },
-      { id: 'f4b', text: '積み重ねた鍛錬と、揺るがぬ信心', axis: 'medatanai' },
-      { id: 'f4c', text: '場の空気を読む機転', axis: 'medatsu' },
-      { id: 'f4d', text: '病や毒への備え', axis: 'medatanai' },
+      { id: 'f4a', text: 'すぐに打ち解けるよう働きかける', axis: 'medatsu' },
+      { id: 'f4b', text: '多くを語らず、まず心の内で祈りを捧げる', axis: 'medatanai' },
+      { id: 'f4c', text: '友人になりきり、心を開かせる', axis: 'medatsu' },
+      { id: 'f4d', text: 'さりげなく様子を窺い、力になれることはないか考える', axis: 'medatanai' },
     ],
   },
   {
     id: 'f5',
+    text: '休息の日、何をして過ごす?',
+    choices: [
+      { id: 'f5a', text: '山に入り、法螺貝を吹き鳴らして身を清める', axis: 'medatsu' },
+      { id: 'f5b', text: '人知れず、市中の噂の出所を探る', axis: 'medatanai' },
+      { id: 'f5c', text: '芸や技を、人前で磨く', axis: 'medatsu' },
+      { id: 'f5d', text: '薬草を摘み、静かに調合を試す', axis: 'medatanai' },
+    ],
+  },
+  {
+    id: 'f6',
     text: '潜入先で怪しまれそうになった。どうする?',
     choices: [
-      { id: 'f5a', text: 'その場に溶け込む', axis: 'medatanai' },
-      { id: 'f5b', text: '大袈裟に笑い、芸を見せて気を逸らす', axis: 'medatsu' },
-      { id: 'f5c', text: '堂々と名乗り、正面から相対する', axis: 'medatsu' },
-      { id: 'f5d', text: '音もなく身を引き、姿をくらます', axis: 'medatanai' },
+      { id: 'f6a', text: '大袈裟に笑い、芸を見せて気を逸らす', axis: 'medatsu' },
+      { id: 'f6b', text: 'その場に溶け込む', axis: 'medatanai' },
+      { id: 'f6c', text: '堂々と名乗り、正面から相対する', axis: 'medatsu' },
+      { id: 'f6d', text: '音もなく身を引き、姿をくらます', axis: 'medatanai' },
     ],
   },
 ]
@@ -67,13 +76,16 @@ export const FRONT_QUESTIONS = [
  * 後半5問。陣営が確定した後に出す、その陣営の6タイプに対応する6択。
  * choices の並びは FACTIONS[].typeIds と同じ順(typeIndex としてそのまま使う)。
  * 選んだ分だけそのタイプに+1する(等ウェイト)。
+ *
+ * 問1のみ、前半→後半の切り替わりを滑らかにするため、両陣営で問い文を
+ * 共通にしてある(選択肢の中身はそれぞれの陣営のまま)。
  */
 export const BACK_QUESTIONS = {
   // 放下師 / 猿楽師 / 商人 / 薬屋 / 山伏 / 武士(激レア)
   medatsu: [
     {
       id: 'medatsu1',
-      text: '人前でお前が最も輝くのは、どんな時だ?',
+      text: 'お前が最も"己"を出せるのは、どんな時だ?',
       choices: [
         { id: 'medatsu1a', text: '芸や曲芸で沸かせる時' },
         { id: 'medatsu1b', text: '別人に成りきり、演じきる時' },
@@ -137,7 +149,7 @@ export const BACK_QUESTIONS = {
   medatanai: [
     {
       id: 'medatanai1',
-      text: 'お前が一番心が休まるのは、どんな時だ?',
+      text: 'お前が最も"己"を出せるのは、どんな時だ?',
       choices: [
         { id: 'medatanai1a', text: '一管の尺八を吹き、静寂に包まれる時' },
         { id: 'medatanai1b', text: '経を誦し、祈りを捧げる時' },
