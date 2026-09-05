@@ -14,6 +14,20 @@ function shuffle(array) {
   return result
 }
 
+/**
+ * 英語版のtextEnに埋め込んだ改行(\n)を<br />に変換して描画する。
+ * 日本語版のtextには\nを含めていないため、素通しでも見た目は変わらない。
+ */
+function withLineBreaks(text) {
+  const lines = text.split('\n')
+  return lines.map((line, i) => (
+    <span key={i}>
+      {line}
+      {i < lines.length - 1 && <br />}
+    </span>
+  ))
+}
+
 export default function QuestionScreen({ lang, question, questionNumber, totalQuestions, onAnswer, onBack }) {
   const isEn = lang === 'en'
 
@@ -41,7 +55,9 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
       <div className="scroll">
         <div className="rod" aria-hidden="true" />
         <div className="scroll__body washi">
-          <h2 className="scroll__question">{isEn ? question.textEn : question.text}</h2>
+          <h2 className="scroll__question">
+            {isEn ? withLineBreaks(question.textEn) : question.text}
+          </h2>
         </div>
         <div className="rod" aria-hidden="true" />
       </div>
@@ -51,7 +67,7 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
         {shuffledChoices.map((choice) => (
           <li key={choice.id}>
             <button type="button" className="choice-button" onClick={() => onAnswer(choice)}>
-              {isEn ? choice.textEn : choice.text}
+              {isEn ? withLineBreaks(choice.textEn) : choice.text}
             </button>
           </li>
         ))}

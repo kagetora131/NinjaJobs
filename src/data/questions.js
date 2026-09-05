@@ -17,7 +17,7 @@ export const COMMON_QUESTIONS = [
   {
     id: 'c1',
     text: '新しい仕事を任された。まず何をする?',
-    textEn: "You've been given a new task at work. What do you do first?",
+    textEn: "You've been given a new task at work.\nWhat do you do first?",
     choices: [
       {
         id: 'c1a',
@@ -41,7 +41,7 @@ export const COMMON_QUESTIONS = [
       {
         id: 'c1d',
         text: '必要になりそうな物や手順を、先に整えておく',
-        textEn: "Prepare the tools and steps you'll likely need, ahead of time.",
+        textEn: "Prepare the tools and steps you'll likely need,\nahead of time.",
         scores: { buke: 1, shomin: 1 },
       },
     ],
@@ -49,7 +49,7 @@ export const COMMON_QUESTIONS = [
   {
     id: 'c2',
     text: '旅先で道に迷ったら、どうする?',
-    textEn: 'You get lost while traveling. What do you do?',
+    textEn: 'You get lost while traveling.\nWhat do you do?',
     choices: [
       {
         id: 'c2a',
@@ -87,13 +87,13 @@ export const COMMON_QUESTIONS = [
       {
         id: 'c3a',
         text: '礼儀を大切にし、知識や誠実さで信頼を得る',
-        textEn: 'Value courtesy, earning trust through knowledge and sincerity.',
+        textEn: 'Value courtesy,\nearning trust through knowledge and sincerity.',
         scores: { buke: 2 },
       },
       {
         id: 'c3b',
         text: '必要以上に語らず、相手と静かな距離を保つ',
-        textEn: 'Speak little, keeping a calm distance from the other person.',
+        textEn: 'Speak little,\nkeeping a calm distance from the other person.',
         scores: { jisha: 2 },
       },
       {
@@ -115,7 +115,7 @@ export const COMMON_QUESTIONS = [
   {
     id: 'c4',
     text: '困っている人を見かけたら、どうする?',
-    textEn: 'You see someone in trouble. What do you do?',
+    textEn: 'You see someone in trouble.\nWhat do you do?',
     choices: [
       {
         id: 'c4a',
@@ -172,7 +172,7 @@ export const COMMON_QUESTIONS = [
       {
         id: 'c5d',
         text: '値段と価値の釣り合いを考え、長く使えるものを選ぶ',
-        textEn: 'Weigh price against value, choosing something built to last.',
+        textEn: 'Weigh price against value,\nchoosing something built to last.',
         scores: { shomin: 1, buke: 1 },
       },
     ],
@@ -180,12 +180,12 @@ export const COMMON_QUESTIONS = [
   {
     id: 'c6',
     text: '思いがけないトラブルが起きた。どうする?',
-    textEn: 'An unexpected problem occurs. What do you do?',
+    textEn: 'An unexpected problem occurs.\nWhat do you do?',
     choices: [
       {
         id: 'c6a',
         text: '状況を整理し、筋道を立てて対処する',
-        textEn: 'Sort out the situation and deal with it logically, step by step.',
+        textEn: 'Sort out the situation and deal with it logically,\nstep by step.',
         scores: { buke: 2 },
       },
       {
@@ -271,19 +271,19 @@ export const BUKE_QUESTIONS = [
       {
         id: 'buke_1a',
         text: '何度も通い、時間をかけて信頼を得てから中に入る',
-        textEn: 'Visit again and again, earning trust over time before stepping inside.',
+        textEn: 'Visit again and again,\nearning trust over time before stepping inside.',
         scores: { bushi: 1 },
       },
       {
         id: 'buke_1b',
         text: '物静かに、心を落ち着けたまま歩み入る',
-        textEn: 'Walk in quietly, keeping your heart calm and still.',
+        textEn: 'Walk in quietly,\nkeeping your heart calm and still.',
         scores: { komuso: 2 },
       },
       {
         id: 'buke_1c',
         text: '相手の様子を見極めながら、慎重に近づく',
-        textEn: 'Approach carefully, reading the other person as you go.',
+        textEn: 'Approach carefully,\nreading the other person as you go.',
         scores: { kusushi: 2 },
       },
       {
@@ -308,7 +308,7 @@ export const BUKE_QUESTIONS = [
       {
         id: 'buke_2b',
         text: '静かに過ごし、心を整える時間に充てる',
-        textEn: 'Spend it quietly, settling your mind.',
+        textEn: 'Spend it quietly,\nsettling your mind.',
         scores: { komuso: 2 },
       },
       {
@@ -333,13 +333,13 @@ export const BUKE_QUESTIONS = [
       {
         id: 'buke_3a',
         text: '人との信頼関係を、じっくり時間をかけて築くこと',
-        textEn: 'Building trust with others, slowly and patiently, over time.',
+        textEn: 'Building trust with others,\nslowly and patiently, over time.',
         scores: { bushi: 1 },
       },
       {
         id: 'buke_3b',
         text: '己の内面や、人としての在り方',
-        textEn: 'Your own inner self, and what it means to be a person.',
+        textEn: 'Your own inner self,\nand what it means to be a person.',
         scores: { komuso: 2 },
       },
       {
@@ -383,7 +383,7 @@ export const JISHA_QUESTIONS = [
       {
         id: 'jisha_1c',
         text: '山伏の姿で、堂々と山を越えて訪れる',
-        textEn: 'Come openly over the mountain, dressed as a yamabushi.',
+        textEn: 'Come openly over the mountain,\ndressed as a yamabushi.',
         scores: { yamabushi: 2 },
       },
       {
@@ -408,7 +408,7 @@ export const JISHA_QUESTIONS = [
       {
         id: 'jisha_2b',
         text: '人々の苦しみと、己の役目を思い返す',
-        textEn: 'Recall the suffering of others, and your own purpose.',
+        textEn: 'Recall the suffering of others,\nand your own purpose.',
         scores: { shukke: 2 },
       },
       {
@@ -445,13 +445,13 @@ export const JISHA_QUESTIONS = [
       {
         id: 'jisha_3c',
         text: '法螺貝を吹き鳴らし、苦しい山道でも前に進み続ける',
-        textEn: 'Blow the conch-shell horn and keep pressing on, even up the hardest mountain paths.',
+        textEn: 'Blow the conch-shell horn and keep pressing on,\neven up the hardest mountain paths.',
         scores: { yamabushi: 2 },
       },
       {
         id: 'jisha_3d',
         text: '険しい岩場を歩き通し、鍛え抜いた身体で示す',
-        textEn: 'Walk the sheerest cliffs to the end, showing a body forged through training.',
+        textEn: 'Walk the sheerest cliffs to the end,\nshowing a body forged through training.',
         scores: { yamabushi: 2 },
       },
     ],
@@ -491,19 +491,19 @@ export const SHOMIN_QUESTIONS = [
       {
         id: 'shomin_1b',
         text: '商いを口実に、堂々と入り込む',
-        textEn: 'Use trade as your excuse, and walk in openly.',
+        textEn: 'Use trade as your excuse,\nand walk in openly.',
         scores: { akindo: 2, kusuriya: 1 },
       },
       {
         id: 'shomin_1c',
         text: '誰にも気づかれず、静かに近づく',
-        textEn: 'Approach quietly, unnoticed by anyone.',
+        textEn: 'Approach quietly,\nunnoticed by anyone.',
         scores: { kanja: 2, shikaku: 1 },
       },
       {
         id: 'shomin_1d',
         text: '興行の許可を得て、人前で技を披露しながら近づく',
-        textEn: 'Get permission to perform, and approach while showing off your skill in front of everyone.',
+        textEn: 'Get permission to perform,\nand approach while showing off your skill in front of everyone.',
         scores: { hokashi: 2, sarugakushi: 1 },
       },
     ],
@@ -522,7 +522,7 @@ export const SHOMIN_QUESTIONS = [
       {
         id: 'shomin_2b',
         text: '薬箱を開き、効能を説いて売り歩くこと',
-        textEn: 'Opening your medicine chest, talking up its remedies, and peddling them.',
+        textEn: 'Opening your medicine chest,\ntalking up its remedies, and peddling them.',
         scores: { kusuriya: 2, akindo: 1 },
       },
       {
@@ -534,7 +534,7 @@ export const SHOMIN_QUESTIONS = [
       {
         id: 'shomin_2d',
         text: '面をつけ、別人に成りきり演じきること',
-        textEn: 'Putting on a mask, becoming someone else, and playing the part all the way through.',
+        textEn: 'Putting on a mask,\nbecoming someone else, and playing the part all the way through.',
         scores: { sarugakushi: 2, hokashi: 1 },
       },
     ],

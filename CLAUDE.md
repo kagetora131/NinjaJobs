@@ -540,6 +540,19 @@ kusushi.png
   (`writing-mode: vertical-rl`)はラテン文字だと読みにくいため、英語版の
   タイトルプレート("NINJA TYPE QUIZ")だけ横書き表示に切り替える
   (`.title-plate--horizontal`)。落款印(`seal`)自体は言語を問わず共通。
+- **英語版の質問文・選択肢文には、意味の区切りで改行(`\n`)を埋め込んでいる**
+  （`QuestionScreen.jsx`の`withLineBreaks()`が`\n`を`<br />`に変換して描画。
+  日本語版の`text`には`\n`を含めていないため、日本語表示には影響しない）。
+  基準: ①2文(ピリオドで区切られた「状況説明。質問？」の形)は必ずピリオドの
+  後で改行する（例:「You've been given a new task at work.」／「What do you
+  do first?」）。②1文中のカンマは、カンマの前が"First,"のような短い前置き
+  （1〜3語程度の副詞・条件節・前置詞句）の場合は改行しない（例:「First, look
+  into records and past cases to find a reliable approach.」はそのまま）。
+  カンマの前が動詞を伴うある程度まとまった独立節（目安4語以上、または短くても
+  動詞+目的語で完結する節）の場合はカンマの後で改行する（例:「Value courtesy,」
+  ／「earning trust through knowledge and sincerity.」）。この基準は
+  `questions.js`のtextEnにのみ適用し、`ninjaTypes.js`のdescriptionEn等
+  （地の文として自然に折り返される想定）には適用していない。
 
 ### 注意点
 - 内部分類(武家系/buke・寺社系/jisha・庶民/shomin)は英語版でも画面に一切
