@@ -1,203 +1,211 @@
-import { FACTIONS, FACTION_MAP, BACK_GROUPS } from '../data/factions.js'
-import { BACK_GROUP_QUESTIONS, BACK_FINAL_QUESTIONS } from '../data/questions.js'
+import { FACTIONS } from '../data/factions.js'
+import { BRANCH_QUESTIONS } from '../data/questions.js'
 
-// 陣営・グループ・タイプを増減させた際の登録漏れは静かに壊れる(そのタイプが
-// 永久に出なくなる)ため、開発時に検知する。
+const FACTION_KEYS = ['buke', 'jisha', 'shomin']
+
+// 分類・タイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に
+// 出なくなる)ため、開発時に検知する。
 if (import.meta.env?.DEV) {
   for (const f of FACTIONS) {
-    const groups = BACK_GROUPS[f.id]
-    if (!groups) {
-      throw new Error(`${f.id}: BACK_GROUPS に定義がありません`)
+    const questions = BRANCH_QUESTIONS[f.id]
+    if (!questions) {
+      throw new Error(`${f.id}: BRANCH_QUESTIONS に定義がありません`)
     }
-
-    const groupedTypeIds = groups.flatMap((g) => g.typeIds)
-    const missing = f.typeIds.filter((id) => !groupedTypeIds.includes(id))
+    const scoredTypeIds = new Set(questions.flatMap((q) => q.choices.flatMap((c) => Object.keys(c.scores))))
+    const missing = f.typeIds.filter((id) => !scoredTypeIds.has(id))
     if (missing.length) {
-      throw new Error(`${f.id}: BACK_GROUPS に含まれないタイプがあります: ${missing.join(', ')}`)
-    }
-    if (!groups.some((g) => g.extremeTypeId === f.extremeTypeId)) {
-      throw new Error(`${f.id}: extremeTypeId「${f.extremeTypeId}」を持つグループがありません`)
-    }
-
-    const groupQuestions = BACK_GROUP_QUESTIONS[f.id]
-    if (!groupQuestions) {
-      throw new Error(`${f.id}: BACK_GROUP_QUESTIONS に定義がありません`)
-    }
-    for (const q of groupQuestions) {
-      if (q.choices.length !== groups.length) {
-        throw new Error(`${q.id}: 選択肢の数が ${f.id} のグループ数と一致しません`)
-      }
-    }
-
-    for (const group of groups) {
-      const finalQ = BACK_FINAL_QUESTIONS[f.id]?.[group.id]
-      if (!finalQ) {
-        throw new Error(`${f.id}/${group.id}: BACK_FINAL_QUESTIONS に定義がありません`)
-      }
-      if (finalQ.choices.length !== group.typeIds.length) {
-        throw new Error(`${finalQ.id}: 選択肢の数が ${group.id} のタイプ数と一致しません`)
-      }
-      if (group.extremeTypeId && !group.typeIds.includes(group.extremeTypeId)) {
-        throw new Error(`${group.id}: extremeTypeId「${group.extremeTypeId}」がtypeIdsに含まれていません`)
-      }
+      throw new Error(`${f.id}: BRANCH_QUESTIONS で加点されないタイプがあります: ${missing.join(', ')}`)
     }
   }
 }
 
 /**
- * 選択肢のscoresから、その選択肢が最も加点する軸を1つ返す。
- * 両軸に均等加点する「中立」の選択肢の場合は 'medatsu' を仮の代表値として返す
- * (前半1問目の同点タイブレークにのみ使う値のため、多少恣意的でも実害はない)。
+ * scoresオブジェクト(例: { buke: 1, shomin: 1 })の中で、最も加点の高い
+ * キーを1つ返す(同点時は最初に見つかったキーを優先)。前半の同点タイブレーク
+ * (第7問→第1問)、後半の同点タイブレーク(問3→問1)のどちらにも使う汎用関数。
  * @param {Record<string, number>} scores
  */
-export function dominantAxis(scores) {
-  return (scores.medatsu ?? 0) >= (scores.medatanai ?? 0) ? 'medatsu' : 'medatanai'
+function dominantKey(scores) {
+  let best = null
+  let bestValue = -Infinity
+  for (const [key, value] of Object.entries(scores)) {
+    if (value > bestValue) {
+      best = key
+      bestValue = value
+    }
+  }
+  return best
 }
 
 /**
- * 前半6問の回答から陣営を決める。
- * @param {Array<Record<string, number>>} answerScores 各問で選んだ選択肢の scores の配列
- * @param {string} firstAxis 第1問の回答の dominantAxis(同点時のタイブレークに使う)
+ * 共通7問の回答から「武家系/寺社系/庶民」を判定する。
+ * (「忍者タイプ診断_新ロジック仕様書」4章)
+ *
+ * 1. buke/jisha/shomin それぞれの合計点を出し、最高得点の分類を採用
+ * 2. 同点の場合は「第7問の回答」→それでも同点なら「第1問の回答」の順で
+ *    タイブレークする(第1問だけで決めると影響が強くなりすぎるための変更)
+ * 3. shakou/kamokuの累計値も同時に返す(庶民に分岐した場合のみ後半の
+ *    判定で使う。武家系/寺社系に分岐した場合は使われない)
+ *
+ * @param {Array<{scores: Record<string, number>, shakou?: number, kamoku?: number}>} commonAnswers 共通7問で選んだ選択肢の配列
  */
-export function resolveFaction(answerScores, firstAxis) {
-  const totals = { medatsu: 0, medatanai: 0 }
-  for (const scores of answerScores) {
-    for (const [axis, points] of Object.entries(scores)) {
-      totals[axis] += points
+export function resolveFaction(commonAnswers) {
+  const totals = { buke: 0, jisha: 0, shomin: 0 }
+  let shakou = 0
+  let kamoku = 0
+
+  for (const answer of commonAnswers) {
+    for (const key of FACTION_KEYS) {
+      totals[key] += answer.scores[key] ?? 0
+    }
+    shakou += answer.shakou ?? 0
+    kamoku += answer.kamoku ?? 0
+  }
+
+  const max = Math.max(...FACTION_KEYS.map((key) => totals[key]))
+  const winners = FACTION_KEYS.filter((key) => totals[key] === max)
+
+  let factionId = winners[0]
+  if (winners.length > 1) {
+    const lastFaction = dominantKey(commonAnswers[commonAnswers.length - 1].scores)
+    const firstFaction = dominantKey(commonAnswers[0].scores)
+    factionId = winners.includes(lastFaction) ? lastFaction : firstFaction
+  }
+
+  return { factionId, totals, shakou, kamoku }
+}
+
+/**
+ * 分岐後3問(寺社系)の回答から、フラット得点制で最終タイプを決める。
+ * 同点は「問3(最後の問)」→「問1(最初の問)」の順でタイブレークする。
+ *
+ * @param {string} factionId 'jisha'
+ * @param {Array<{scores: Record<string, number>}>} branchAnswers 分岐後3問で選んだ選択肢の配列
+ */
+export function resolveBranchType(factionId, branchAnswers) {
+  const typeIds = FACTIONS.find((f) => f.id === factionId).typeIds
+  const totals = Object.fromEntries(typeIds.map((id) => [id, 0]))
+
+  for (const answer of branchAnswers) {
+    for (const [id, value] of Object.entries(answer.scores)) {
+      totals[id] += value
     }
   }
 
-  if (totals.medatsu === totals.medatanai) {
-    // 両軸に加点する「中立」の選択肢を混ぜたことで、この同点は実際に起こりうる
-    // (総当たりで実測済み。詳細はCLAUDE.md 7章)。結果が出ない事態を避けるため、
-    // 第1問の回答軸で決着させる。
-    return { factionId: firstAxis, totals }
+  const max = Math.max(...typeIds.map((id) => totals[id]))
+  const winners = typeIds.filter((id) => totals[id] === max)
+
+  if (winners.length === 1) {
+    return winners[0]
   }
 
-  return { factionId: totals.medatsu > totals.medatanai ? 'medatsu' : 'medatanai', totals }
+  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
+  const firstType = dominantKey(branchAnswers[0].scores)
+  return winners.includes(lastType) ? lastType : firstType
 }
 
 /**
- * グループ決定3問の回答からグループを決める。
- * 似たタイプ2つを1つの選択肢に統合しているため、後半の選択肢数を
- * 6→3(最終問のみ2)に減らせている(詳細はCLAUDE.md 6章)。
+ * 分岐後3問(武家系)の回答から、フラット得点制で最終タイプを決める。
  *
- * 各グループのweight(既定1、BACK_GROUPS参照)をポイントとして加算する。
- * 武闘派閥・忍びはweight未設定(=1)のまま、他4グループはweight2を持つため、
- * 際どい票の割れ方(例: 武闘派閥2票・他グループ1票)では他グループ側が
- * 勝ちやすくなる。ただし「3問すべて同じグループを選んだか」で決まる
- * unanimousの判定は、この重み付けとは無関係にgroupPicks(生の選択index)
- * だけを見て決めているため、激レア(武士・刺客)の判定条件はweightの値に
- * 一切左右されない(詳細はCLAUDE.md 7章)。
+ * 武士(bushi)は+1、虚無僧(komuso)・薬師(kusushi)は+2という配点差により、
+ * 3問合計の素点では武士が不利になりやすい設計だが、素直に「同点は問3→問1で
+ * タイブレーク」を武士にも適用すると、際どい同点(例: 武士2問+他1問)でも
+ * 武士が勝ててしまい、意図した「レアさ」が成立しない(総当たりで実測、
+ * 全27通り中5通り=18.5%まで上振れすることを確認済み)。
  *
+ * そのため武士だけは同点勝ちを許さない特別ルールにしている: 武士が結果に
+ * なるのは「3問すべてで武士の選択肢を選び、素点が他の2タイプを単独で
+ * 上回った場合」(全27通り中1通り=3.7%)のみ。同点に武士が含まれる場合は
+ * 武士を候補から外し、残った候補で(必要なら問3→問1のタイブレークを経て)
+ * 虚無僧/薬師のどちらかに決める。虚無僧・薬師同士の同点タイブレークは
+ * これまで通り問3→問1。
+ *
+ * @param {Array<{scores: Record<string, number>}>} branchAnswers 分岐後3問で選んだ選択肢の配列
+ */
+export function resolveBukeType(branchAnswers) {
+  const typeIds = ['bushi', 'komuso', 'kusushi']
+  const totals = Object.fromEntries(typeIds.map((id) => [id, 0]))
+
+  for (const answer of branchAnswers) {
+    for (const [id, value] of Object.entries(answer.scores)) {
+      totals[id] += value
+    }
+  }
+
+  const max = Math.max(...typeIds.map((id) => totals[id]))
+  let winners = typeIds.filter((id) => totals[id] === max)
+
+  // 武士は同点勝ちできない(素点で単独最高点の場合のみ武士に至る)
+  if (winners.length > 1 && winners.includes('bushi')) {
+    winners = winners.filter((id) => id !== 'bushi')
+  }
+
+  if (winners.length === 1) {
+    return winners[0]
+  }
+
+  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
+  const firstType = dominantKey(branchAnswers[0].scores)
+  return winners.includes(lastType) ? lastType : firstType
+}
+
+const SHAKOU_TYPE_IDS = ['akindo', 'kusuriya', 'hokashi', 'sarugakushi']
+const KAMOKU_TYPE_IDS = ['kanja', 'shikaku']
+
+/**
+ * 庶民の分岐後3問の回答から、フラット得点制で最終タイプを決める。
+ * 7タイプへの事前クラスター分岐は行わない(6章)。3問の合計得点に、共通7問
+ * で貯まったshakou(社交的な選択肢を選んだ回数由来)/kamoku(寡黙な選択肢を
+ * 選んだ回数由来)を加算してから最高得点を採用する。常の形は
+ * 「目立ちたくない」という独自の動機を保つため、この加算の対象外。
+ *
+ * 同点は「問3(最後の問)」→「問1(最初の問)」の順でタイブレークする
+ * (タイブレークの判定自体はshakou/kamoku加算前の生スコアの優劣で行う)。
+ *
+ * @param {Array<{scores: Record<string, number>}>} branchAnswers 分岐後3問で選んだ選択肢の配列
+ * @param {number} shakou 共通7問で貯まったshakouの合計
+ * @param {number} kamoku 共通7問で貯まったkamokuの合計
+ */
+export function resolveShominType(branchAnswers, shakou, kamoku) {
+  const typeIds = FACTIONS.find((f) => f.id === 'shomin').typeIds
+  const totals = Object.fromEntries(typeIds.map((id) => [id, 0]))
+
+  for (const answer of branchAnswers) {
+    for (const [id, value] of Object.entries(answer.scores)) {
+      totals[id] += value
+    }
+  }
+
+  for (const id of SHAKOU_TYPE_IDS) totals[id] += shakou
+  for (const id of KAMOKU_TYPE_IDS) totals[id] += kamoku
+  // 常の形(tsunenokatachi)には加算しない
+
+  const max = Math.max(...typeIds.map((id) => totals[id]))
+  const winners = typeIds.filter((id) => totals[id] === max)
+
+  if (winners.length === 1) {
+    return winners[0]
+  }
+
+  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
+  const firstType = dominantKey(branchAnswers[0].scores)
+  return winners.includes(lastType) ? lastType : firstType
+}
+
+/**
+ * 分類IDと分岐後3問の回答(+庶民の場合はshakou/kamoku)から最終タイプを決める、
+ * App.jsx向けの窓口関数。
  * @param {string} factionId
- * @param {number[]} groupPicks 各問で選んだ選択肢のindex(= BACK_GROUPS[faction] のindex)の配列(3つ)
+ * @param {Array<{scores: Record<string, number>}>} branchAnswers
+ * @param {number} shakou
+ * @param {number} kamoku
  */
-export function resolveGroup(factionId, groupPicks) {
-  const groups = BACK_GROUPS[factionId]
-  const counts = groups.map(() => 0)
-  for (const pick of groupPicks) {
-    counts[pick] += groups[pick].weight ?? 1
+export function resolveFinalType(factionId, branchAnswers, shakou, kamoku) {
+  if (factionId === 'shomin') {
+    return resolveShominType(branchAnswers, shakou, kamoku)
   }
-
-  const best = Math.max(...counts)
-  const tied = counts.reduce((acc, v, i) => (v === best ? [...acc, i] : acc), [])
-
-  let groupIndex = tied[0]
-  if (tied.length > 1) {
-    // 同点は「最後に選んだ側」を決め手にする(これまでの分岐判定と同じ方針)
-    for (let i = groupPicks.length - 1; i >= 0; i -= 1) {
-      if (tied.includes(groupPicks[i])) {
-        groupIndex = groupPicks[i]
-        break
-      }
-    }
+  if (factionId === 'buke') {
+    return resolveBukeType(branchAnswers)
   }
-
-  // 3問すべてで同じグループを選び通したか(激レア判定に使う)
-  const unanimous = groupPicks.every((pick) => pick === groupIndex)
-
-  return { group: groups[groupIndex], unanimous }
-}
-
-/**
- * 最終1問の回答から、グループ内の2タイプのどちらになるかを決める。
- *
- * 武闘派閥(山伏/武士)・忍び(間者/刺客)には「妥協のない極致」(激レア)が
- * 1タイプずつ存在する。**グループ決定3問すべてでそのグループを選び通した上で、
- * 最終問でも激レア側を選んだ場合のみ**激レアタイプに至る。1問でも他グループを
- * 選んでいた場合(グループ自体は点数で押し切って確定したが選び通してはいない)は、
- * 最終問で激レア側を選んでも無効票として扱われ、グループ内のもう一方の
- * タイプに決まる(旧・後半5問時代の「全問一致でなければ無効票」という
- * 白か黒かの仕様を、グループ制のもとでもそのまま踏襲している)。
- *
- * @param {import('../data/factions.js').FACTIONS[number]} group resolveGroupが返したグループ
- * @param {boolean} groupUnanimous resolveGroupが返した「選び通したか」
- * @param {number} finalPickIndex 最終問で選んだ選択肢のindex(= group.typeIds のindex)
- */
-export function resolveFinalType(group, groupUnanimous, finalPickIndex) {
-  const pickedTypeId = group.typeIds[finalPickIndex]
-
-  if (!group.extremeTypeId) {
-    return pickedTypeId
-  }
-
-  if (pickedTypeId === group.extremeTypeId && groupUnanimous) {
-    return group.extremeTypeId
-  }
-
-  return group.typeIds.find((id) => id !== group.extremeTypeId)
-}
-
-/**
- * 前半6問の回答から、目立つ/目立たないのどちらかに「純粋」だったか
- * (前半6問の中で一度も逆の軸に加点していないか)を判定する。
- * 中立の選択肢(両軸に加点)を1問でも選ぶと、どちらの純度も満たさなくなる。
- * @param {Array<Record<string, number>>} frontAnswerScores 前半6問で選んだ選択肢の scores の配列
- */
-export function resolveFrontPurity(frontAnswerScores) {
-  let hasMedatsu = false
-  let hasMedatanai = false
-  for (const scores of frontAnswerScores) {
-    if ((scores.medatsu ?? 0) > 0) hasMedatsu = true
-    if ((scores.medatanai ?? 0) > 0) hasMedatanai = true
-  }
-  return {
-    pureMedatsu: hasMedatsu && !hasMedatanai,
-    pureMedatanai: hasMedatanai && !hasMedatsu,
-  }
-}
-
-/**
- * 前半6問の「純度」による最終タイプの上書き。
- *
- * - 武士は前半6問で一度でも「目立たない」に加点していたら、代わりに虚無僧になる
- * - 刺客は前半6問で一度でも「目立つ」に加点していたら、代わりに山伏になる
- *
- * 武士・刺客の2タイプを「2大レア職業」にするための仕組み。当初は間者にも
- * 同じ条件(不純なら商人に差し替え)を課していたが、後半で忍びグループに
- * 辿り着いた人の大半は前半が完全に一色ではない(6問すべてを1つの軸だけで
- * 貫く「純粋」な回答は少数派)ため、間者のほぼ全員が商人に飲み込まれて
- * 商人が全タイプ中最多(24.05%)になってしまった。間者への適用をやめて
- * 元の頻度に戻し、武士・刺客の2タイプだけをこの仕組みで際立たせている。
- *
- * 前半6問の判定(resolveFaction)・後半の激レア判定(resolveGroup/resolveFinalType)
- * とは独立した、最終結果に対する追加の上書きレイヤー。そのため後半で激レア条件
- * (グループ決定3問すべて選び通した上で最終問でも選ぶ)を満たしていても、前半が
- * 純粋でなければここで別のタイプに差し替わる。
- *
- * 差し替え先(虚無僧・山伏)は上書き元(武士・刺客)とは別の陣営に属することが
- * あるため、結果画面では必ず `factionOfType` で最終タイプの実際の所属陣営を
- * 求め直すこと(前半で判定した陣営IDをそのまま使わない)。
- *
- * @param {string} resultId resolveFinalTypeが返した結果
- * @param {Array<Record<string, number>>} frontAnswerScores 前半6問で選んだ選択肢の scores の配列
- */
-export function applyFrontPurityOverride(resultId, frontAnswerScores) {
-  const { pureMedatsu, pureMedatanai } = resolveFrontPurity(frontAnswerScores)
-
-  if (resultId === 'bushi' && !pureMedatsu) return 'komuso'
-  if (resultId === 'shikaku' && !pureMedatanai) return 'yamabushi'
-
-  return resultId
+  return resolveBranchType(factionId, branchAnswers)
 }

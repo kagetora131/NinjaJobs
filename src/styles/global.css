@@ -564,18 +564,6 @@ button {
   text-align: left;
 }
 
-/* 陣営名は本文の後、控えめに触れる程度に留める(タイプ名を先に見せる演出のため) */
-.result-card__faction {
-  position: relative;
-  z-index: 1;
-  margin: 0.6rem 0 0;
-  font-family: var(--font-heading);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  color: rgba(34, 31, 26, 0.55);
-  text-align: left;
-}
-
 /* 落款印(本文の後ろに捺す) */
 .result-card__seal {
   position: relative;

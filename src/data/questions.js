@@ -1,220 +1,202 @@
 /**
- * 前半6問(共通)。「目立つ/目立たない」の二択軸にのみ加点する。
- * 各問4択。choices[].scores は { medatsu?: 2, medatanai?: 2 } のように
- * 加点する軸を持つ。通常は片方だけに+2する単軸の選択肢だが、第4問Aのように
- * 両軸に+2する「中立」の選択肢を混ぜることもある(あからさまさを消すため)。
+ * 共通7問。「武家系/寺社系/庶民」の3分類を内部判定する(ユーザーには見せない)。
+ * 「忍者タイプ診断_新ロジック仕様書」4章に基づき、忍者用語(任務・潜入・
+ * 忍び込む等)を排し、一般的な職業適性診断風の文言にしてある。
  *
- * 質問はできるだけ最後まで軸が読めないよう、以下の工夫をしている
- * (詳細はCLAUDE.md 6章):
- * - 選択肢は「目立つ/気配を消す」と直接言い切らず、具体的な行動の描写に留める
- * - 忍者の職務(任務・潜入)ばかりが続くと「適性診断」の構えが透けるため、
- *   日常の場面(贈り物選び)を挟んで毛色を変えている
- * - 一部の選択肢は両軸に加点する「中立」の選択肢にして、4択を機械的に
- *   2:2で読めないようにしている
+ * choices[].scores は { buke?, jisha?, shomin? } の3キーのみ持つ
+ * (加点先の分類名。個々の値は+1/+2)。一部の選択肢はさらに shakou/kamoku
+ * という裏スコアも持つ(数値、庶民に分岐した場合のみ最終判定で使用。
+ * 6章・scoring.js参照)。
  */
-export const FRONT_QUESTIONS = [
+export const COMMON_QUESTIONS = [
   {
-    id: 'f1',
-    text: '任務を与えられた。まず何をする?',
+    id: 'c1',
+    text: '新しい仕事を任された。まず何をする?',
     choices: [
-      { id: 'f1a', text: '皆の前で役割を言い渡し、士気を高める', scores: { medatsu: 2 } },
-      { id: 'f1b', text: '一人で黙々と、身支度と得物を整える', scores: { medatanai: 2 } },
-      { id: 'f1c', text: 'まず情報を集めようと、あちこちに顔を出す', scores: { medatsu: 2 } },
-      { id: 'f1d', text: '気配を殺し、誰にも知られぬ内に動き出す', scores: { medatanai: 2 } },
+      { id: 'c1a', text: 'まず資料や過去の事例を調べ、確実な方法を考える', scores: { buke: 2 } },
+      { id: 'c1b', text: '心を落ち着け、自分の調子を整えてから取りかかる', scores: { jisha: 2 } },
+      { id: 'c1c', text: '周囲の人に話を聞き、必要な情報を集める', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c1d', text: '必要になりそうな物や手順を、先に整えておく', scores: { buke: 1, shomin: 1 } },
     ],
   },
   {
-    id: 'f2',
-    text: 'どう潜入する?',
+    id: 'c2',
+    text: '旅先で道に迷ったら、どうする?',
     choices: [
-      { id: 'f2a', text: '声をかけながら、堂々と門をくぐる', scores: { medatsu: 2 } },
-      { id: 'f2b', text: '誰かの陰に紛れ、そっと敷地に入り込む', scores: { medatanai: 2 } },
-      { id: 'f2c', text: '話題を振りまき、注意を逸らしながら進む', scores: { medatsu: 2 } },
-      { id: 'f2d', text: '足音を殺し、闇と一つになって進む', scores: { medatanai: 2 } },
+      { id: 'c2a', text: '地図や案内を確認し、確実な道を探す', scores: { buke: 2 } },
+      { id: 'c2b', text: 'いったん立ち止まり、焦らず周囲の状況を見直す', scores: { jisha: 2 } },
+      { id: 'c2c', text: '近くの人に声をかけ、道を教えてもらう', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c2d', text: '周囲をよく観察し、自分で判断できる材料を集める', scores: { buke: 1, shomin: 1 }, kamoku: 1 },
     ],
   },
   {
-    id: 'f3',
-    text: '初対面の相手には、どう接する?',
+    id: 'c3',
+    text: '初対面の相手とは、どのように接する?',
     choices: [
-      { id: 'f3a', text: 'すぐに打ち解けるよう働きかける', scores: { medatsu: 2 } },
-      { id: 'f3b', text: '多くを語らず、まず心の内で祈りを捧げる', scores: { medatanai: 2 } },
-      { id: 'f3c', text: '友人になりきり、心を開かせる', scores: { medatsu: 2 } },
-      { id: 'f3d', text: 'さりげなく様子を窺い、力になれることはないか考える', scores: { medatanai: 2 } },
+      { id: 'c3a', text: '礼儀を大切にし、知識や誠実さで信頼を得る', scores: { buke: 2 } },
+      { id: 'c3b', text: '必要以上に語らず、相手と静かな距離を保つ', scores: { jisha: 2 } },
+      { id: 'c3c', text: '気軽に話しかけ、自然に打ち解ける', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c3d', text: '相手の表情や様子をよく見てから、接し方を決める', scores: { buke: 1, shomin: 1 }, kamoku: 1 },
     ],
   },
   {
-    id: 'f4',
-    text: '休息の日、何をして過ごす?',
+    id: 'c4',
+    text: '困っている人を見かけたら、どうする?',
     choices: [
-      // 「目立つ」だけに寄りすぎず、瞑想は求道・修行どちらの気質にも通じるため中立
-      { id: 'f4a', text: '瞑想して過ごす', scores: { medatsu: 2, medatanai: 2 } },
-      { id: 'f4b', text: '人知れず、市中の噂の出所を探る', scores: { medatanai: 2 } },
-      { id: 'f4c', text: '芸や技を、人前で磨く', scores: { medatsu: 2 } },
-      { id: 'f4d', text: '薬草を摘み、静かに調合を試す', scores: { medatanai: 2 } },
+      { id: 'c4a', text: '状況を整理し、自分にできる現実的な助け方を考える', scores: { buke: 2 } },
+      { id: 'c4b', text: 'まず相手の気持ちを落ち着かせ、安心できるようにする', scores: { jisha: 2 } },
+      { id: 'c4c', text: '自分から声をかけ、できることがあれば手を貸す', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c4d', text: '直接手を出す前に、何が必要なのかを見極める', scores: { buke: 1, shomin: 1 }, kamoku: 1 },
     ],
   },
   {
-    id: 'f5',
+    id: 'c5',
     text: '贈り物を選ぶなら、どうする?',
     choices: [
-      { id: 'f5a', text: '皆で盛り上がれる、賑やかな品を選ぶ', scores: { medatsu: 2 } },
-      { id: 'f5b', text: '相手の心にそっと寄り添う品を選ぶ', scores: { medatanai: 2 } },
-      { id: 'f5c', text: '誰もが目を引く、とびきりの品を探す', scores: { medatsu: 2 } },
-      { id: 'f5d', text: '誰にも気づかれぬよう、そっと届ける', scores: { medatanai: 2 } },
+      { id: 'c5a', text: '実用的で質の良いものを、じっくり吟味する', scores: { buke: 2 } },
+      { id: 'c5b', text: '相手の無事や幸せを願えるものを選ぶ', scores: { jisha: 2 } },
+      { id: 'c5c', text: '相手が喜ぶ姿を想像しながら、楽しんで選ぶ', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c5d', text: '値段と価値の釣り合いを考え、長く使えるものを選ぶ', scores: { shomin: 1, buke: 1 } },
     ],
   },
   {
-    id: 'f6',
-    text: '潜入先で怪しまれそうになった。どうする?',
+    id: 'c6',
+    text: '思いがけないトラブルが起きた。どうする?',
     choices: [
-      { id: 'f6a', text: '大袈裟に笑い、芸を見せて気を逸らす', scores: { medatsu: 2 } },
-      { id: 'f6b', text: 'その場に溶け込む', scores: { medatanai: 2 } },
-      { id: 'f6c', text: '堂々と名乗り、正面から相対する', scores: { medatsu: 2 } },
-      { id: 'f6d', text: '音もなく身を引き、姿をくらます', scores: { medatanai: 2 } },
+      { id: 'c6a', text: '状況を整理し、筋道を立てて対処する', scores: { buke: 2 } },
+      { id: 'c6b', text: '心を乱さず、まず落ち着いてから動く', scores: { jisha: 2 } },
+      { id: 'c6c', text: '周囲と相談しながら、その場をうまく収める', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c6d', text: 'その場で最も安全な方法を、素早く選ぶ', scores: { jisha: 1, shomin: 1 }, kamoku: 1 },
+    ],
+  },
+  {
+    id: 'c7',
+    text: 'あなたが「仕事のできる人」だと思うのは、どんな人?',
+    choices: [
+      { id: 'c7a', text: '知識や技術を着実に積み重ねている人', scores: { buke: 2 } },
+      { id: 'c7b', text: 'どんな状況でも、自分を律することのできる人', scores: { jisha: 2 } },
+      { id: 'c7c', text: '周囲とうまく関係を築き、場をまとめられる人', scores: { shomin: 2 }, shakou: 1 },
+      { id: 'c7d', text: '先回りして準備し、状況に応じて動ける人', scores: { buke: 1, shomin: 1 } },
     ],
   },
 ]
 
 /**
- * 後半・グループ決定3問。陣営が確定した後に出す、3グループ(6タイプを
- * 2つずつまとめたもの)から1つに絞り込むための設問。
- * choices の並びは BACK_GROUPS[faction] と同じ順(groupIndexとしてそのまま使う)。
- * 選んだグループに+2する。似たタイプ2つを1つの選択肢に統合することで、
- * 後半の選択肢数を6→3(最終問のみ2)に減らしている。
+ * 武家系(武士/虚無僧/薬師)の分岐後3問。武士は+1、虚無僧・薬師は+2という
+ * 配点差により、3問合計で虚無僧・薬師(満点6)が武士(満点3)より自然に
+ * 高得点になりやすく、武士が低配点だけで自然にレア化する(5章参照)。
  */
-export const BACK_GROUP_QUESTIONS = {
-  // 芸能系(猿楽師/放下師) / 商売系(薬屋/商人) / 武闘派閥(山伏/武士・激レア)
-  medatsu: [
-    {
-      id: 'medatsu_g1',
-      text: 'お前が最も"己"を出せるのは、どんな時だ?',
-      choices: [
-        { id: 'medatsu_g1a', text: '人前で、芸や役を演じきる時' },
-        { id: 'medatsu_g1b', text: '駆け引きの末、取引をまとめる時' },
-        { id: 'medatsu_g1c', text: '力を示し、己を鍛え抜く時' },
-      ],
-    },
-    {
-      id: 'medatsu_g2',
-      text: '人々から求められるのは何だ?',
-      choices: [
-        { id: 'medatsu_g2a', text: '笑いと、忘れられぬ舞台' },
-        { id: 'medatsu_g2b', text: '良い品と、確かな信頼' },
-        { id: 'medatsu_g2c', text: '確かな力と、揺るがぬ心' },
-      ],
-    },
-    {
-      id: 'medatsu_g3',
-      text: '一番大切にしているものは?',
-      choices: [
-        { id: 'medatsu_g3a', text: '磨き上げた芸の腕' },
-        { id: 'medatsu_g3b', text: '商いの才と、人脈' },
-        { id: 'medatsu_g3c', text: '鍛え抜いた力と、己を貫く強さ' },
-      ],
-    },
-  ],
-
-  // 求道系(虚無僧/出家) / 庶民系(常の形/薬師) / 忍び(間者/刺客・激レア)
-  medatanai: [
-    {
-      id: 'medatanai_g1',
-      text: 'お前が最も"己"を出せるのは、どんな時だ?',
-      choices: [
-        { id: 'medatanai_g1a', text: '静寂の中、心を澄ませる時' },
-        { id: 'medatanai_g1b', text: '誰にも気づかれず、日常に紛れる時' },
-        { id: 'medatanai_g1c', text: '気配を消し、物事の深部に迫る時' },
-      ],
-    },
-    {
-      id: 'medatanai_g2',
-      text: '人からどう思われたいか?',
-      choices: [
-        { id: 'medatanai_g2a', text: '慎み深く、徳のある者として' },
-        { id: 'medatanai_g2b', text: '記憶にも残らぬ、ただの人として' },
-        { id: 'medatanai_g2c', text: '何も語らず、正体の知れぬ者として' },
-      ],
-    },
-    {
-      id: 'medatanai_g3',
-      text: '一番大切にしているものは?',
-      choices: [
-        { id: 'medatanai_g3a', text: '深い静寂と、平らかな心' },
-        { id: 'medatanai_g3b', text: '誰にも踏み込まれない、日常' },
-        { id: 'medatanai_g3c', text: '知恵と技を、静かに研ぎ澄ますこと' },
-      ],
-    },
-  ],
-}
+export const BUKE_QUESTIONS = [
+  {
+    id: 'buke_1',
+    text: 'あなたが最も誇りに思うものは?',
+    choices: [
+      { id: 'buke_1a', text: '磨き上げた技術と、それを実際に役立てる力', scores: { bushi: 1 } },
+      { id: 'buke_1b', text: '深い信念と、人を導く言葉', scores: { komuso: 2 } },
+      { id: 'buke_1c', text: '積み重ねた知識と、冷静に物事を判断する力', scores: { kusushi: 2 } },
+    ],
+  },
+  {
+    id: 'buke_2',
+    text: '迷いが生じたとき、何を拠り所にする?',
+    choices: [
+      { id: 'buke_2a', text: 'これまで積み重ねてきた経験と、自分の腕', scores: { bushi: 1 } },
+      { id: 'buke_2b', text: '自分の信じるものと、揺るがぬ信念', scores: { komuso: 2 } },
+      { id: 'buke_2c', text: '学んできた知識と、客観的に考える力', scores: { kusushi: 2 } },
+    ],
+  },
+  {
+    id: 'buke_3',
+    text: '自分の価値を示すとしたら?',
+    choices: [
+      { id: 'buke_3a', text: '行動と実力で、結果を示す', scores: { bushi: 1 } },
+      { id: 'buke_3b', text: '言葉や生き方で、人に何かを伝える', scores: { komuso: 2 } },
+      { id: 'buke_3c', text: '知識や技術を用いて、人の役に立つ', scores: { kusushi: 2 } },
+    ],
+  },
+]
 
 /**
- * 後半・最終1問。グループが確定した後に出す、そのグループ内の2タイプを
- * 決める最後の2択。BACK_GROUPS[faction][groupIndex].typeIds の順と対応する。
- * 全グループ共通で「最後は何を信じるか?」を問う(旧・各グループ別の問い文
- * だと2グループで文言が偶然重複したため、あえて統一した)。
- *
- * 武闘派閥(山伏/武士)と忍び(間者/刺客)は、グループ決定3問すべてで
- * そのグループを選び通した上でこの最終問でも激レア側を選んだ場合のみ、
- * 激レアタイプ(武士/刺客)に至る(詳細はCLAUDE.md 7章)。
+ * 寺社系(出家/山伏)の分岐後3問。
  */
-const FINAL_QUESTION_TEXT = '最後は何を信じるか?'
+export const JISHA_QUESTIONS = [
+  {
+    id: 'jisha_1',
+    text: '自分を鍛えるなら、どんな方法を選ぶ?',
+    choices: [
+      { id: 'jisha_1a', text: '人の中に身を置き、自分を律する', scores: { shukke: 2 } },
+      { id: 'jisha_1b', text: '静かな場所で心を整え、己と向き合う', scores: { shukke: 2 } },
+      { id: 'jisha_1c', text: '厳しい環境に身を置き、己を鍛える', scores: { yamabushi: 2 } },
+      { id: 'jisha_1d', text: '苦しいことから逃げず、最後までやり抜く', scores: { yamabushi: 2 } },
+    ],
+  },
+  {
+    id: 'jisha_2',
+    text: '心を乱されそうなとき、どうする?',
+    choices: [
+      { id: 'jisha_2a', text: '静かに自分の心と向き合う', scores: { shukke: 2 } },
+      { id: 'jisha_2b', text: '人の苦しみや自分の役割を思い返す', scores: { shukke: 2 } },
+      { id: 'jisha_2c', text: '呼吸を整え、身体の感覚に意識を集中する', scores: { yamabushi: 2 } },
+      { id: 'jisha_2d', text: 'あえて厳しい環境に身を置き、自分を奮い立たせる', scores: { yamabushi: 2 } },
+    ],
+  },
+  {
+    id: 'jisha_3',
+    text: '「強い人」とは、どんな人だと思う?',
+    choices: [
+      { id: 'jisha_3a', text: '人のために、自分を律して行動できる人', scores: { shukke: 2 } },
+      { id: 'jisha_3b', text: '欲や迷いに振り回されず、静かな心を保てる人', scores: { shukke: 2 } },
+      { id: 'jisha_3c', text: '苦しい状況でも耐え抜き、前に進み続ける人', scores: { yamabushi: 2 } },
+      { id: 'jisha_3d', text: '自分を鍛え続け、困難に立ち向かえる人', scores: { yamabushi: 2 } },
+    ],
+  },
+]
 
-export const BACK_FINAL_QUESTIONS = {
-  medatsu: {
-    geino: {
-      id: 'medatsu_f_geino',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatsu_f_geino_a', text: '人を欺く、巧みな技を信じる' }, // 猿楽師
-        { id: 'medatsu_f_geino_b', text: '人を沸かせる、確かな芸を信じる' }, // 放下師
-      ],
-    },
-    shobai: {
-      id: 'medatsu_f_shobai',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatsu_f_shobai_a', text: '効き目のある、確かな品を信じる' }, // 薬屋
-        { id: 'medatsu_f_shobai_b', text: '人と人との、確かな縁を信じる' }, // 商人
-      ],
-    },
-    butouha: {
-      id: 'medatsu_f_butouha',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatsu_f_butouha_a', text: '鍛え抜いた、己の力を信じる' }, // 山伏
-        { id: 'medatsu_f_butouha_b', text: '何より、義を信じる' }, // 武士(激レア)
-      ],
-    },
+/**
+ * 庶民(常の形/商人/薬屋/間者/刺客/放下師/猿楽師)の分岐後3問。
+ * クラスターによる事前分岐は行わず、7タイプを直接フラット得点制で判定する
+ * (6章参照)。常の形は3問すべての選択肢Aとして毎回登場し、他の6タイプは
+ * B/C/Dに主+2・従+1で振り分けられる。
+ */
+export const SHOMIN_QUESTIONS = [
+  {
+    id: 'shomin_1',
+    text: '人前でのお前は?',
+    choices: [
+      { id: 'shomin_1a', text: '誰の記憶にも残らない、ごく普通の者', scores: { tsunenokatachi: 3 } },
+      { id: 'shomin_1b', text: '商いの話で、自然と人の輪の中心にいる', scores: { akindo: 2, kusuriya: 1 } },
+      { id: 'shomin_1c', text: '物静かで、多くを語らない', scores: { kanja: 2, shikaku: 1 } },
+      { id: 'shomin_1d', text: '手品や芸で、人目を引きつける', scores: { hokashi: 2, sarugakushi: 1 } },
+    ],
   },
-  medatanai: {
-    kyudo: {
-      id: 'medatanai_f_kyudo',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatanai_f_kyudo_a', text: '何もない、静寂の境地を信じる' }, // 虚無僧
-        { id: 'medatanai_f_kyudo_b', text: '人のために生きる、己の心を信じる' }, // 出家
-      ],
-    },
-    shomin: {
-      id: 'medatanai_f_shomin',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatanai_f_shomin_a', text: '変わらぬ、日々の暮らしを信じる' }, // 常の形
-        { id: 'medatanai_f_shomin_b', text: '人を救う、確かな理を信じる' }, // 薬師
-      ],
-    },
-    shinobi: {
-      id: 'medatanai_f_shinobi',
-      text: FINAL_QUESTION_TEXT,
-      choices: [
-        { id: 'medatanai_f_shinobi_a', text: '知ることこそが、力だと信じる' }, // 間者
-        { id: 'medatanai_f_shinobi_b', text: '為すべきを為す、己の刃を信じる' }, // 刺客(激レア)
-      ],
-    },
+  {
+    id: 'shomin_2',
+    text: 'お前が得意なのは?',
+    choices: [
+      { id: 'shomin_2a', text: '何者でもない顔で、居続けること', scores: { tsunenokatachi: 3 } },
+      { id: 'shomin_2b', text: '効能を説き、薬を売り歩くこと', scores: { kusuriya: 2, akindo: 1 } },
+      { id: 'shomin_2c', text: '気配を殺し、一息で事を成すこと', scores: { shikaku: 2, kanja: 1 } },
+      { id: 'shomin_2d', text: '別人に成りきり、演じきること', scores: { sarugakushi: 2, hokashi: 1 } },
+    ],
   },
+  {
+    id: 'shomin_3',
+    text: '人からどう見られたい?',
+    choices: [
+      { id: 'shomin_3a', text: '特に何とも思われない、当たり前の者として', scores: { tsunenokatachi: 3 } },
+      { id: 'shomin_3b', text: '良い品と良い話をもたらす者として', scores: { akindo: 2, kusuriya: 1 } },
+      { id: 'shomin_3c', text: '何を考えているか分からない者として', scores: { kanja: 2, shikaku: 1 } },
+      { id: 'shomin_3d', text: '笑いと驚きを届ける者として', scores: { hokashi: 2, sarugakushi: 1 } },
+    ],
+  },
+]
+
+export const BRANCH_QUESTIONS = {
+  buke: BUKE_QUESTIONS,
+  jisha: JISHA_QUESTIONS,
+  shomin: SHOMIN_QUESTIONS,
 }
 
-export const FRONT_COUNT = FRONT_QUESTIONS.length
-export const BACK_GROUP_COUNT = 3
-export const BACK_FINAL_COUNT = 1
-export const TOTAL_QUESTIONS = FRONT_COUNT + BACK_GROUP_COUNT + BACK_FINAL_COUNT
+export const COMMON_COUNT = COMMON_QUESTIONS.length
+export const BRANCH_COUNT = 3
+export const TOTAL_QUESTIONS = COMMON_COUNT + BRANCH_COUNT

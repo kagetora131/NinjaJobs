@@ -1,11 +1,11 @@
 import { FACTIONS } from '../data/factions.js'
 import { NINJA_TYPE_MAP } from '../data/ninjaTypes.js'
 
-// 陣営(目立つ/目立たない)やグループ(芸能系・武闘派閥等)による分類・説明は
-// あえて出さない。前半・後半で隠してきた軸をここで種明かししてしまうと、
-// 診断の余韻を損なうため(詳細はCLAUDE.md 6章)。
+// 分類(武家系/寺社系/庶民)による分類・説明はあえて出さない。内部分類名は
+// ユーザーに一切見せない方針のため(詳細はCLAUDE.md 6-7章)。
 const ALL_TYPE_IDS = FACTIONS.flatMap((faction) => faction.typeIds)
-const EXTREME_TYPE_IDS = new Set(FACTIONS.map((faction) => faction.extremeTypeId))
+// 武士のみ低配点による自然発生的なレア職業(詳細はCLAUDE.md 7章)
+const EXTREME_TYPE_IDS = new Set(['bushi'])
 
 export default function TypeGallery({ resultId }) {
   return (

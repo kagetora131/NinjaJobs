@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import TypeGallery from './TypeGallery.jsx'
 
-export default function ResultCard({ ninjaType, faction, onRetry }) {
+export default function ResultCard({ ninjaType, onRetry }) {
   const reduceMotion = useReducedMotion()
   const d = (seconds) => (reduceMotion ? 0 : seconds)
 
@@ -72,7 +72,6 @@ export default function ResultCard({ ninjaType, faction, onRetry }) {
           <motion.div variants={bodyVariants}>
             <span className="result-card__keyword">{ninjaType.keyword}</span>
             <p className="result-card__description">{ninjaType.description}</p>
-            {faction && <p className="result-card__faction">{faction.name}の忍び</p>}
           </motion.div>
 
           <motion.div className="result-card__seal" variants={sealVariants} aria-hidden="true">
