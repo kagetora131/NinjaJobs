@@ -245,119 +245,142 @@ export const COMMON_QUESTIONS = [
 ]
 
 /**
- * 武家系(武士/虚無僧/薬師)の分岐後3問。武士は+1、虚無僧・薬師は+2という
- * 配点差により、3問合計で虚無僧・薬師(満点6)が武士(満点3)より自然に
+ * 武家系(武士/虚無僧/薬師)の分岐後3問。武士は「服部半蔵のように、時間を
+ * かけて信頼を勝ち取り武士として認められた者」というコンセプト(刀や兜など
+ * 武士を直接示唆する表現は避け、"同じ相手・同じ関係にじっくり向き合う一貫性"
+ * を識別軸にする)。4択に統一し、Dは虚無僧・薬師どちらにも寄らない
+ * 「器用貧乏」枠(scores: { komuso: 1, kusushi: 1 })。武士は+1、虚無僧・薬師は
+ * +2という配点差により、3問合計で虚無僧・薬師(満点6)が武士(満点3)より自然に
  * 高得点になりやすく、武士が低配点だけで自然にレア化する(5章参照)。
  */
 export const BUKE_QUESTIONS = [
   {
     id: 'buke_1',
-    text: 'あなたが最も誇りに思うものは?',
-    textEn: 'What are you proudest of?',
+    text: '忍びとして潜入するなら、どのように?',
+    textEn: 'If you were to infiltrate as a shinobi, how would you do it?',
     choices: [
       {
         id: 'buke_1a',
-        text: '磨き上げた技術と、それを実際に役立てる力',
-        textEn: 'The skill you have honed, and the ability to put it to real use.',
+        text: '何度も通い、時間をかけて信頼を得てから中に入る',
+        textEn: 'Visit again and again, earning trust over time before stepping inside.',
         scores: { bushi: 1 },
       },
       {
         id: 'buke_1b',
-        text: '深い信念と、人を導く言葉',
-        textEn: 'A deep conviction, and words that guide others.',
+        text: '物静かに、心を落ち着けたまま歩み入る',
+        textEn: 'Walk in quietly, keeping your heart calm and still.',
         scores: { komuso: 2 },
       },
       {
         id: 'buke_1c',
-        text: '積み重ねた知識と、冷静に物事を判断する力',
-        textEn: 'The knowledge you have accumulated, and the ability to judge things calmly.',
+        text: '相手の様子を見極めながら、慎重に近づく',
+        textEn: 'Approach carefully, reading the other person as you go.',
         scores: { kusushi: 2 },
+      },
+      {
+        id: 'buke_1d',
+        text: 'その場の状況に応じて、やり方を柔軟に変える',
+        textEn: 'Adapt your approach flexibly to whatever the moment calls for.',
+        scores: { komuso: 1, kusushi: 1 },
       },
     ],
   },
   {
     id: 'buke_2',
-    text: '迷いが生じたとき、何を拠り所にする?',
-    textEn: 'When you are in doubt, what do you rely on?',
+    text: '休みの日をどう過ごしますか?',
+    textEn: 'How do you spend your days off?',
     choices: [
       {
         id: 'buke_2a',
-        text: 'これまで積み重ねてきた経験と、自分の腕',
-        textEn: 'The experience you have built up, and your own two hands.',
+        text: '決まった相手と、じっくり関係を築く時間に使う',
+        textEn: 'Spend the time deepening a relationship with someone you already know well.',
         scores: { bushi: 1 },
       },
       {
         id: 'buke_2b',
-        text: '自分の信じるものと、揺るがぬ信念',
-        textEn: 'What you believe in, and an unshakable conviction.',
+        text: '静かに過ごし、心を整える時間に充てる',
+        textEn: 'Spend it quietly, settling your mind.',
         scores: { komuso: 2 },
       },
       {
         id: 'buke_2c',
-        text: '学んできた知識と、客観的に考える力',
-        textEn: 'What you have learned, and the ability to think objectively.',
+        text: '本を読んだり、調べ物をして過ごす',
+        textEn: 'Spend it reading or looking into things.',
         scores: { kusushi: 2 },
+      },
+      {
+        id: 'buke_2d',
+        text: 'その日の気分で、過ごし方を変える',
+        textEn: 'However the mood takes you that day.',
+        scores: { komuso: 1, kusushi: 1 },
       },
     ],
   },
   {
     id: 'buke_3',
-    text: '自分の価値を示すとしたら?',
-    textEn: 'If you had to demonstrate your own worth, how would you do it?',
+    text: '空いた時間に何を究めますか?',
+    textEn: 'What do you devote your spare time to mastering?',
     choices: [
       {
         id: 'buke_3a',
-        text: '行動と実力で、結果を示す',
-        textEn: 'Show it through action and results.',
+        text: '人との信頼関係を、じっくり時間をかけて築くこと',
+        textEn: 'Building trust with others, slowly and patiently, over time.',
         scores: { bushi: 1 },
       },
       {
         id: 'buke_3b',
-        text: '言葉や生き方で、人に何かを伝える',
-        textEn: 'Convey it through your words and how you live.',
+        text: '己の内面や、人としての在り方',
+        textEn: 'Your own inner self, and what it means to be a person.',
         scores: { komuso: 2 },
       },
       {
         id: 'buke_3c',
-        text: '知識や技術を用いて、人の役に立つ',
-        textEn: 'Put your knowledge and skill to use for others.',
+        text: '知識や、物事の理屈',
+        textEn: 'Knowledge, and the reasoning behind things.',
         scores: { kusushi: 2 },
+      },
+      {
+        id: 'buke_3d',
+        text: 'その時々で、興味のあることを幅広く',
+        textEn: 'Whatever happens to interest you at the time, broadly.',
+        scores: { komuso: 1, kusushi: 1 },
       },
     ],
   },
 ]
 
 /**
- * 寺社系(出家/山伏)の分岐後3問。
+ * 寺社系(出家/山伏)の分岐後3問。七方出の変装ネタ(出家=托鉢僧、山伏=修験者)と、
+ * 職業カードの視覚要素(数珠・袈裟、法螺貝・山)を反映した文言。
  */
 export const JISHA_QUESTIONS = [
   {
     id: 'jisha_1',
-    text: '自分を鍛えるなら、どんな方法を選ぶ?',
-    textEn: 'How would you choose to train yourself?',
+    text: '忍びとして潜入するなら、どのように?',
+    textEn: 'If you were to infiltrate as a shinobi, how would you do it?',
     choices: [
       {
         id: 'jisha_1a',
-        text: '人の中に身を置き、自分を律する',
-        textEn: 'Place yourself among others, and discipline yourself there.',
+        text: '托鉢の僧を装い、里の中に紛れ込む',
+        textEn: 'Disguise yourself as a begging monk and slip into the village.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_1b',
-        text: '静かな場所で心を整え、己と向き合う',
-        textEn: 'Find a quiet place to settle your mind and face yourself.',
+        text: '経を唱えながら、寺社の一員として入り込む',
+        textEn: "Chant sutras and enter as one of the temple's own.",
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_1c',
-        text: '厳しい環境に身を置き、己を鍛える',
-        textEn: 'Place yourself in a harsh environment and forge yourself through it.',
+        text: '山伏の姿で、堂々と山を越えて訪れる',
+        textEn: 'Come openly over the mountain, dressed as a yamabushi.',
         scores: { yamabushi: 2 },
       },
       {
         id: 'jisha_1d',
-        text: '苦しいことから逃げず、最後までやり抜く',
-        textEn: 'Never run from hardship, and see it through to the end.',
+        text: '法螺貝を吹き鳴らしながら、修行の一団として入り込む',
+        textEn: 'Blow the conch-shell horn and enter as part of a band of ascetics.',
         scores: { yamabushi: 2 },
       },
     ],
@@ -369,57 +392,57 @@ export const JISHA_QUESTIONS = [
     choices: [
       {
         id: 'jisha_2a',
-        text: '静かに自分の心と向き合う',
-        textEn: 'Quietly face your own heart.',
+        text: '静かに読経し、自分の心と向き合う',
+        textEn: 'Quietly chant a sutra and face your own heart.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_2b',
-        text: '人の苦しみや自分の役割を思い返す',
+        text: '人々の苦しみと、己の役目を思い返す',
         textEn: 'Recall the suffering of others, and your own purpose.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_2c',
-        text: '呼吸を整え、身体の感覚に意識を集中する',
-        textEn: 'Steady your breathing and focus on the sensations of your body.',
+        text: '法螺貝を吹き鳴らし、呼吸を整える',
+        textEn: 'Blow the conch-shell horn and steady your breathing.',
         scores: { yamabushi: 2 },
       },
       {
         id: 'jisha_2d',
-        text: 'あえて厳しい環境に身を置き、自分を奮い立たせる',
-        textEn: 'Deliberately place yourself in a harsh environment to spur yourself on.',
+        text: 'あえて厳しい山に分け入り、自分を奮い立たせる',
+        textEn: 'Deliberately head into the harsh mountains to spur yourself on.',
         scores: { yamabushi: 2 },
       },
     ],
   },
   {
     id: 'jisha_3',
-    text: '「強い人」とは、どんな人だと思う?',
-    textEn: 'What do you think it means to be "strong"?',
+    text: '忍びとして「強さ」を示すなら?',
+    textEn: 'If you were to show "strength" as a shinobi, how would you do it?',
     choices: [
       {
         id: 'jisha_3a',
-        text: '人のために、自分を律して行動できる人',
-        textEn: 'Someone who can discipline themselves and act for others.',
+        text: '数珠を手に、人のために己を律して動く',
+        textEn: 'Prayer beads in hand, discipline yourself and act for others.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_3b',
-        text: '欲や迷いに振り回されず、静かな心を保てる人',
-        textEn: 'Someone who keeps a calm heart, unmoved by desire or doubt.',
+        text: '静かな読経で、欲や迷いに振り回されぬ心を示す',
+        textEn: 'Show, through quiet chanting, a heart unmoved by desire or doubt.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_3c',
-        text: '苦しい状況でも耐え抜き、前に進み続ける人',
-        textEn: 'Someone who endures hardship and keeps moving forward.',
+        text: '法螺貝を吹き鳴らし、苦しい山道でも前に進み続ける',
+        textEn: 'Blow the conch-shell horn and keep pressing on, even up the hardest mountain paths.',
         scores: { yamabushi: 2 },
       },
       {
         id: 'jisha_3d',
-        text: '自分を鍛え続け、困難に立ち向かえる人',
-        textEn: 'Someone who keeps forging themselves and can stand against any difficulty.',
+        text: '険しい岩場を歩き通し、鍛え抜いた身体で示す',
+        textEn: 'Walk the sheerest cliffs to the end, showing a body forged through training.',
         scores: { yamabushi: 2 },
       },
     ],
@@ -430,44 +453,56 @@ export const JISHA_QUESTIONS = [
  * 庶民(常の形/商人/薬屋/間者/刺客/放下師/猿楽師)の分岐後3問。
  * クラスターによる事前分岐は行わず、7タイプを直接フラット得点制で判定する
  * (6章参照)。常の形は3問すべての選択肢Aとして毎回登場し、他の6タイプは
- * B/C/Dに主+2・従+1で振り分けられる。
+ * B/C/Dに振り分けられる。
+ *
+ * 問1・問2は各ペア(商人/薬屋、間者/刺客、放下師/猿楽師)のどちらか一方が
+ * 「主+2」・もう一方が「従+1」の配点だが、問3だけは主従を設けず両方に
+ * +1ずつの均等配点にしてある(バランス修正。以前は問1・問2どちらも
+ * 商人・間者・放下師が「主+2」を2回、薬屋・刺客・猿楽師が1回しか得られない
+ * 構造だったため、総当たり検証で薬屋(1.14%)・刺客(0.33%)が武家系の
+ * レアタイプである武士(1.4474%)より出現しにくいという逆転が発覚した。
+ * 問3を均等配点にしたことで各ペアの3問合計が4点ずつに揃い、この逆転を解消)。
+ *
+ * 問3のCは、間者・刺客にもかかわらず一見「信仰心」を思わせる表現
+ * (精神統一する)にすることで、寺社系の設問と紛らわしくし、選択肢から
+ * 結果を逆算しにくくしている。
  */
 export const SHOMIN_QUESTIONS = [
   {
     id: 'shomin_1',
-    text: '人前でのお前は?',
-    textEn: 'What are you like in front of others?',
+    text: '忍びとして潜入するなら、どのように?',
+    textEn: 'If you were to infiltrate as a shinobi, how would you do it?',
     choices: [
       {
         id: 'shomin_1a',
-        text: '誰の記憶にも残らない、ごく普通の者',
-        textEn: 'Utterly unremarkable — no one remembers your face.',
+        text: '一般庶民になりきって、紛れ込む',
+        textEn: 'Pass yourself off completely as an ordinary commoner and slip in.',
         scores: { tsunenokatachi: 3 },
       },
       {
         id: 'shomin_1b',
-        text: '商いの話で、自然と人の輪の中心にいる',
-        textEn: 'The natural center of attention when trade and dealing is the topic.',
+        text: '商いを口実に、堂々と入り込む',
+        textEn: 'Use trade as your excuse, and walk in openly.',
         scores: { akindo: 2, kusuriya: 1 },
       },
       {
         id: 'shomin_1c',
-        text: '物静かで、多くを語らない',
-        textEn: 'Quiet, and not one to say much.',
+        text: '誰にも気づかれず、静かに近づく',
+        textEn: 'Approach quietly, unnoticed by anyone.',
         scores: { kanja: 2, shikaku: 1 },
       },
       {
         id: 'shomin_1d',
-        text: '手品や芸で、人目を引きつける',
-        textEn: 'Someone who draws every eye with a trick or a performance.',
+        text: '興行の許可を得て、人前で技を披露しながら近づく',
+        textEn: 'Get permission to perform, and approach while showing off your skill in front of everyone.',
         scores: { hokashi: 2, sarugakushi: 1 },
       },
     ],
   },
   {
     id: 'shomin_2',
-    text: 'お前が得意なのは?',
-    textEn: 'What are you good at?',
+    text: '忍びとして、お前が得意なのは?',
+    textEn: 'As a shinobi, what are you good at?',
     choices: [
       {
         id: 'shomin_2a',
@@ -477,52 +512,52 @@ export const SHOMIN_QUESTIONS = [
       },
       {
         id: 'shomin_2b',
-        text: '効能を説き、薬を売り歩くこと',
-        textEn: 'Talking up remedies and peddling your wares.',
+        text: '薬箱を開き、効能を説いて売り歩くこと',
+        textEn: 'Opening your medicine chest, talking up its remedies, and peddling them.',
         scores: { kusuriya: 2, akindo: 1 },
       },
       {
         id: 'shomin_2c',
-        text: '気配を殺し、一息で事を成すこと',
+        text: '気配を断ち、一息で事を成すこと',
         textEn: 'Erasing your presence and finishing the job in a single breath.',
         scores: { shikaku: 2, kanja: 1 },
       },
       {
         id: 'shomin_2d',
-        text: '別人に成りきり、演じきること',
-        textEn: 'Becoming someone else entirely, and playing the part all the way through.',
+        text: '面をつけ、別人に成りきり演じきること',
+        textEn: 'Putting on a mask, becoming someone else, and playing the part all the way through.',
         scores: { sarugakushi: 2, hokashi: 1 },
       },
     ],
   },
   {
     id: 'shomin_3',
-    text: '人からどう見られたい?',
-    textEn: 'How do you want people to see you?',
+    text: '空いた時間に何を究めますか?',
+    textEn: 'What do you devote your spare time to mastering?',
     choices: [
       {
         id: 'shomin_3a',
-        text: '特に何とも思われない、当たり前の者として',
-        textEn: 'As someone utterly unremarkable, beneath notice.',
+        text: '特に何かを究めようとは思わない',
+        textEn: "Nothing in particular — you don't feel the need to master anything.",
         scores: { tsunenokatachi: 3 },
       },
       {
         id: 'shomin_3b',
-        text: '良い品と良い話をもたらす者として',
-        textEn: 'As someone who brings good goods and good stories.',
-        scores: { akindo: 2, kusuriya: 1 },
+        text: '物欲を高められるよう、豆知識を増やす',
+        textEn: 'Bits of trivia that make people want things more.',
+        scores: { akindo: 1, kusuriya: 1 },
       },
       {
         id: 'shomin_3c',
-        text: '何を考えているか分からない者として',
-        textEn: 'As someone whose thoughts no one can read.',
-        scores: { kanja: 2, shikaku: 1 },
+        text: '精神統一する',
+        textEn: 'Focusing and settling your mind.',
+        scores: { kanja: 1, shikaku: 1 },
       },
       {
         id: 'shomin_3d',
-        text: '笑いと驚きを届ける者として',
-        textEn: 'As someone who brings laughter and surprise.',
-        scores: { hokashi: 2, sarugakushi: 1 },
+        text: '人を惹きつける技や、表現の仕方',
+        textEn: 'Skills and ways of expressing yourself that draw people in.',
+        scores: { hokashi: 1, sarugakushi: 1 },
       },
     ],
   },
