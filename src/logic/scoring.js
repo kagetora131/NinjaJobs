@@ -38,6 +38,30 @@ function dominantKey(scores) {
 }
 
 /**
+ * 同点の候補(winners)から1つに絞り込む共通のタイブレーク処理。
+ * 「最後の問の回答のdominantKey」→それでも決まらなければ「最初の問の回答の
+ * dominantKey」の順で試すが、**どちらもwinnersに実在する候補でなければ
+ * 採用しない**(ここを確認せずに返すと、tie-break対象から除外したはずの
+ * タイプ(例: 武士)がdominantKeyの結果としてたまたま返ってきた場合に、
+ * 除外を無視して復活してしまうバグになる。実際に武家系のD選択肢
+ * (虚無僧+2, 薬師+2)を挟んだ3択中2択武士のケースで、武士を候補から除外した
+ * はずなのに最終的に武士が返ってしまう不具合が発生していたため、この
+ * 実在チェックを追加した)。どちらも実在しない場合は、winners配列の並び順
+ * (呼び出し元のtypeIds順、= 決め打ちの優先順)で先頭のものを採用する。
+ * @param {string[]} winners 同点で並んだ候補のtypeId配列
+ * @param {Array<{scores: Record<string, number>}>} answers タイブレークの対象になった質問群の回答配列
+ */
+function breakTie(winners, answers) {
+  const lastType = dominantKey(answers[answers.length - 1].scores)
+  if (winners.includes(lastType)) return lastType
+
+  const firstType = dominantKey(answers[0].scores)
+  if (winners.includes(firstType)) return firstType
+
+  return winners[0]
+}
+
+/**
  * 共通7問の回答から「武家系/寺社系/庶民」を判定する。
  * (「忍者タイプ診断_新ロジック仕様書」4章)
  *
@@ -65,12 +89,7 @@ export function resolveFaction(commonAnswers) {
   const max = Math.max(...FACTION_KEYS.map((key) => totals[key]))
   const winners = FACTION_KEYS.filter((key) => totals[key] === max)
 
-  let factionId = winners[0]
-  if (winners.length > 1) {
-    const lastFaction = dominantKey(commonAnswers[commonAnswers.length - 1].scores)
-    const firstFaction = dominantKey(commonAnswers[0].scores)
-    factionId = winners.includes(lastFaction) ? lastFaction : firstFaction
-  }
+  const factionId = winners.length === 1 ? winners[0] : breakTie(winners, commonAnswers)
 
   return { factionId, totals, shakou, kamoku }
 }
@@ -95,13 +114,7 @@ export function resolveBranchType(factionId, branchAnswers) {
   const max = Math.max(...typeIds.map((id) => totals[id]))
   const winners = typeIds.filter((id) => totals[id] === max)
 
-  if (winners.length === 1) {
-    return winners[0]
-  }
-
-  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
-  const firstType = dominantKey(branchAnswers[0].scores)
-  return winners.includes(lastType) ? lastType : firstType
+  return winners.length === 1 ? winners[0] : breakTie(winners, branchAnswers)
 }
 
 /**
@@ -140,13 +153,7 @@ export function resolveBukeType(branchAnswers) {
     winners = winners.filter((id) => id !== 'bushi')
   }
 
-  if (winners.length === 1) {
-    return winners[0]
-  }
-
-  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
-  const firstType = dominantKey(branchAnswers[0].scores)
-  return winners.includes(lastType) ? lastType : firstType
+  return winners.length === 1 ? winners[0] : breakTie(winners, branchAnswers)
 }
 
 const SHAKOU_TYPE_IDS = ['akindo', 'kusuriya', 'hokashi', 'sarugakushi']
@@ -183,13 +190,7 @@ export function resolveShominType(branchAnswers, shakou, kamoku) {
   const max = Math.max(...typeIds.map((id) => totals[id]))
   const winners = typeIds.filter((id) => totals[id] === max)
 
-  if (winners.length === 1) {
-    return winners[0]
-  }
-
-  const lastType = dominantKey(branchAnswers[branchAnswers.length - 1].scores)
-  const firstType = dominantKey(branchAnswers[0].scores)
-  return winners.includes(lastType) ? lastType : firstType
+  return winners.length === 1 ? winners[0] : breakTie(winners, branchAnswers)
 }
 
 /**

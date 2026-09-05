@@ -249,9 +249,18 @@ export const COMMON_QUESTIONS = [
  * かけて信頼を勝ち取り武士として認められた者」というコンセプト(刀や兜など
  * 武士を直接示唆する表現は避け、"同じ相手・同じ関係にじっくり向き合う一貫性"
  * を識別軸にする)。4択に統一し、Dは虚無僧・薬師どちらにも寄らない
- * 「器用貧乏」枠(scores: { komuso: 1, kusushi: 1 })。武士は+1、虚無僧・薬師は
+ * 「器用貧乏」枠(scores: { komuso: 2, kusushi: 2 })。武士は+1、虚無僧・薬師は
  * +2という配点差により、3問合計で虚無僧・薬師(満点6)が武士(満点3)より自然に
  * 高得点になりやすく、武士が低配点だけで自然にレア化する(5章参照)。
+ *
+ * Dの配点は当初{ komuso: 1, kusushi: 1 }だったが、「武士を全12タイプ中
+ * 最もレアにしたい」という要望を受けて{ komuso: 2, kusushi: 2 }に引き上げた
+ * (7章「武士のレア化」参照)。Dが1/1のままだと「3問中2問が武士・残り1問がD」
+ * という組み合わせで武士(2点)がkomuso/kusushi(各1点)を単独で上回り
+ * 同点扱いにならず武士が勝ててしまっていたため、Dの配点を2/2に上げることで
+ * この組み合わせを「3すくみの同点」に変え(武士だけ同点勝ち不可のルールにより
+ * 除外)、武士が結果になるのは3問すべてで武士の選択肢を選んだ場合のみに
+ * 絞り込んでいる。
  */
 export const BUKE_QUESTIONS = [
   {
@@ -281,7 +290,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_1d',
         text: 'その場の状況に応じて、やり方を柔軟に変える',
         textEn: 'Adapt your approach flexibly to whatever the moment calls for.',
-        scores: { komuso: 1, kusushi: 1 },
+        scores: { komuso: 2, kusushi: 2 },
       },
     ],
   },
@@ -312,7 +321,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_2d',
         text: 'その日の気分で、過ごし方を変える',
         textEn: 'However the mood takes you that day.',
-        scores: { komuso: 1, kusushi: 1 },
+        scores: { komuso: 2, kusushi: 2 },
       },
     ],
   },
@@ -343,7 +352,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_3d',
         text: 'その時々で、興味のあることを幅広く',
         textEn: 'Whatever happens to interest you at the time, broadly.',
-        scores: { komuso: 1, kusushi: 1 },
+        scores: { komuso: 2, kusushi: 2 },
       },
     ],
   },
