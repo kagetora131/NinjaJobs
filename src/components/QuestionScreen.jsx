@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useRef } from 'react'
 import ProgressBar from './ProgressBar.jsx'
 
 /**
@@ -19,19 +19,23 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
 
   // 「常に一番上を選ぶと必ず同じ結果になる」のを防ぐため、選択肢の表示順を
   // 問題ごとにシャッフルする。判定に使うのはchoiceオブジェクト自体(scores)
-  // なので、表示順を変えても採点結果には影響しない。question.idが同じ間は
-  // 再レンダーしてもシャッフル順を保つ(選んでいる最中に順番が変わらないように)。
-  const shuffledChoices = useMemo(() => shuffle(question.choices), [question.id])
+  // なので、表示順を変えても採点結果には影響しない。
+  //
+  // シャッフル結果はquestion.idをキーにこのコンポーネントの生存期間(=1回の
+  // 診断セッション)を通じてキャッシュしており、「戻る」で同じ問題に再訪
+  // しても並び順は変わらない(再訪のたびに並び替わると、選び直す時に
+  // 前回どれを選んだか分かりにくくなるため)。「もう一度診断する」で
+  // QuestionScreen自体が再マウントされた際はキャッシュもリセットされ、
+  // 新しい診断では改めてランダムな順序になる。
+  const shuffleCache = useRef(new Map())
+  if (!shuffleCache.current.has(question.id)) {
+    shuffleCache.current.set(question.id, shuffle(question.choices))
+  }
+  const shuffledChoices = shuffleCache.current.get(question.id)
 
   return (
     <div key={question.id} className="screen question-screen">
       <ProgressBar lang={lang} current={questionNumber} total={totalQuestions} />
-
-      {onBack && (
-        <button type="button" className="question-screen__back" onClick={onBack}>
-          {isEn ? '← Return to the previous question' : '← 一つ前の問いに戻る'}
-        </button>
-      )}
 
       {/* 巻物に記された問い */}
       <div className="scroll">
@@ -52,6 +56,12 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
           </li>
         ))}
       </ul>
+
+      {onBack && (
+        <button type="button" className="question-screen__back" onClick={onBack}>
+          {isEn ? '← Return to the previous question' : '← 一つ前の問いに戻る'}
+        </button>
+      )}
     </div>
   )
 }

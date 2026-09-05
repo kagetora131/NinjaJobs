@@ -356,7 +356,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  margin: 0 0 1.1rem;
+  margin: 1.1rem 0 0;
   padding: 0.3rem 0.2rem;
   border: none;
   background: none;
