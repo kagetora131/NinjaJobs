@@ -107,8 +107,8 @@ export const NINJA_TYPES = [
   {
     id: 'tsunenokatachi',
     name: '常の形',
-    nameEn: 'Tsunenokatachi',
-    epithetEn: 'The Ordinary Form',
+    nameEn: 'Tsunenokata',
+    epithetEn: 'The Peasant',
     keyword: '擬態・堅実・目立たなさ',
     keywordEn: 'Mimicry · Steadiness · Anonymity',
     description:

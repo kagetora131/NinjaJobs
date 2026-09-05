@@ -70,7 +70,7 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
           <motion.h2 className="result-card__title" variants={titleVariants}>
             {isEn ? ninjaType.nameEn : ninjaType.name}
           </motion.h2>
-          <span className="result-card__title-en">
+          <span className={`result-card__title-en${isEn ? ' result-card__title-en--epithet' : ''}`}>
             {isEn ? ninjaType.epithetEn : ninjaType.nameEn}
           </span>
 

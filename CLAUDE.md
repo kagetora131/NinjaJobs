@@ -520,6 +520,17 @@ kusushi.png
   `keywordEn`・`descriptionEn`を追加。既存の`nameEn`(ローマ字、例: "Shikaku")を
   英語モードでの主表示名としてそのまま流用。日本語版の`name`/`keyword`/
   `description`は一切変更していない(標準instruction厳守)。
+  ※`tsunenokatachi`のみ`nameEn`/`epithetEn`をそれぞれ"Tsunenokatachi"/
+  "The Ordinary Form"から"Tsunenokata"/"The Peasant"に変更(ユーザー指定)。
+- 英語版の固有名詞(`nameEn`)＋添え名(`epithetEn`)は、結果画面
+  (`ResultCard.jsx`)・十二タイプ一覧(`TypeGallery.jsx`)のどちらも
+  **2行表示**にしている(例: 1行目"Komuso"、2行目"The Hermit Monk")。
+  日本語版は「虚無僧 KOMUSO」のように短いローマ字コードを横並びで
+  小さく添えるだけで済むが、英語版の添え名は"The Hermit Monk"のような
+  文の一部なので、同じ横並び・大文字化・広い字間のスタイルのままだと
+  読みにくい。`isEn`の時だけ専用の修飾クラス
+  (`.result-card__title-en--epithet` / `.gallery__name--stacked`)を付け、
+  大文字化・字間を解除してイタリック体で2行目に自然に収まるようにしている。
 - `questions.js`の各質問・各選択肢に`textEn`を追加(内部スコア・id・日本語の
   `text`は変更なし)。
 - 結果画面の落款印(`result-card__seal`)は、和柄の印章という性質上、英語版でも

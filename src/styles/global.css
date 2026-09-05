@@ -569,6 +569,17 @@ button {
   margin-bottom: 1.1rem;
 }
 
+/* 英語版: 添え名(epithetEn)は"KOMUSO"のような短いローマ字コードではなく
+   "The Hermit Monk"のような文の一部なので、大文字化・広い字間をやめて
+   通常の読みやすい表示にする */
+.result-card__title-en--epithet {
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  text-indent: 0;
+  text-transform: none;
+  font-style: italic;
+}
+
 /* 墨の罫 */
 .result-card__title-en::after {
   content: '';
@@ -736,6 +747,29 @@ button {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(244, 240, 230, 0.4);
+}
+
+/* 英語版: nameEn(固有名詞)の下にepithetEn(添え名)を2行で表示する。
+   JA版の「虚無僧 KOMUSO」のような横並びの短いローマ字コードとは違い、
+   "The Hermit Monk"のような文の一部なので、大文字化・広い字間をやめて
+   縦に積む(gallery__name--stacked)。 */
+.gallery__name--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.gallery__name--stacked .gallery__name-en {
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-style: italic;
+  color: rgba(244, 240, 230, 0.55);
+}
+
+.gallery__name--stacked .gallery__extreme-badge {
+  margin-left: 0;
+  margin-top: 0.1rem;
 }
 
 .gallery__extreme-badge {

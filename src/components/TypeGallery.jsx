@@ -35,8 +35,8 @@ export default function TypeGallery({ lang, resultId }) {
               </div>
 
               <div className="gallery__text">
-                <p className="gallery__name">
-                  {isEn ? type.nameEn : type.name}
+                <p className={`gallery__name${isEn ? ' gallery__name--stacked' : ''}`}>
+                  <span className="gallery__name-main">{isEn ? type.nameEn : type.name}</span>
                   <span className="gallery__name-en">{isEn ? type.epithetEn : type.nameEn}</span>
                   {isExtreme && (
                     <span className="gallery__extreme-badge">{isEn ? 'Ultra Rare' : '激レア'}</span>
