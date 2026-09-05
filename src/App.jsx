@@ -39,6 +39,7 @@ export default function App() {
   const [started, setStarted] = useState(false)
   const [commonAnswers, setCommonAnswers] = useState([])
   const [branchAnswers, setBranchAnswers] = useState([])
+  const [lang, setLang] = useState('ja')
 
   const { phase, factionId, resultId } = deriveState(started, commonAnswers, branchAnswers)
 
@@ -74,10 +75,19 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {phase === PHASE.START && <StartScreen onStart={handleStart} />}
+      <button
+        type="button"
+        className="lang-toggle"
+        onClick={() => setLang((prev) => (prev === 'ja' ? 'en' : 'ja'))}
+      >
+        {lang === 'ja' ? 'English' : '日本語'}
+      </button>
+
+      {phase === PHASE.START && <StartScreen lang={lang} onStart={handleStart} />}
 
       {phase === PHASE.COMMON && (
         <QuestionScreen
+          lang={lang}
           question={COMMON_QUESTIONS[commonAnswers.length]}
           questionNumber={commonAnswers.length + 1}
           totalQuestions={TOTAL_QUESTIONS}
@@ -88,6 +98,7 @@ export default function App() {
 
       {phase === PHASE.BRANCH && factionId && (
         <QuestionScreen
+          lang={lang}
           question={BRANCH_QUESTIONS[factionId][branchAnswers.length]}
           questionNumber={COMMON_COUNT + branchAnswers.length + 1}
           totalQuestions={TOTAL_QUESTIONS}
@@ -97,7 +108,7 @@ export default function App() {
       )}
 
       {phase === PHASE.RESULT && resultId && (
-        <ResultCard ninjaType={NINJA_TYPE_MAP[resultId]} onRetry={handleRetry} />
+        <ResultCard lang={lang} ninjaType={NINJA_TYPE_MAP[resultId]} onRetry={handleRetry} />
       )}
     </div>
   )

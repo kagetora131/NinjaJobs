@@ -7,11 +7,15 @@ const ALL_TYPE_IDS = FACTIONS.flatMap((faction) => faction.typeIds)
 // 武士のみ低配点による自然発生的なレア職業(詳細はCLAUDE.md 7章)
 const EXTREME_TYPE_IDS = new Set(['bushi'])
 
-export default function TypeGallery({ resultId }) {
+export default function TypeGallery({ lang, resultId }) {
+  const isEn = lang === 'en'
+
   return (
     <section className="gallery">
       <h3 className="gallery__heading">
-        <span className="gallery__heading-text">十二の忍びの道</span>
+        <span className="gallery__heading-text">
+          {isEn ? 'The Twelve Paths of the Shinobi' : '十二の忍びの道'}
+        </span>
       </h3>
 
       <ul className="gallery__list">
@@ -27,17 +31,19 @@ export default function TypeGallery({ resultId }) {
             >
               <div className="gallery__thumb">
                 <img src={type.imagePath} alt={type.name} loading="lazy" decoding="async" />
-                {isResult && <span className="gallery__badge">あなたの道</span>}
+                {isResult && <span className="gallery__badge">{isEn ? 'Your Path' : 'あなたの道'}</span>}
               </div>
 
               <div className="gallery__text">
                 <p className="gallery__name">
-                  {type.name}
-                  <span className="gallery__name-en">{type.nameEn}</span>
-                  {isExtreme && <span className="gallery__extreme-badge">激レア</span>}
+                  {isEn ? type.nameEn : type.name}
+                  <span className="gallery__name-en">{isEn ? type.epithetEn : type.nameEn}</span>
+                  {isExtreme && (
+                    <span className="gallery__extreme-badge">{isEn ? 'Ultra Rare' : '激レア'}</span>
+                  )}
                 </p>
-                <p className="gallery__keyword">{type.keyword}</p>
-                <p className="gallery__desc">{type.description}</p>
+                <p className="gallery__keyword">{isEn ? type.keywordEn : type.keyword}</p>
+                <p className="gallery__desc">{isEn ? type.descriptionEn : type.description}</p>
               </div>
             </li>
           )

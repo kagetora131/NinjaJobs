@@ -1,8 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import TypeGallery from './TypeGallery.jsx'
 
-export default function ResultCard({ ninjaType, onRetry }) {
+export default function ResultCard({ lang, ninjaType, onRetry }) {
   const reduceMotion = useReducedMotion()
+  const isEn = lang === 'en'
   const d = (seconds) => (reduceMotion ? 0 : seconds)
 
   const scrollVariants = {
@@ -58,22 +59,31 @@ export default function ResultCard({ ninjaType, onRetry }) {
         <div className="rod rod--capped" aria-hidden="true" />
 
         <div className="kakejiku__body washi">
-          <p className="result-card__eyebrow">お前の忍びの道は――</p>
+          <p className="result-card__eyebrow">
+            {isEn ? 'Thy path of shinobi is —' : 'お前の忍びの道は――'}
+          </p>
 
           <motion.div className="result-card__frame" variants={imageVariants}>
             <img className="result-card__image" src={ninjaType.imagePath} alt={ninjaType.name} />
           </motion.div>
 
           <motion.h2 className="result-card__title" variants={titleVariants}>
-            {ninjaType.name}
+            {isEn ? ninjaType.nameEn : ninjaType.name}
           </motion.h2>
-          <span className="result-card__title-en">{ninjaType.nameEn}</span>
+          <span className="result-card__title-en">
+            {isEn ? ninjaType.epithetEn : ninjaType.nameEn}
+          </span>
 
           <motion.div variants={bodyVariants}>
-            <span className="result-card__keyword">{ninjaType.keyword}</span>
-            <p className="result-card__description">{ninjaType.description}</p>
+            <span className="result-card__keyword">
+              {isEn ? ninjaType.keywordEn : ninjaType.keyword}
+            </span>
+            <p className="result-card__description">
+              {isEn ? ninjaType.descriptionEn : ninjaType.description}
+            </p>
           </motion.div>
 
+          {/* 落款印(伝統的な忍者の印章の意匠のため、言語を問わず日本語の名の一部を使う) */}
           <motion.div className="result-card__seal" variants={sealVariants} aria-hidden="true">
             {ninjaType.name.slice(0, 2)}
           </motion.div>
@@ -87,12 +97,12 @@ export default function ResultCard({ ninjaType, onRetry }) {
         animate={{ opacity: 1 }}
         transition={{ duration: d(0.6), delay: d(2.4) }}
       >
-        <TypeGallery resultId={ninjaType.id} />
+        <TypeGallery lang={lang} resultId={ninjaType.id} />
       </motion.div>
 
       <div className="result-screen__actions">
         <button type="button" className="btn-secondary" onClick={onRetry}>
-          もう一度診断する
+          {isEn ? 'Take the Trial Again' : 'もう一度診断する'}
         </button>
       </div>
     </div>

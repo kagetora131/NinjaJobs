@@ -1,7 +1,8 @@
 const KANJI_NUMERALS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
 
-export default function ProgressBar({ current, total }) {
+export default function ProgressBar({ lang, current, total }) {
   const percent = Math.round((current / total) * 100)
+  const isEn = lang === 'en'
 
   return (
     <div
@@ -10,11 +11,11 @@ export default function ProgressBar({ current, total }) {
       aria-valuenow={current}
       aria-valuemin={0}
       aria-valuemax={total}
-      aria-label={`全${total}問中${current}問目`}
+      aria-label={isEn ? `Question ${current} of ${total}` : `全${total}問中${current}問目`}
     >
       <div className="progress-bar__label">
         <span className="progress-bar__kanji">
-          第{KANJI_NUMERALS[current] ?? current}問
+          {isEn ? `Question ${current}` : `第${KANJI_NUMERALS[current] ?? current}問`}
         </span>
         <span className="progress-bar__count">
           {current} / {total}

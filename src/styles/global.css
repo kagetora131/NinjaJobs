@@ -57,6 +57,31 @@ button {
   padding: 2.5rem 1.25rem;
 }
 
+/* 言語切り替えボタン(全画面共通で右上に常設) */
+.lang-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  padding: 0.4rem 0.85rem;
+  background: rgba(20, 20, 26, 0.55);
+  border: 1px solid rgba(244, 240, 230, 0.3);
+  border-radius: 999px;
+  color: var(--color-text-light);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  border-color: var(--color-kondo);
+  color: var(--color-kondo);
+}
+
 .screen {
   width: 100%;
   max-width: var(--max-width);
@@ -107,6 +132,19 @@ button {
 
 .title-plate--lg .title-plate__text {
   font-size: clamp(1.9rem, 7vw, 2.3rem);
+}
+
+/* 英語版: ラテン文字は縦書きだと読みにくいため横書きに切り替える */
+.title-plate--horizontal {
+  flex-direction: row;
+  padding: 0.9rem 1.1rem;
+}
+
+.title-plate--horizontal .title-plate__text {
+  writing-mode: horizontal-tb;
+  text-align: center;
+  letter-spacing: 0.08em;
+  font-size: clamp(1.05rem, 5vw, 1.6rem) !important;
 }
 
 /* 朱の落款印 */

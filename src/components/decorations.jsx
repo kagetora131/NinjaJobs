@@ -11,10 +11,12 @@ export function Shuriken({ className }) {
 
 /**
  * 12枚のイラストに共通する「白地に縦書きの題字＋朱の落款」の意匠をUIに流用する。
+ * 英語版では縦書き(vertical-rl)だとラテン文字が読みにくいため、horizontal
+ * を指定すると横書き表示に切り替える(落款印の意匠自体は言語を問わず共通)。
  */
-export function TitlePlate({ text, seal, size = 'md' }) {
+export function TitlePlate({ text, seal, size = 'md', horizontal = false }) {
   return (
-    <div className={`title-plate title-plate--${size}`}>
+    <div className={`title-plate title-plate--${size}${horizontal ? ' title-plate--horizontal' : ''}`}>
       <span className="title-plate__text">{text}</span>
       {seal && <span className="title-plate__seal">{seal}</span>}
     </div>
