@@ -1,7 +1,27 @@
+import { useMemo } from 'react'
 import ProgressBar from './ProgressBar.jsx'
+
+/**
+ * Fisher-Yatesで配列をシャッフルする(元の配列は変更しない)。
+ * @param {Array<T>} array
+ */
+function shuffle(array) {
+  const result = [...array]
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
 
 export default function QuestionScreen({ lang, question, questionNumber, totalQuestions, onAnswer, onBack }) {
   const isEn = lang === 'en'
+
+  // 「常に一番上を選ぶと必ず同じ結果になる」のを防ぐため、選択肢の表示順を
+  // 問題ごとにシャッフルする。判定に使うのはchoiceオブジェクト自体(scores)
+  // なので、表示順を変えても採点結果には影響しない。question.idが同じ間は
+  // 再レンダーしてもシャッフル順を保つ(選んでいる最中に順番が変わらないように)。
+  const shuffledChoices = useMemo(() => shuffle(question.choices), [question.id])
 
   return (
     <div key={question.id} className="screen question-screen">
@@ -24,7 +44,7 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
 
       {/* 木札に記された答え */}
       <ul className="choice-list">
-        {question.choices.map((choice) => (
+        {shuffledChoices.map((choice) => (
           <li key={choice.id}>
             <button type="button" className="choice-button" onClick={() => onAnswer(choice)}>
               {isEn ? choice.textEn : choice.text}
