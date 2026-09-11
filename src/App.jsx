@@ -8,6 +8,16 @@ import { resolveFaction, resolveFinalType } from './logic/scoring.js'
 
 const PHASE = { START: 'start', COMMON: 'common', BRANCH: 'branch', RESULT: 'result' }
 
+// 端末の言語設定が日本語以外なら英語をデフォルトにする
+// (フランス語・スペイン語など未対応言語の訪問者にも英語を表示するため)。
+function detectInitialLang() {
+  try {
+    return navigator.language.toLowerCase().startsWith('ja') ? 'ja' : 'en'
+  } catch {
+    return 'ja'
+  }
+}
+
 /**
  * 「戻る」を安全に成立させるため、画面(phase)や分類・結果はすべて
  * 回答の配列(commonAnswers/branchAnswers)から毎回導出する。個別に
@@ -39,7 +49,7 @@ export default function App() {
   const [started, setStarted] = useState(false)
   const [commonAnswers, setCommonAnswers] = useState([])
   const [branchAnswers, setBranchAnswers] = useState([])
-  const [lang, setLang] = useState('ja')
+  const [lang, setLang] = useState(detectInitialLang)
 
   const { phase, factionId, resultId } = deriveState(started, commonAnswers, branchAnswers)
 
