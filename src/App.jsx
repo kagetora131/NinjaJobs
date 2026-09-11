@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import StartScreen from './components/StartScreen.jsx'
 import QuestionScreen from './components/QuestionScreen.jsx'
 import ResultCard from './components/ResultCard.jsx'
@@ -8,9 +8,17 @@ import { resolveFaction, resolveFinalType } from './logic/scoring.js'
 
 const PHASE = { START: 'start', COMMON: 'common', BRANCH: 'branch', RESULT: 'result' }
 
-// 端末の言語設定が日本語以外なら英語をデフォルトにする
-// (フランス語・スペイン語など未対応言語の訪問者にも英語を表示するため)。
+// URLに ?lang=ja / ?lang=en があれば最優先(ホームページの表示言語のまま
+// アプリを開けるようにするため)。無ければ端末の言語設定から判定し、
+// 日本語以外なら英語をデフォルトにする(フランス語・スペイン語など
+// 未対応言語の訪問者にも英語を表示するため)。
 function detectInitialLang() {
+  try {
+    const urlLang = new URLSearchParams(window.location.search).get('lang')
+    if (urlLang === 'ja' || urlLang === 'en') return urlLang
+  } catch {
+    // ignore
+  }
   try {
     return navigator.language.toLowerCase().startsWith('ja') ? 'ja' : 'en'
   } catch {
@@ -50,6 +58,19 @@ export default function App() {
   const [commonAnswers, setCommonAnswers] = useState([])
   const [branchAnswers, setBranchAnswers] = useState([])
   const [lang, setLang] = useState(detectInitialLang)
+
+  // ?lang= で開かれた場合、初期表示には反映済みなのでURLからは消しておく。
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href)
+      if (url.searchParams.has('lang')) {
+        url.searchParams.delete('lang')
+        window.history.replaceState(null, '', url.pathname + url.search + url.hash)
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
 
   const { phase, factionId, resultId } = deriveState(started, commonAnswers, branchAnswers)
 
