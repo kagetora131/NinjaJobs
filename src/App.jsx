@@ -19,6 +19,13 @@ function detectInitialLang() {
   } catch {
     // ignore
   }
+  // ホームページの表示言語(同一オリジンのlocalStorageを共有)を端末の言語設定より優先する。
+  try {
+    const hpLang = window.localStorage.getItem('kagetora-lang')
+    if (hpLang === 'ja' || hpLang === 'en') return hpLang
+  } catch {
+    // ignore
+  }
   try {
     return navigator.language.toLowerCase().startsWith('ja') ? 'ja' : 'en'
   } catch {
