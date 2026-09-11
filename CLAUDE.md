@@ -511,11 +511,13 @@ kusushi.png
 
 ### 実装方式
 - 診断ロジック(`scoring.js`)は言語に依存しないため変更なし。
-- `App.jsx`に`lang`state('ja'|'en'、既定'ja')を追加し、全画面共通のヘッダー的な
-  役割として右上固定の言語切替ボタン(`.lang-toggle`)を常設。`StartScreen`/
-  `QuestionScreen`/`ResultCard`(経由で`TypeGallery`)に`lang`をpropsで渡す
-  シンプルなprop drilling方式(状態はlocalStorage等に永続化しない。1セッション
-  内で切り替えられれば十分という判断)。
+- `App.jsx`に`lang`state('ja'|'en'、既定'ja')を追加。右上固定の言語切替ボタン
+  (`.lang-toggle`)は**開始画面(`phase === 'start'`)でのみ表示**する。診断中に
+  言語が切り替わると設問の並び順や進行が分かりにくくなるため、開始前に選び
+  切ってもらう方針(「もう一度診断する」で開始画面に戻れば再度切り替え可能。
+  1回の診断中は言語固定)。`StartScreen`/`QuestionScreen`/`ResultCard`(経由で
+  `TypeGallery`)に`lang`をpropsで渡すシンプルなprop drilling方式(状態は
+  localStorage等に永続化しない)。
 - `ninjaTypes.js`の各タイプに`epithetEn`(英語の添え名、例: "The Assassin")・
   `keywordEn`・`descriptionEn`を追加。既存の`nameEn`(ローマ字、例: "Shikaku")を
   英語モードでの主表示名としてそのまま流用。日本語版の`name`/`keyword`/

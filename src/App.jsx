@@ -75,13 +75,18 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <button
-        type="button"
-        className="lang-toggle"
-        onClick={() => setLang((prev) => (prev === 'ja' ? 'en' : 'ja'))}
-      >
-        {lang === 'ja' ? 'English' : '日本語'}
-      </button>
+      {/* 言語切替は開始画面のみ。診断中に言語が変わると設問の並びや進行が
+          分かりにくくなるため、開始前に選び切ってもらう(「もう一度診断する」で
+          開始画面に戻れば再度切り替えられる)。 */}
+      {phase === PHASE.START && (
+        <button
+          type="button"
+          className="lang-toggle"
+          onClick={() => setLang((prev) => (prev === 'ja' ? 'en' : 'ja'))}
+        >
+          {lang === 'ja' ? 'English' : '日本語'}
+        </button>
+      )}
 
       {phase === PHASE.START && <StartScreen lang={lang} onStart={handleStart} />}
 
