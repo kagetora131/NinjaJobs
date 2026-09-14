@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import StartScreen from './components/StartScreen.jsx'
 import QuestionScreen from './components/QuestionScreen.jsx'
 import ResultCard from './components/ResultCard.jsx'
 import { COMMON_QUESTIONS, BRANCH_QUESTIONS, COMMON_COUNT, TOTAL_QUESTIONS } from './data/questions.js'
 import { NINJA_TYPE_MAP } from './data/ninjaTypes.js'
 import { resolveFaction, resolveFinalType } from './logic/scoring.js'
+import { logDiagnosisEvent } from './lib/analytics.js'
 
 const PHASE = { START: 'start', COMMON: 'common', BRANCH: 'branch', RESULT: 'result' }
 
@@ -81,10 +82,23 @@ export default function App() {
 
   const { phase, factionId, resultId } = deriveState(started, commonAnswers, branchAnswers)
 
+  // テスターの結果が偏っている(虚無僧に集中する)原因を調査するための匿名ログ。
+  // 結果画面に到達した瞬間に1回だけ送る(loggedResultRefでこのラウンド中の
+  // 二重送信を防ぎ、handleStartでリセットして次の診断では再度送れるようにする)。
+  // 個人情報は送らない(詳細はsrc/lib/analytics.js)。送信失敗しても診断結果の
+  // 表示には一切影響しない。
+  const loggedResultRef = useRef(false)
+  useEffect(() => {
+    if (phase !== PHASE.RESULT || !resultId || loggedResultRef.current) return
+    loggedResultRef.current = true
+    logDiagnosisEvent({ lang, commonAnswers, branchAnswers, factionId, resultId })
+  }, [phase, resultId, lang, commonAnswers, branchAnswers, factionId])
+
   function handleStart() {
     setCommonAnswers([])
     setBranchAnswers([])
     setStarted(true)
+    loggedResultRef.current = false
   }
 
   function handleCommonAnswer(choice) {

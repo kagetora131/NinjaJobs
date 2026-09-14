@@ -586,3 +586,60 @@ kusushi.png
 `SHOMIN_QUESTIONS`の配点(質問ごとにB/C選択肢の優勢タイプが入れ替わる設計)と
 加算式スコアリングの組み合わせによる副作用と見られる。対応は必要に応じて
 別途検討する(本レビュー時点では未対応・要相談事項)。
+
+## 13. 診断結果の匿名データ収集(`src/lib/analytics.js`)
+
+**経緯**: 実際にテスターに試してもらったところ「3人中3人が虚無僧になった」
+との報告があり、原因(総当たり計算上の偏り／実際の回答分布の偏り／実装の
+不具合、のどれなのか)を調査するため、リリース済みの本番環境でも実際の
+回答パターンを収集できるようにした。ブラウザでの総当たり計算だけでは
+「実在する人間が実際にどう答えるか」までは分からないため。
+
+### 収集する内容(個人情報は一切含めない)
+
+- `lang`: 診断時の言語('ja'/'en')
+- `common_picks`: 共通7問で選んだ選択肢idの配列(例: `["c1a","c2c",...]`)
+- `branch_picks`: 分岐後3問で選んだ選択肢idの配列
+- `faction_id`: 内部分類(buke/jisha/shomin)。ユーザーには見せない値だが、
+  調査目的では有用なため収集する
+- `result_id`: 最終タイプid(例: `"komuso"`)
+- `client_session_id`: ブラウザのlocalStorageにランダム生成して保存するUUID
+  (個人情報ではない。同じ人の複数回診断を後から見分けるためだけの用途)
+
+名前・メールアドレス・IPアドレス・ユーザーエージェント等は一切送信しない。
+
+### 保存先とその設計
+
+- 保存先はSupabaseの`ninja-training-log`プロジェクト
+  (`rtecihjilnuhhgtpogdw`)内の`public.ninja_shindan_diagnosis_events`
+  テーブル。**このアプリ(NinjaJobsリポジトリ)専用の無関係な独立テーブル**
+  であり、`ninja-training-log`アプリ自身のテーブル(`training_logs`/
+  `user_progress`)とはスキーマ・外部キーともに一切関連しない。
+  新規にSupabaseプロジェクトを作ると無料枠のactiveプロジェクト数上限に
+  近づくため、既存の空いている無料枠を間借りする形にした(ユーザー承認済み)。
+- RLSは「anonキーからのINSERTのみ許可」で、SELECT/UPDATE/DELETEのポリシーは
+  一切定義していない。つまり公開されている`.env`のanonキー経由では
+  **書き込みだけができ、読み取ることはできない**(読み取りはSupabase
+  ダッシュボードのSQL Editor等、プロジェクト所有者の権限でのみ可能)。
+- `@supabase/supabase-js`は1件INSERTするだけの用途には過大(バンドルサイズが
+  約230KB増える)なため使わず、PostgRESTのREST APIに`fetch`で直接POSTする
+  実装にした(このアプリの「バックエンドなし・依存最小限」という方針を保つ
+  ため)。
+- `.env`(`VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`)は`.gitignore`済みで
+  リポジトリには含まれない。値は`.env.example`を参照。
+
+### 実装
+
+- `App.jsx`で結果画面(`phase === 'result'`)に到達した瞬間に1回だけ
+  `logDiagnosisEvent()`を呼ぶ(`useRef`で同一ラウンド内の二重送信を防止、
+  「もう一度診断する」でリセットして次の診断では再度送れるようにする)。
+- 送信は完全にfire-and-forget。失敗しても`console.warn`するだけで診断結果の
+  表示には一切影響しない(通信環境が悪い訪問者の体験を損なわないため)。
+
+### データの見方
+
+Supabase側で`select common_picks, branch_picks, faction_id, result_id, lang
+from ninja_shindan_diagnosis_events order by created_at desc`のように問い合わせ、
+実際の回答パターンと結果の対応を確認する。十分な件数が集まった時点で、
+7章の総当たり計算値(理論値)と実際の分布を比較し、偏りが理論通りの範囲内か
+(単に少人数でのサンプル差)、それとも実装の不具合か再度判断すること。
