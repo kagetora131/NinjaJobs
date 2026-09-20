@@ -1,0 +1,18 @@
+[
+  {
+    "label": "調整前(v3.1・〜9/19)",
+    "pct": { "komuso": 21.89, "kusushi": 16.42, "shukke": 11.21, "yamabushi": 11.21, "akindo": 9.56, "hokashi": 9.31, "tsunenokatachi": 6.31, "kusuriya": 4.15, "sarugakushi": 4.14, "kanja": 3.99, "shikaku": 1.2, "bushi": 0.61 }
+  },
+  {
+    "label": "案A＋軸ボーナス2(9/20 1回目)",
+    "pct": { "kusushi": 12.15, "hokashi": 12.14, "akindo": 11.87, "komuso": 10.89, "tsunenokatachi": 10.68, "kusuriya": 9.81, "yamabushi": 9.09, "shukke": 7.25, "kanja": 6.8, "sarugakushi": 6.69, "shikaku": 2.25, "bushi": 0.37 }
+  },
+  {
+    "label": "均等化＋c4b調整(9/20 2回目)",
+    "pct": { "kusushi": 10.66, "kusuriya": 9.64, "tsunenokatachi": 9.39, "komuso": 9.09, "hokashi": 8.73, "sarugakushi": 8.35, "shikaku": 8.24, "shukke": 8.17, "yamabushi": 8.17, "akindo": 8.01, "kanja": 7.89, "bushi": 3.66 }
+  },
+  {
+    "label": "刺客を区分なしに(Excel入力の反映前)",
+    "pct": { "kusushi": 10.66, "kusuriya": 9.68, "tsunenokatachi": 9.47, "kanja": 9.22, "komuso": 9.09, "hokashi": 8.99, "sarugakushi": 8.4, "akindo": 8.29, "shukke": 8.17, "yamabushi": 8.17, "shikaku": 6.2, "bushi": 3.66 }
+  }
+]
