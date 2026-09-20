@@ -10,6 +10,9 @@ const FACTION_KEYS = ['buke', 'jisha', 'shomin']
 // 結果を塗り替えてしまわないようにするため。
 const AXIS_KEYS = ['teiju', 'tokidoki', 'hyohaku']
 const AXIS_BONUS = 1
+// mobilityを意図的に持たない(=ボーナス対象外の)タイプ。武士は最レア、刺客は
+// 武士に次ぐレアに保つため(2026/9/20のユーザー判断。7章参照)。
+const NO_MOBILITY_TYPE_IDS = ['bushi', 'shikaku']
 
 // 分類・タイプを増減させた際の登録漏れは静かに壊れる(そのタイプが永久に
 // 出なくなる)ため、開発時に検知する。
@@ -24,9 +27,9 @@ if (import.meta.env?.DEV) {
     if (missing.length) {
       throw new Error(`${f.id}: BRANCH_QUESTIONS で加点されないタイプがあります: ${missing.join(', ')}`)
     }
-    // 武士(bushi)以外は必ずmobilityを持つ(付け忘れると軸ボーナスが静かに効かなくなる)
+    // 武士・刺客以外は必ずmobilityを持つ(付け忘れると軸ボーナスが静かに効かなくなる)
     const badMobility = f.typeIds.filter(
-      (id) => id !== 'bushi' && !AXIS_KEYS.includes(NINJA_TYPE_MAP[id]?.mobility),
+      (id) => !NO_MOBILITY_TYPE_IDS.includes(id) && !AXIS_KEYS.includes(NINJA_TYPE_MAP[id]?.mobility),
     )
     if (badMobility.length) {
       throw new Error(`${f.id}: mobility が未設定/不正なタイプがあります: ${badMobility.join(', ')}`)
@@ -78,7 +81,7 @@ function breakTie(winners, answers) {
 
 /**
  * 軸ボーナス: mobilityがaxisWinnerと一致するタイプの合計点に+AXIS_BONUSする。
- * axisWinnerがnull(同点・全て0)のときは何もしない。mobilityを持たない武士は
+ * axisWinnerがnull(同点・全て0)のときは何もしない。mobilityを持たない武士・刺客は
  * 常に対象外。totalsは呼び出し元のオブジェクトを直接更新する。
  * @param {Record<string, number>} totals
  * @param {string[]} typeIds
@@ -137,7 +140,7 @@ export function resolveFaction(commonAnswers) {
  * 分岐後3問(寺社系)の回答から、フラット得点制で最終タイプを決める。
  * 同点は「問3(最後の問)」→「問1(最初の問)」の順でタイブレークする。
  *
- * 同点判定の前に、軸ボーナス(axisWinnerと同じmobilityのタイプに+2)を加算する。
+ * 同点判定の前に、軸ボーナス(axisWinnerと同じmobilityのタイプに+AXIS_BONUS)を加算する。
  *
  * @param {string} factionId 'jisha'
  * @param {Array<{scores: Record<string, number>}>} branchAnswers 分岐後3問で選んだ選択肢の配列
@@ -221,7 +224,7 @@ const KAMOKU_TYPE_IDS = ['kanja', 'shikaku']
  * 同点は「問3(最後の問)」→「問1(最初の問)」の順でタイブレークする
  * (タイブレークの判定自体はshakou/kamoku加算前の生スコアの優劣で行う)。
  *
- * shakou/kamokuの加算の後に、軸ボーナス(axisWinnerと同じmobilityのタイプに+2)
+ * shakou/kamokuの加算の後に、軸ボーナス(axisWinnerと同じmobilityのタイプに+AXIS_BONUS)
  * も加算してから比較する。
  *
  * @param {Array<{scores: Record<string, number>}>} branchAnswers 分岐後3問で選んだ選択肢の配列

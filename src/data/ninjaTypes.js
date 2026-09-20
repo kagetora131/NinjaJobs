@@ -16,8 +16,9 @@ import kusushi from '../assets/characters/kusushi.webp'
 // mobility(内部専用・画面には出さない): 移動・定住の区分。'teiju'(定住する)/
 // 'tokidoki'(時々定住する)/'hyohaku'(ずっと転々とする)のいずれか。共通7問で
 // 最も多く選ばれた区分と一致するタイプに、最終判定で一律ボーナスが入る
-// (scoring.jsのAXIS_BONUS)。**武士(bushi)だけは意図的にmobilityを持たない**
-// (ボーナス対象外。武士を最レアに保つため)。
+// (scoring.jsのAXIS_BONUS)。**武士(bushi)と刺客(shikaku)だけは意図的にmobilityを
+// 持たない**(ボーナス対象外。武士を最レア、刺客を武士に次ぐレアに保つため。
+// 刺客は2026/9/20に「時々定住する」から区分なしに変更した)。
 //
 // 英語版のフィールド(nameEn以外)について: 日本語版のname/keyword/description
 // は一切変更していない(標準instruction「カード説明文には今後手を加えない」を
@@ -133,7 +134,6 @@ export const NINJA_TYPES = [
   },
   {
     id: 'shikaku',
-    mobility: 'tokidoki',
     name: '刺客',
     nameEn: 'Shikaku',
     epithetEn: 'The Assassin',
