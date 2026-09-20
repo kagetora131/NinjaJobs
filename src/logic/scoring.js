@@ -217,8 +217,10 @@ const KAMOKU_TYPE_IDS = ['kanja', 'shikaku']
  * 庶民の分岐後3問の回答から、フラット得点制で最終タイプを決める。
  * 7タイプへの事前クラスター分岐は行わない(6章)。3問の合計得点に、共通7問
  * で貯まったshakou(社交的な選択肢を選んだ回数由来)/kamoku(寡黙な選択肢を
- * 選んだ回数由来)を加算してから最高得点を採用する。常の形は
- * 「目立ちたくない」という独自の動機を保つため、この加算の対象外。
+ * 選んだ回数由来)を加算してから最高得点を採用する。常の形は、社交的にも
+ * 寡黙にも偏らない「バランスのよい人」として、shakouとkamokuの**小さい方**
+ * (Math.min)を加算する(2026/9/21。7章参照。どちらか一方に偏った人には
+ * ほとんど加算されず、両方をバランスよく選んだ人ほど有利になる)。
  *
  * 同点は「問3(最後の問)」→「問1(最初の問)」の順でタイブレークする
  * (タイブレークの判定自体はshakou/kamoku加算前の生スコアの優劣で行う)。
@@ -243,7 +245,8 @@ export function resolveShominType(branchAnswers, shakou, kamoku, axisWinner = nu
 
   for (const id of SHAKOU_TYPE_IDS) totals[id] += shakou
   for (const id of KAMOKU_TYPE_IDS) totals[id] += kamoku
-  // 常の形(tsunenokatachi)にはshakou/kamokuを加算しない
+  // 常の形(tsunenokatachi)には、社交性・寡黙さの小さい方を加算する(バランス型)
+  totals.tsunenokatachi += Math.min(shakou, kamoku)
   applyAxisBonus(totals, typeIds, axisWinner)
 
   const max = Math.max(...typeIds.map((id) => totals[id]))

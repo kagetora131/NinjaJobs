@@ -83,5 +83,22 @@
       "sarugakushi": 9.76,
       "kanja": 8.72
     }
+  },
+  {
+    "label": "Excelメモ反映後(9/20 4回目・上限3ポイント適用前)",
+    "pct": {
+      "bushi": 3.23,
+      "komuso": 8.91,
+      "kusushi": 10.35,
+      "shukke": 9.2,
+      "yamabushi": 9.2,
+      "tsunenokatachi": 11.46,
+      "akindo": 8.64,
+      "hokashi": 9.58,
+      "kusuriya": 7.59,
+      "sarugakushi": 9.34,
+      "shikaku": 4.49,
+      "kanja": 8
+    }
   }
 ]

@@ -12,11 +12,14 @@
  * Dは「庶民+2・武家系(c2・c6のみ寺社系)+1」(配点調整・案A。dominantKeyが
  * 全問shominになるよう、shominを先頭に置くこと)。
  *
- * shakou(社交性)はC選択肢に付ける(c1c+2, c2c+2, c3c+3, c4c+3, c6c+3, c7c+3。
+ * shakou(社交性)はC選択肢に付ける(c1c+2, c2c+2, c3c+2, c4c+2, c6c+2, c7c+2。
  * c5cは0)。kamoku(寡黙さ)は「静か・見極める」系の選択肢に付ける(c1b+1, c2b+1,
  * c3b+2, c3d+1, c4a+2, c4b+1, c4d+1, c7d+2)。どちらも2026/9/20に、ユーザーが
  * 質問と点数の一覧(Excel)を確認して入力した違和感の指摘を反映し、出現率を
  * 均等に近づけるよう再配分した(7章参照)。
+ *
+ * **点数の上限は3**(2026/9/21のユーザー方針。全ての点数・社交性・寡黙さが
+ * この範囲内。新しい点数を付けるときも3を超えないこと)。
  *
  * 各選択肢にはさらに内部専用の axis(移動・定住の区分。'teiju'=定住する /
  * 'tokidoki'=時々定住する / 'hyohaku'=ずっと転々とする / 無し)を付けてある。
@@ -136,7 +139,7 @@ export const COMMON_QUESTIONS = [
         text: '気軽に話しかけ、自然に打ち解ける',
         textEn: 'Strike up an easy conversation and open up naturally.',
         scores: { shomin: 2 },
-        shakou: 3,
+        shakou: 2,
         axis: 'hyohaku',
       },
       {
@@ -173,7 +176,7 @@ export const COMMON_QUESTIONS = [
         text: '自分から声をかけ、できることがあれば手を貸す',
         textEn: "Approach them yourself and lend a hand if there's anything you can do.",
         scores: { shomin: 2 },
-        shakou: 3,
+        shakou: 2,
       },
       {
         id: 'c4d',
@@ -241,7 +244,7 @@ export const COMMON_QUESTIONS = [
         text: '周囲と相談しながら、その場をうまく収める',
         textEn: 'Talk it over with those around you and smooth things over.',
         scores: { shomin: 2 },
-        shakou: 3,
+        shakou: 2,
         axis: 'tokidoki',
       },
       {
@@ -276,7 +279,7 @@ export const COMMON_QUESTIONS = [
         text: '周囲とうまく関係を築き、場をまとめられる人',
         textEn: 'Someone who builds good relationships and brings people together.',
         scores: { shomin: 2 },
-        shakou: 3,
+        shakou: 2,
         axis: 'tokidoki',
       },
       {
@@ -539,7 +542,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_1a',
         text: '現地の人に紛れる',
         textEn: 'Blend in with the locals.',
-        scores: { tsunenokatachi: 5 },
+        scores: { tsunenokatachi: 3 },
       },
       {
         id: 'shomin_1b',
@@ -570,7 +573,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_2a',
         text: '何者でもない顔で、居続けること',
         textEn: 'Simply staying as a face that belongs to no one in particular.',
-        scores: { tsunenokatachi: 5 },
+        scores: { tsunenokatachi: 3 },
       },
       {
         id: 'shomin_2b',
@@ -582,7 +585,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_2c',
         text: '気配を断ち、一息で事を成すこと',
         textEn: 'Erasing your presence and finishing the job in a single breath.',
-        scores: { shikaku: 3, kanja: 2 },
+        scores: { shikaku: 3, kanja: 1 },
       },
       {
         id: 'shomin_2d',
@@ -601,19 +604,19 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_3a',
         text: '特に何かを究めようとは思わない',
         textEn: "Nothing in particular — you don't feel the need to master anything.",
-        scores: { tsunenokatachi: 6 },
+        scores: { tsunenokatachi: 2 },
       },
       {
         id: 'shomin_3b',
         text: '物欲を高められるよう、豆知識を増やす',
         textEn: 'Bits of trivia that make people want things more.',
-        scores: { akindo: 1, kusuriya: 1 },
+        scores: { akindo: 2, kusuriya: 2 },
       },
       {
         id: 'shomin_3c',
         text: '精神統一する',
         textEn: 'Focusing and settling your mind.',
-        scores: { shikaku: 2, kanja: 2 },
+        scores: { shikaku: 1, kanja: 1 },
       },
       {
         id: 'shomin_3d',
