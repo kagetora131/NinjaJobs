@@ -60,7 +60,7 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
 
         <div className="kakejiku__body washi">
           <p className="result-card__eyebrow">
-            {isEn ? 'Thy path of shinobi is —' : 'お前の忍びの道は――'}
+            {isEn ? 'Thy path of shinobi is —' : '忍びの道は――'}
           </p>
 
           <motion.div className="result-card__frame" variants={imageVariants}>

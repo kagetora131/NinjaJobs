@@ -39,7 +39,7 @@ export default function StartScreen({ lang, onStart }) {
               <br />
               十二の忍びの道の中から、
               <br />
-              お前の内に眠る本性を暴き出す。
+              内に眠る本性を暴き出す。
             </>
           )}
         </p>

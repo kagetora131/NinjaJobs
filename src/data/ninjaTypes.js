@@ -13,6 +13,12 @@ import kusushi from '../assets/characters/kusushi.webp'
 
 // 12タイプの定義。配列の並び順は同点時の優先順位(先勝ち)としても使う。
 //
+// mobility(内部専用・画面には出さない): 移動・定住の区分。'teiju'(定住する)/
+// 'tokidoki'(時々定住する)/'hyohaku'(ずっと転々とする)のいずれか。共通7問で
+// 最も多く選ばれた区分と一致するタイプに、最終判定で一律ボーナスが入る
+// (scoring.jsのAXIS_BONUS)。**武士(bushi)だけは意図的にmobilityを持たない**
+// (ボーナス対象外。武士を最レアに保つため)。
+//
 // 英語版のフィールド(nameEn以外)について: 日本語版のname/keyword/description
 // は一切変更していない(標準instruction「カード説明文には今後手を加えない」を
 // 厳守)。英語版はすべて新規追加フィールドで、和風の世界観を保つため
@@ -22,6 +28,7 @@ import kusushi from '../assets/characters/kusushi.webp'
 export const NINJA_TYPES = [
   {
     id: 'komuso',
+    mobility: 'hyohaku',
     name: '虚無僧',
     nameEn: 'Komuso',
     epithetEn: 'The Hermit Monk',
@@ -36,6 +43,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'shukke',
+    mobility: 'teiju',
     name: '出家',
     nameEn: 'Shukke',
     epithetEn: 'The Renunciate',
@@ -50,6 +58,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'yamabushi',
+    mobility: 'hyohaku',
     name: '山伏',
     nameEn: 'Yamabushi',
     epithetEn: 'The Mountain Ascetic',
@@ -64,6 +73,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'akindo',
+    mobility: 'tokidoki',
     name: '商人',
     nameEn: 'Akindo',
     epithetEn: 'The Merchant',
@@ -78,6 +88,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'hokashi',
+    mobility: 'hyohaku',
     name: '放下師',
     nameEn: 'Hokashi',
     epithetEn: 'The Street Performer',
@@ -92,6 +103,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'sarugakushi',
+    mobility: 'tokidoki',
     name: '猿楽師',
     nameEn: 'Sarugakushi',
     epithetEn: 'The Masked Player',
@@ -106,6 +118,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'tsunenokatachi',
+    mobility: 'teiju',
     name: '常の形',
     nameEn: 'Tsunenokata',
     epithetEn: 'The Peasant',
@@ -120,6 +133,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'shikaku',
+    mobility: 'tokidoki',
     name: '刺客',
     nameEn: 'Shikaku',
     epithetEn: 'The Assassin',
@@ -134,6 +148,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'kanja',
+    mobility: 'tokidoki',
     name: '間者',
     nameEn: 'Kanja',
     epithetEn: 'The Spy',
@@ -162,6 +177,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'kusuriya',
+    mobility: 'hyohaku',
     name: '薬屋',
     nameEn: 'Kusuriya',
     epithetEn: 'The Apothecary',
@@ -176,6 +192,7 @@ export const NINJA_TYPES = [
   },
   {
     id: 'kusushi',
+    mobility: 'teiju',
     name: '薬師',
     nameEn: 'Kusushi',
     epithetEn: 'The Physician',

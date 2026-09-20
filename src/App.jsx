@@ -50,14 +50,14 @@ function deriveState(started, commonAnswers, branchAnswers) {
     return { phase: PHASE.COMMON }
   }
 
-  const { factionId, shakou, kamoku } = resolveFaction(commonAnswers)
+  const { factionId, shakou, kamoku, axisWinner } = resolveFaction(commonAnswers)
 
   const branchDone = branchAnswers.length >= BRANCH_QUESTIONS[factionId].length
   if (!branchDone) {
     return { phase: PHASE.BRANCH, factionId }
   }
 
-  const resultId = resolveFinalType(factionId, branchAnswers, shakou, kamoku)
+  const resultId = resolveFinalType(factionId, branchAnswers, shakou, kamoku, axisWinner)
   return { phase: PHASE.RESULT, factionId, resultId }
 }
 

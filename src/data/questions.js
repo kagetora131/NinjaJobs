@@ -8,6 +8,25 @@
  * という裏スコアも持つ(数値、庶民に分岐した場合のみ最終判定で使用。
  * 6章・scoring.js参照)。
  *
+ * 選択肢のscoresは、A〜Cが従来通り(A=武家系+2、B=寺社系+2、C=庶民+2)、
+ * Dは「庶民+2・武家系(c6のみ寺社系)+1」(配点調整・案A。dominantKeyが
+ * 全問shominになるよう、shominを先頭に置くこと)。
+ *
+ * 各選択肢にはさらに内部専用の axis(移動・定住の区分。'teiju'=定住する /
+ * 'tokidoki'=時々定住する / 'hyohaku'=ずっと転々とする / 無し)を付けてある。
+ * 7問で選んだ axis の最頻値(単独首位のみ)が最終タイプ判定でのボーナス
+ * 対象になる(scoring.js・7章参照)。axis名は画面・DOM属性・console・storage・
+ * URLには一切出さない(内部分類名 buke/jisha/shomin と同じ扱い)。
+ *
+ * axisタグの読み方(参考。文言に沿って付与している):
+ * - teiju: 資料や前例を調べる、地図で確実な道を探す、礼儀で長く信頼を築く、
+ *   相手の気持ちに寄り添う、質の良い物・長く使える物を選ぶ、着実に積み重ねる
+ * - tokidoki: 人に話を聞く・相談する、様子を見て接し方を変える、必要な物を
+ *   見極める、相手の喜ぶ顔を想像する、関係を築き場をまとめる
+ * - hyohaku: 旅支度を先に整える、旅慣れて焦らない、自分で観察して判断する、
+ *   深入りせず距離を保つ、気軽に打ち解ける、旅の無事を願う、素早く安全策を
+ *   選ぶ、自分を律する(修行)、状況に応じて動く
+ *
  * textEn/choices[].textEn は英語版の文言(「忍者タイプ診断アプリ:英語版仕様書」
  * 準拠)。日本語版のtext/内部スコアは変更していない。英語版でも内部分類名
  * (buke/jisha/shomin)は画面に一切出さない方針は変わらないため、英訳も
@@ -24,6 +43,7 @@ export const COMMON_QUESTIONS = [
         text: 'まず資料や過去の事例を調べ、確実な方法を考える',
         textEn: 'First, look into records and past cases to find a reliable approach.',
         scores: { buke: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c1b',
@@ -37,12 +57,14 @@ export const COMMON_QUESTIONS = [
         textEn: 'Ask around and gather the information you need from others.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'tokidoki',
       },
       {
         id: 'c1d',
         text: '必要になりそうな物や手順を、先に整えておく',
         textEn: "Prepare the tools and steps you'll likely need,\nahead of time.",
-        scores: { buke: 1, shomin: 1 },
+        scores: { shomin: 2, buke: 1 },
+        axis: 'hyohaku',
       },
     ],
   },
@@ -56,12 +78,14 @@ export const COMMON_QUESTIONS = [
         text: '地図や案内を確認し、確実な道を探す',
         textEn: 'Check a map or signpost to find a reliable route.',
         scores: { buke: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c2b',
         text: 'いったん立ち止まり、焦らず周囲の状況を見直す',
         textEn: 'Stop for a moment and calmly reassess your surroundings.',
         scores: { jisha: 2 },
+        axis: 'hyohaku',
       },
       {
         id: 'c2c',
@@ -69,13 +93,15 @@ export const COMMON_QUESTIONS = [
         textEn: 'Ask someone nearby to point you in the right direction.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'tokidoki',
       },
       {
         id: 'c2d',
         text: '周囲をよく観察し、自分で判断できる材料を集める',
         textEn: 'Observe your surroundings closely to gather clues you can judge from yourself.',
-        scores: { buke: 1, shomin: 1 },
+        scores: { shomin: 2, buke: 1 },
         kamoku: 1,
+        axis: 'hyohaku',
       },
     ],
   },
@@ -89,12 +115,14 @@ export const COMMON_QUESTIONS = [
         text: '礼儀を大切にし、知識や誠実さで信頼を得る',
         textEn: 'Value courtesy,\nearning trust through knowledge and sincerity.',
         scores: { buke: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c3b',
         text: '必要以上に語らず、相手と静かな距離を保つ',
         textEn: 'Speak little,\nkeeping a calm distance from the other person.',
         scores: { jisha: 2 },
+        axis: 'hyohaku',
       },
       {
         id: 'c3c',
@@ -102,13 +130,15 @@ export const COMMON_QUESTIONS = [
         textEn: 'Strike up an easy conversation and open up naturally.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'hyohaku',
       },
       {
         id: 'c3d',
         text: '相手の表情や様子をよく見てから、接し方を決める',
         textEn: 'Watch their expression and manner closely before deciding how to approach them.',
-        scores: { buke: 1, shomin: 1 },
+        scores: { shomin: 2, buke: 1 },
         kamoku: 1,
+        axis: 'tokidoki',
       },
     ],
   },
@@ -128,6 +158,7 @@ export const COMMON_QUESTIONS = [
         text: 'まず相手の気持ちを落ち着かせ、安心できるようにする',
         textEn: 'First, help them calm down so they feel safe.',
         scores: { jisha: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c4c',
@@ -140,8 +171,9 @@ export const COMMON_QUESTIONS = [
         id: 'c4d',
         text: '直接手を出す前に、何が必要なのかを見極める',
         textEn: "Before stepping in, figure out exactly what's needed.",
-        scores: { buke: 1, shomin: 1 },
+        scores: { shomin: 2, buke: 1 },
         kamoku: 1,
+        axis: 'tokidoki',
       },
     ],
   },
@@ -155,12 +187,14 @@ export const COMMON_QUESTIONS = [
         text: '実用的で質の良いものを、じっくり吟味する',
         textEn: 'Carefully consider something practical and well-made.',
         scores: { buke: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c5b',
         text: '相手の無事や幸せを願えるものを選ぶ',
         textEn: "Choose something that wishes for the other person's safety and happiness.",
         scores: { jisha: 2 },
+        axis: 'hyohaku',
       },
       {
         id: 'c5c',
@@ -168,12 +202,14 @@ export const COMMON_QUESTIONS = [
         textEn: 'Imagine their delighted reaction and enjoy the choosing.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'tokidoki',
       },
       {
         id: 'c5d',
         text: '値段と価値の釣り合いを考え、長く使えるものを選ぶ',
         textEn: 'Weigh price against value,\nchoosing something built to last.',
-        scores: { shomin: 1, buke: 1 },
+        scores: { shomin: 2, buke: 1 },
+        axis: 'teiju',
       },
     ],
   },
@@ -200,13 +236,15 @@ export const COMMON_QUESTIONS = [
         textEn: 'Talk it over with those around you and smooth things over.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'tokidoki',
       },
       {
         id: 'c6d',
         text: 'その場で最も安全な方法を、素早く選ぶ',
         textEn: 'Quickly choose whatever is safest in the moment.',
-        scores: { jisha: 1, shomin: 1 },
+        scores: { shomin: 2, jisha: 1 },
         kamoku: 1,
+        axis: 'hyohaku',
       },
     ],
   },
@@ -220,12 +258,14 @@ export const COMMON_QUESTIONS = [
         text: '知識や技術を着実に積み重ねている人',
         textEn: 'Someone who steadily builds up knowledge and skill.',
         scores: { buke: 2 },
+        axis: 'teiju',
       },
       {
         id: 'c7b',
         text: 'どんな状況でも、自分を律することのできる人',
         textEn: 'Someone who can keep their composure no matter the situation.',
         scores: { jisha: 2 },
+        axis: 'hyohaku',
       },
       {
         id: 'c7c',
@@ -233,12 +273,14 @@ export const COMMON_QUESTIONS = [
         textEn: 'Someone who builds good relationships and brings people together.',
         scores: { shomin: 2 },
         shakou: 1,
+        axis: 'tokidoki',
       },
       {
         id: 'c7d',
         text: '先回りして準備し、状況に応じて動ける人',
         textEn: 'Someone who prepares ahead of time and adapts as things unfold.',
-        scores: { buke: 1, shomin: 1 },
+        scores: { shomin: 2, buke: 1 },
+        axis: 'hyohaku',
       },
     ],
   },
@@ -296,7 +338,7 @@ export const BUKE_QUESTIONS = [
   },
   {
     id: 'buke_2',
-    text: '休みの日をどう過ごしますか?',
+    text: '休みの日を、どう過ごす?',
     textEn: 'How do you spend your days off?',
     choices: [
       {
@@ -327,7 +369,7 @@ export const BUKE_QUESTIONS = [
   },
   {
     id: 'buke_3',
-    text: '空いた時間に何を究めますか?',
+    text: '空いた時間に、何を究める?',
     textEn: 'What do you devote your spare time to mastering?',
     choices: [
       {
@@ -510,7 +552,7 @@ export const SHOMIN_QUESTIONS = [
   },
   {
     id: 'shomin_2',
-    text: '忍びとして、お前が得意なのは?',
+    text: '忍びとして、得意なのは?',
     textEn: 'As a shinobi, what are you good at?',
     choices: [
       {
@@ -541,7 +583,7 @@ export const SHOMIN_QUESTIONS = [
   },
   {
     id: 'shomin_3',
-    text: '空いた時間に何を究めますか?',
+    text: '空いた時間に、何を究める?',
     textEn: 'What do you devote your spare time to mastering?',
     choices: [
       {
