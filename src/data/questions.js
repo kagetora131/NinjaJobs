@@ -13,7 +13,7 @@
  * 全問shominになるよう、shominを先頭に置くこと)。
  *
  * shakou(社交性)はC選択肢すべてに+1。kamoku(寡黙さ)は「静か・見極める」系の
- * 選択肢に付ける(c1b+1, c2b+1, c3d+2, c4b+2, c7d+2)。kamokuの付与先は2026/9/20の
+ * 選択肢に付ける(c1b+1, c2b+1, c3d+2, c4b+1, c7d+2)。kamokuの付与先は2026/9/20の
  * 平等化調整で、間者・刺客が出にくかった偏りを直すため再配分した(7章参照)。
  *
  * 各選択肢にはさらに内部専用の axis(移動・定住の区分。'teiju'=定住する /
@@ -163,7 +163,7 @@ export const COMMON_QUESTIONS = [
         text: 'まず相手の気持ちを落ち着かせ、安心できるようにする',
         textEn: 'First, help them calm down so they feel safe.',
         scores: { jisha: 2 },
-        kamoku: 2,
+        kamoku: 1,
         axis: 'teiju',
       },
       {
