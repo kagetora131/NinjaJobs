@@ -9,12 +9,14 @@
  * 6章・scoring.js参照)。
  *
  * 選択肢のscoresは、A〜Cが従来通り(A=武家系+2、B=寺社系+2、C=庶民+2)、
- * Dは「庶民+2・武家系(c6のみ寺社系)+1」(配点調整・案A。dominantKeyが
+ * Dは「庶民+2・武家系(c2・c6のみ寺社系)+1」(配点調整・案A。dominantKeyが
  * 全問shominになるよう、shominを先頭に置くこと)。
  *
- * shakou(社交性)はC選択肢すべてに+1。kamoku(寡黙さ)は「静か・見極める」系の
- * 選択肢に付ける(c1b+1, c2b+1, c3d+2, c4b+1, c7d+2)。kamokuの付与先は2026/9/20の
- * 平等化調整で、間者・刺客が出にくかった偏りを直すため再配分した(7章参照)。
+ * shakou(社交性)はC選択肢に付ける(c1c+1, c2c+1, c3c+3, c4c+3, c6c+3, c7c+3。
+ * c5cは0)。kamoku(寡黙さ)は「静か・見極める」系の選択肢に付ける(c1b+1, c2b+1,
+ * c3b+1, c3d+1, c4a+2, c4b+1, c4d+1, c7d+2)。どちらも2026/9/20に、ユーザーが
+ * 質問と点数の一覧(Excel)を確認して入力した違和感の指摘を反映し、出現率を
+ * 均等に近づけるよう再配分した(7章参照)。
  *
  * 各選択肢にはさらに内部専用の axis(移動・定住の区分。'teiju'=定住する /
  * 'tokidoki'=時々定住する / 'hyohaku'=ずっと転々とする / 無し)を付けてある。
@@ -47,11 +49,10 @@ export const COMMON_QUESTIONS = [
         text: 'まず資料や過去の事例を調べ、確実な方法を考える',
         textEn: 'First, look into records and past cases to find a reliable approach.',
         scores: { buke: 2 },
-        axis: 'teiju',
       },
       {
         id: 'c1b',
-        text: '心を落ち着け、自分の調子を整えてから取りかかる',
+        text: '心を落ち着かせ、自分の調子を整えてから取りかかる',
         textEn: 'Calm your mind and get yourself in the right state before starting.',
         scores: { jisha: 2 },
         kamoku: 1,
@@ -62,14 +63,14 @@ export const COMMON_QUESTIONS = [
         textEn: 'Ask around and gather the information you need from others.',
         scores: { shomin: 2 },
         shakou: 1,
-        axis: 'tokidoki',
+        axis: 'hyohaku',
       },
       {
         id: 'c1d',
         text: '必要になりそうな物や手順を、先に整えておく',
         textEn: "Prepare the tools and steps you'll likely need,\nahead of time.",
         scores: { shomin: 2, buke: 1 },
-        axis: 'hyohaku',
+        axis: 'tokidoki',
       },
     ],
   },
@@ -105,7 +106,7 @@ export const COMMON_QUESTIONS = [
         id: 'c2d',
         text: '周囲をよく観察し、自分で判断できる材料を集める',
         textEn: 'Observe your surroundings closely to gather clues you can judge from yourself.',
-        scores: { shomin: 2, buke: 1 },
+        scores: { shomin: 2, jisha: 1 },
         axis: 'hyohaku',
       },
     ],
@@ -127,6 +128,7 @@ export const COMMON_QUESTIONS = [
         text: '必要以上に語らず、相手と静かな距離を保つ',
         textEn: 'Speak little,\nkeeping a calm distance from the other person.',
         scores: { jisha: 2 },
+        kamoku: 1,
         axis: 'hyohaku',
       },
       {
@@ -134,7 +136,7 @@ export const COMMON_QUESTIONS = [
         text: '気軽に話しかけ、自然に打ち解ける',
         textEn: 'Strike up an easy conversation and open up naturally.',
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 3,
         axis: 'hyohaku',
       },
       {
@@ -142,7 +144,7 @@ export const COMMON_QUESTIONS = [
         text: '相手の表情や様子をよく見てから、接し方を決める',
         textEn: 'Watch their expression and manner closely before deciding how to approach them.',
         scores: { shomin: 2, buke: 1 },
-        kamoku: 2,
+        kamoku: 1,
         axis: 'tokidoki',
       },
     ],
@@ -157,6 +159,7 @@ export const COMMON_QUESTIONS = [
         text: '状況を整理し、自分にできる現実的な助け方を考える',
         textEn: 'Assess the situation and think of a realistic way you can help.',
         scores: { buke: 2 },
+        kamoku: 2,
       },
       {
         id: 'c4b',
@@ -164,20 +167,20 @@ export const COMMON_QUESTIONS = [
         textEn: 'First, help them calm down so they feel safe.',
         scores: { jisha: 2 },
         kamoku: 1,
-        axis: 'teiju',
       },
       {
         id: 'c4c',
         text: '自分から声をかけ、できることがあれば手を貸す',
         textEn: "Approach them yourself and lend a hand if there's anything you can do.",
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 3,
       },
       {
         id: 'c4d',
         text: '直接手を出す前に、何が必要なのかを見極める',
         textEn: "Before stepping in, figure out exactly what's needed.",
         scores: { shomin: 2, buke: 1 },
+        kamoku: 1,
         axis: 'tokidoki',
       },
     ],
@@ -199,22 +202,20 @@ export const COMMON_QUESTIONS = [
         text: '相手の無事や幸せを願えるものを選ぶ',
         textEn: "Choose something that wishes for the other person's safety and happiness.",
         scores: { jisha: 2 },
-        axis: 'hyohaku',
+        axis: 'tokidoki',
       },
       {
         id: 'c5c',
         text: '相手が喜ぶ姿を想像しながら、楽しんで選ぶ',
         textEn: 'Imagine their delighted reaction and enjoy the choosing.',
         scores: { shomin: 2 },
-        shakou: 1,
-        axis: 'tokidoki',
+        axis: 'hyohaku',
       },
       {
         id: 'c5d',
         text: '値段と価値の釣り合いを考え、長く使えるものを選ぶ',
         textEn: 'Weigh price against value,\nchoosing something built to last.',
         scores: { shomin: 2, buke: 1 },
-        axis: 'teiju',
       },
     ],
   },
@@ -240,7 +241,7 @@ export const COMMON_QUESTIONS = [
         text: '周囲と相談しながら、その場をうまく収める',
         textEn: 'Talk it over with those around you and smooth things over.',
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 3,
         axis: 'tokidoki',
       },
       {
@@ -262,7 +263,6 @@ export const COMMON_QUESTIONS = [
         text: '知識や技術を着実に積み重ねている人',
         textEn: 'Someone who steadily builds up knowledge and skill.',
         scores: { buke: 2 },
-        axis: 'teiju',
       },
       {
         id: 'c7b',
@@ -276,7 +276,7 @@ export const COMMON_QUESTIONS = [
         text: '周囲とうまく関係を築き、場をまとめられる人',
         textEn: 'Someone who builds good relationships and brings people together.',
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 3,
         axis: 'tokidoki',
       },
       {
@@ -298,9 +298,10 @@ export const COMMON_QUESTIONS = [
  * を識別軸にする)。4択に統一し、Dは虚無僧・薬師どちらにも寄らない
  * 「器用貧乏」枠(scores: { komuso: 2, kusushi: 2 })。武士も虚無僧・薬師と同じ
  * +2(2026/9/20の平等化調整でそれまでの+1から引き上げた。「武士は少し出やすく
- * なってよい」というユーザー判断)。武士だけは「同点勝ち不可」ルール(scoring.js)が
- * あるため、素点が虚無僧・薬師の合計をどちらも単独で上回るときだけ武士になり、
- * 12タイプ中もっともレアなまま(約3.7%)保たれる。
+ * なってよい」というユーザー判断。同日の再調整で問3のAだけ+3)。武士だけは
+ * 「同点勝ち不可」ルール(scoring.js)があるため、素点が虚無僧・薬師の合計を
+ * どちらも単独で上回るときだけ武士になり、12タイプ中もっともレアなまま
+ * (約3.8%)保たれる。
  *
  * ※以下は2026/9/19までの経緯(武士が+1だった時点の説明)。
  *
@@ -385,7 +386,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_3a',
         text: '人との信頼関係を、じっくり時間をかけて築くこと',
         textEn: 'Building trust with others,\nslowly and patiently, over time.',
-        scores: { bushi: 2 },
+        scores: { bushi: 3 },
       },
       {
         id: 'buke_3b',
@@ -537,25 +538,25 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_1a',
         text: '一般庶民になりきって、紛れ込む',
         textEn: 'Pass yourself off completely as an ordinary commoner and slip in.',
-        scores: { tsunenokatachi: 3 },
+        scores: { tsunenokatachi: 4 },
       },
       {
         id: 'shomin_1b',
         text: '商いを口実に、堂々と入り込む',
         textEn: 'Use trade as your excuse,\nand walk in openly.',
-        scores: { akindo: 3, kusuriya: 2 },
+        scores: { akindo: 2 },
       },
       {
         id: 'shomin_1c',
         text: '誰にも気づかれず、静かに近づく',
         textEn: 'Approach quietly,\nunnoticed by anyone.',
-        scores: { kanja: 2, shikaku: 1 },
+        scores: { kanja: 3, shikaku: 2 },
       },
       {
         id: 'shomin_1d',
         text: '興行の許可を得て、人前で技を披露しながら近づく',
         textEn: 'Get permission to perform,\nand approach while showing off your skill in front of everyone.',
-        scores: { hokashi: 2, sarugakushi: 1 },
+        scores: { hokashi: 2 },
       },
     ],
   },
@@ -568,7 +569,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_2a',
         text: '何者でもない顔で、居続けること',
         textEn: 'Simply staying as a face that belongs to no one in particular.',
-        scores: { tsunenokatachi: 3 },
+        scores: { tsunenokatachi: 6 },
       },
       {
         id: 'shomin_2b',
@@ -580,13 +581,13 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_2c',
         text: '気配を断ち、一息で事を成すこと',
         textEn: 'Erasing your presence and finishing the job in a single breath.',
-        scores: { shikaku: 2, kanja: 1 },
+        scores: { shikaku: 3, kanja: 2 },
       },
       {
         id: 'shomin_2d',
         text: '面をつけ、別人に成りきり演じきること',
         textEn: 'Putting on a mask,\nbecoming someone else, and playing the part all the way through.',
-        scores: { sarugakushi: 3, hokashi: 1 },
+        scores: { sarugakushi: 3 },
       },
     ],
   },
@@ -599,13 +600,13 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_3a',
         text: '特に何かを究めようとは思わない',
         textEn: "Nothing in particular — you don't feel the need to master anything.",
-        scores: { tsunenokatachi: 3 },
+        scores: { tsunenokatachi: 4 },
       },
       {
         id: 'shomin_3b',
         text: '物欲を高められるよう、豆知識を増やす',
         textEn: 'Bits of trivia that make people want things more.',
-        scores: { kusuriya: 1, akindo: 1 },
+        scores: { akindo: 1, kusuriya: 1 },
       },
       {
         id: 'shomin_3c',
