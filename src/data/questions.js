@@ -12,9 +12,9 @@
  * Dは「庶民+2・武家系(c2・c6のみ寺社系)+1」(配点調整・案A。dominantKeyが
  * 全問shominになるよう、shominを先頭に置くこと)。
  *
- * shakou(社交性)はC選択肢に付ける(c1c+1, c2c+1, c3c+3, c4c+3, c6c+3, c7c+3。
+ * shakou(社交性)はC選択肢に付ける(c1c+2, c2c+2, c3c+3, c4c+3, c6c+3, c7c+3。
  * c5cは0)。kamoku(寡黙さ)は「静か・見極める」系の選択肢に付ける(c1b+1, c2b+1,
- * c3b+1, c3d+1, c4a+2, c4b+1, c4d+1, c7d+2)。どちらも2026/9/20に、ユーザーが
+ * c3b+2, c3d+1, c4a+2, c4b+1, c4d+1, c7d+2)。どちらも2026/9/20に、ユーザーが
  * 質問と点数の一覧(Excel)を確認して入力した違和感の指摘を反映し、出現率を
  * 均等に近づけるよう再配分した(7章参照)。
  *
@@ -62,7 +62,7 @@ export const COMMON_QUESTIONS = [
         text: '周囲の人に話を聞き、必要な情報を集める',
         textEn: 'Ask around and gather the information you need from others.',
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 2,
         axis: 'hyohaku',
       },
       {
@@ -99,7 +99,7 @@ export const COMMON_QUESTIONS = [
         text: '近くの人に声をかけ、道を教えてもらう',
         textEn: 'Ask someone nearby to point you in the right direction.',
         scores: { shomin: 2 },
-        shakou: 1,
+        shakou: 2,
         axis: 'tokidoki',
       },
       {
@@ -120,7 +120,7 @@ export const COMMON_QUESTIONS = [
         id: 'c3a',
         text: '礼儀を大切にし、知識や誠実さで信頼を得る',
         textEn: 'Value courtesy,\nearning trust through knowledge and sincerity.',
-        scores: { buke: 2 },
+        scores: { buke: 3 },
         axis: 'teiju',
       },
       {
@@ -128,7 +128,7 @@ export const COMMON_QUESTIONS = [
         text: '必要以上に語らず、相手と静かな距離を保つ',
         textEn: 'Speak little,\nkeeping a calm distance from the other person.',
         scores: { jisha: 2 },
-        kamoku: 1,
+        kamoku: 2,
         axis: 'hyohaku',
       },
       {
@@ -215,7 +215,7 @@ export const COMMON_QUESTIONS = [
         id: 'c5d',
         text: '値段と価値の釣り合いを考え、長く使えるものを選ぶ',
         textEn: 'Weigh price against value,\nchoosing something built to last.',
-        scores: { shomin: 2, buke: 1 },
+        scores: { shomin: 2, jisha: 1 },
       },
     ],
   },
@@ -296,12 +296,13 @@ export const COMMON_QUESTIONS = [
  * かけて信頼を勝ち取り武士として認められた者」というコンセプト(刀や兜など
  * 武士を直接示唆する表現は避け、"同じ相手・同じ関係にじっくり向き合う一貫性"
  * を識別軸にする)。4択に統一し、Dは虚無僧・薬師どちらにも寄らない
- * 「器用貧乏」枠(scores: { komuso: 2, kusushi: 2 })。武士も虚無僧・薬師と同じ
- * +2(2026/9/20の平等化調整でそれまでの+1から引き上げた。「武士は少し出やすく
- * なってよい」というユーザー判断。同日の再調整で問3のAだけ+3)。武士だけは
- * 「同点勝ち不可」ルール(scoring.js)があるため、素点が虚無僧・薬師の合計を
- * どちらも単独で上回るときだけ武士になり、12タイプ中もっともレアなまま
- * (約3.8%)保たれる。
+ * 「器用貧乏」枠(scores: { komuso: 2, kusushi: 2 }。2026/9/20のユーザー指摘で、
+ * 問1のDは虚無僧0(薬師+2のみ)、問2・問3のDは武士+1を追加した)。武士の選択肢Aは、
+ * 問1・問2が+1、問3が+3(2026/9/20時点。「武士は少し出やすくなってよい」という
+ * ユーザー判断で、それまでの+1から問3だけ引き上げ、出現率の再調整で問1・問2を
+ * +1に戻した)。武士だけは「同点勝ち不可」ルール(scoring.js)があるため、素点が
+ * 虚無僧・薬師の合計をどちらも単独で上回るときだけ武士になり、12タイプ中
+ * もっともレアなまま(約3.2%)保たれる。
  *
  * ※以下は2026/9/19までの経緯(武士が+1だった時点の説明)。
  *
@@ -324,7 +325,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_1a',
         text: '何度も通い、時間をかけて信頼を得てから中に入る',
         textEn: 'Visit again and again,\nearning trust over time before stepping inside.',
-        scores: { bushi: 2 },
+        scores: { bushi: 1 },
       },
       {
         id: 'buke_1b',
@@ -342,7 +343,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_1d',
         text: 'その場の状況に応じて、やり方を柔軟に変える',
         textEn: 'Adapt your approach flexibly to whatever the moment calls for.',
-        scores: { komuso: 2, kusushi: 2 },
+        scores: { kusushi: 2 },
       },
     ],
   },
@@ -355,7 +356,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_2a',
         text: '決まった相手と、じっくり関係を築く時間に使う',
         textEn: 'Spend the time deepening a relationship with someone you already know well.',
-        scores: { bushi: 2 },
+        scores: { bushi: 1 },
       },
       {
         id: 'buke_2b',
@@ -373,7 +374,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_2d',
         text: 'その日の気分で、過ごし方を変える',
         textEn: 'However the mood takes you that day.',
-        scores: { komuso: 2, kusushi: 2 },
+        scores: { komuso: 2, kusushi: 2, bushi: 1 },
       },
     ],
   },
@@ -404,7 +405,7 @@ export const BUKE_QUESTIONS = [
         id: 'buke_3d',
         text: 'その時々で、興味のあることを幅広く',
         textEn: 'Whatever happens to interest you at the time, broadly.',
-        scores: { komuso: 2, kusushi: 2 },
+        scores: { komuso: 2, kusushi: 2, bushi: 1 },
       },
     ],
   },
@@ -422,26 +423,26 @@ export const JISHA_QUESTIONS = [
     choices: [
       {
         id: 'jisha_1a',
-        text: '托鉢の僧を装い、里の中に紛れ込む',
-        textEn: 'Disguise yourself as a begging monk and slip into the village.',
+        text: '見返りを求めず、困っている人を助けながら入り込む',
+        textEn: 'Expect nothing in return,\nand slip in by helping people in need.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_1b',
-        text: '経を唱えながら、寺社の一員として入り込む',
-        textEn: "Chant sutras and enter as one of the temple's own.",
+        text: '争いを避け、穏やかな態度で人々の中へ入り込む',
+        textEn: 'Avoid conflict and enter among the people with a gentle manner.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_1c',
-        text: '山伏の姿で、堂々と山を越えて訪れる',
-        textEn: 'Come openly over the mountain,\ndressed as a yamabushi.',
+        text: '険しい道のりも自分の足で越え、正面から訪れる',
+        textEn: 'Cross even the roughest road on your own two feet,\nand arrive openly.',
         scores: { yamabushi: 2 },
       },
       {
         id: 'jisha_1d',
-        text: '法螺貝を吹き鳴らしながら、修行の一団として入り込む',
-        textEn: 'Blow the conch-shell horn and enter as part of a band of ascetics.',
+        text: '厳しい道を仲間とともに歩み、一団として入り込む',
+        textEn: 'Walk the hard road together with your companions,\nand enter as one group.',
         scores: { yamabushi: 2 },
       },
     ],
@@ -453,8 +454,8 @@ export const JISHA_QUESTIONS = [
     choices: [
       {
         id: 'jisha_2a',
-        text: '静かに読経し、自分の心と向き合う',
-        textEn: 'Quietly chant a sutra and face your own heart.',
+        text: '静かに目を閉じ、自分の心と向き合う',
+        textEn: 'Quietly close your eyes and face your own heart.',
         scores: { shukke: 2 },
       },
       {
@@ -465,8 +466,8 @@ export const JISHA_QUESTIONS = [
       },
       {
         id: 'jisha_2c',
-        text: '法螺貝を吹き鳴らし、呼吸を整える',
-        textEn: 'Blow the conch-shell horn and steady your breathing.',
+        text: '深く息を整え、体に意識を向けて落ち着く',
+        textEn: 'Steady your breath deeply and settle by turning your attention to your body.',
         scores: { yamabushi: 2 },
       },
       {
@@ -484,20 +485,20 @@ export const JISHA_QUESTIONS = [
     choices: [
       {
         id: 'jisha_3a',
-        text: '数珠を手に、人のために己を律して動く',
-        textEn: 'Prayer beads in hand, discipline yourself and act for others.',
+        text: '人のために、己を律して動く',
+        textEn: 'Discipline yourself and act for the sake of others.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_3b',
-        text: '静かな読経で、欲や迷いに振り回されぬ心を示す',
-        textEn: 'Show, through quiet chanting, a heart unmoved by desire or doubt.',
+        text: '静けさの中で、欲や迷いに振り回されぬ心を示す',
+        textEn: 'Show, in stillness, a heart unmoved by desire or doubt.',
         scores: { shukke: 2 },
       },
       {
         id: 'jisha_3c',
-        text: '法螺貝を吹き鳴らし、苦しい山道でも前に進み続ける',
-        textEn: 'Blow the conch-shell horn and keep pressing on,\neven up the hardest mountain paths.',
+        text: '苦しい道のりでも、前に進み続ける',
+        textEn: 'Keep pressing on,\neven along the hardest road.',
         scores: { yamabushi: 2 },
       },
       {
@@ -536,9 +537,9 @@ export const SHOMIN_QUESTIONS = [
     choices: [
       {
         id: 'shomin_1a',
-        text: '一般庶民になりきって、紛れ込む',
-        textEn: 'Pass yourself off completely as an ordinary commoner and slip in.',
-        scores: { tsunenokatachi: 4 },
+        text: '現地の人に紛れる',
+        textEn: 'Blend in with the locals.',
+        scores: { tsunenokatachi: 5 },
       },
       {
         id: 'shomin_1b',
@@ -550,7 +551,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_1c',
         text: '誰にも気づかれず、静かに近づく',
         textEn: 'Approach quietly,\nunnoticed by anyone.',
-        scores: { kanja: 3, shikaku: 2 },
+        scores: { kanja: 3 },
       },
       {
         id: 'shomin_1d',
@@ -569,7 +570,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_2a',
         text: '何者でもない顔で、居続けること',
         textEn: 'Simply staying as a face that belongs to no one in particular.',
-        scores: { tsunenokatachi: 6 },
+        scores: { tsunenokatachi: 5 },
       },
       {
         id: 'shomin_2b',
@@ -600,7 +601,7 @@ export const SHOMIN_QUESTIONS = [
         id: 'shomin_3a',
         text: '特に何かを究めようとは思わない',
         textEn: "Nothing in particular — you don't feel the need to master anything.",
-        scores: { tsunenokatachi: 4 },
+        scores: { tsunenokatachi: 6 },
       },
       {
         id: 'shomin_3b',
