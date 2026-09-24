@@ -1,5 +1,9 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from 'framer-motion'
 import ProgressBar from './ProgressBar.jsx'
+
+// 選んだ札が光るのを見せてから次の問いへ進むまでの間(ミリ秒)
+const SELECT_DELAY_MS = 320
 
 /**
  * Fisher-Yatesで配列をシャッフルする(元の配列は変更しない)。
@@ -47,6 +51,24 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
   }
   const shuffledChoices = shuffleCache.current.get(question.id)
 
+  const reduceMotion = useReducedMotion()
+  const [selectedId, setSelectedId] = useState(null)
+  const timerRef = useRef(null)
+  // stateは再描画まで反映されないため、連打で2問進まないよう即時に立つrefで判定する
+  const pendingRef = useRef(false)
+  useEffect(() => () => clearTimeout(timerRef.current), [])
+
+  function handleSelect(choice) {
+    if (pendingRef.current) return
+    pendingRef.current = true
+    setSelectedId(choice.id)
+    timerRef.current = setTimeout(() => {
+      pendingRef.current = false
+      setSelectedId(null)
+      onAnswer(choice)
+    }, reduceMotion ? 0 : SELECT_DELAY_MS)
+  }
+
   return (
     <div key={question.id} className="screen question-screen">
       <ProgressBar lang={lang} current={questionNumber} total={totalQuestions} />
@@ -63,10 +85,14 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
       </div>
 
       {/* 木札に記された答え */}
-      <ul className="choice-list">
+      <ul className={`choice-list${selectedId ? ' is-pending' : ''}`}>
         {shuffledChoices.map((choice) => (
           <li key={choice.id}>
-            <button type="button" className="choice-button" onClick={() => onAnswer(choice)}>
+            <button
+              type="button"
+              className={`choice-button${choice.id === selectedId ? ' is-selected' : ''}`}
+              onClick={() => handleSelect(choice)}
+            >
               {isEn ? withLineBreaks(choice.textEn) : choice.text}
             </button>
           </li>
@@ -74,7 +100,13 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
       </ul>
 
       {onBack && (
-        <button type="button" className="question-screen__back" onClick={onBack}>
+        <button
+          type="button"
+          className="question-screen__back"
+          onClick={() => {
+            if (!pendingRef.current) onBack()
+          }}
+        >
           {isEn ? '← Return to the previous question' : '← 一つ前の問いに戻る'}
         </button>
       )}

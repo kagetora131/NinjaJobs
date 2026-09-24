@@ -34,19 +34,6 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
     visible: { opacity: 1, y: 0, transition: { duration: d(0.5), delay: d(1.7) } },
   }
 
-  // 落款印が「ポン」と押される
-  const sealVariants = {
-    hidden: { opacity: 0, scale: reduceMotion ? 1 : 2.2, rotate: reduceMotion ? -7 : -28 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      rotate: -7,
-      transition: reduceMotion
-        ? { duration: 0 }
-        : { delay: 2.1, type: 'spring', stiffness: 340, damping: 13 },
-    },
-  }
-
   return (
     <div className="screen result-screen">
       <motion.div
@@ -82,11 +69,6 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
               {isEn ? ninjaType.descriptionEn : ninjaType.description}
             </p>
           </motion.div>
-
-          {/* 落款印(伝統的な忍者の印章の意匠のため、言語を問わず日本語の名の一部を使う) */}
-          <motion.div className="result-card__seal" variants={sealVariants} aria-hidden="true">
-            {ninjaType.name.slice(0, 2)}
-          </motion.div>
         </div>
 
         <div className="rod rod--capped" aria-hidden="true" />
@@ -95,16 +77,16 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: d(0.6), delay: d(2.4) }}
+        transition={{ duration: d(0.6), delay: d(2.2) }}
       >
+        <div className="result-screen__actions">
+          <button type="button" className="btn-secondary" onClick={onRetry}>
+            {isEn ? 'Take the Trial Again' : 'もう一度診断する'}
+          </button>
+        </div>
+
         <TypeGallery lang={lang} resultId={ninjaType.id} />
       </motion.div>
-
-      <div className="result-screen__actions">
-        <button type="button" className="btn-secondary" onClick={onRetry}>
-          {isEn ? 'Take the Trial Again' : 'もう一度診断する'}
-        </button>
-      </div>
     </div>
   )
 }
