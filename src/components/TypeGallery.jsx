@@ -1,5 +1,6 @@
 import { FACTIONS } from '../data/factions.js'
 import { NINJA_TYPE_MAP } from '../data/ninjaTypes.js'
+import Typeset from './Typeset.jsx'
 
 // 分類(武家系/寺社系/庶民)による分類・説明はあえて出さない。内部分類名は
 // ユーザーに一切見せない方針のため(詳細はCLAUDE.md 6-7章)。
@@ -42,8 +43,12 @@ export default function TypeGallery({ lang, resultId }) {
                     <span className="gallery__extreme-badge">{isEn ? 'Ultra Rare' : '激レア'}</span>
                   )}
                 </p>
-                <p className="gallery__keyword">{isEn ? type.keywordEn : type.keyword}</p>
-                <p className="gallery__desc">{isEn ? type.descriptionEn : type.description}</p>
+                <p className="gallery__keyword">
+                  <Typeset lang={lang} text={isEn ? type.keywordEn : type.keyword} variant="prose" />
+                </p>
+                <p className="gallery__desc">
+                  <Typeset lang={lang} text={isEn ? type.descriptionEn : type.description} variant="prose" />
+                </p>
               </div>
             </li>
           )

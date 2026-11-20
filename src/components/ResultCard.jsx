@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import TypeGallery from './TypeGallery.jsx'
+import Typeset from './Typeset.jsx'
 
 export default function ResultCard({ lang, ninjaType, onRetry }) {
   const reduceMotion = useReducedMotion()
@@ -63,10 +64,14 @@ export default function ResultCard({ lang, ninjaType, onRetry }) {
 
           <motion.div variants={bodyVariants}>
             <span className="result-card__keyword">
-              {isEn ? ninjaType.keywordEn : ninjaType.keyword}
+              <Typeset lang={lang} text={isEn ? ninjaType.keywordEn : ninjaType.keyword} variant="prose" />
             </span>
             <p className="result-card__description">
-              {isEn ? ninjaType.descriptionEn : ninjaType.description}
+              <Typeset
+                lang={lang}
+                text={isEn ? ninjaType.descriptionEn : ninjaType.description}
+                variant="prose"
+              />
             </p>
           </motion.div>
         </div>

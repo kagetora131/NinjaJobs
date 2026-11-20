@@ -1,4 +1,19 @@
 import { Shuriken, TitlePlate } from './decorations.jsx'
+import Typeset from './Typeset.jsx'
+
+// 1行ずつ区切って表示する(各行は狭い幅で折り返しても、行の長さをそろえて崩れないようにする)
+const LEAD_JA = [
+  '全十問の問いに答えよ。',
+  '虚無僧、出家、山伏、商人、刺客——',
+  '十二の忍びの道の中から、',
+  '内に眠る本性を暴き出す。',
+]
+const LEAD_EN = [
+  'Answer all ten questions.',
+  'Komuso, Shukke, Yamabushi, Akindo, Shikaku —',
+  'from the twelve paths of the shinobi,',
+  'we shall uncover the nature sleeping within you.',
+]
 
 export default function StartScreen({ lang, onStart }) {
   const isEn = lang === 'en'
@@ -21,27 +36,11 @@ export default function StartScreen({ lang, onStart }) {
         </h1>
 
         <p className="start-screen__lead">
-          {isEn ? (
-            <>
-              Answer all ten questions.
-              <br />
-              Komuso, Shukke, Yamabushi, Akindo, Shikaku —
-              <br />
-              from the twelve paths of the shinobi,
-              <br />
-              we shall uncover the nature sleeping within you.
-            </>
-          ) : (
-            <>
-              全十問の問いに答えよ。
-              <br />
-              虚無僧、出家、山伏、商人、刺客——
-              <br />
-              十二の忍びの道の中から、
-              <br />
-              内に眠る本性を暴き出す。
-            </>
-          )}
+          {(isEn ? LEAD_EN : LEAD_JA).map((line) => (
+            <span key={line} className="start-screen__lead-line">
+              <Typeset lang={lang} text={line} variant="prose" />
+            </span>
+          ))}
         </p>
 
         <button type="button" className="btn-primary" onClick={onStart}>

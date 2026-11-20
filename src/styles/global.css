@@ -47,18 +47,41 @@ button {
   font-family: inherit;
 }
 
-/* 短い文は文節の区切りで改行し、行末に1〜2文字だけ残るのを防ぐ
-   (auto-phraseはChrome/Edge、prettyはChrome/Safari 26以降が対応。未対応環境は従来どおり)。
-   長い説明文は文節改行だと行末がガタつくため、最終行の孤立だけを防ぐ */
+/* 改行位置の調整。区切りの位置そのものは`Typeset.jsx`(`lib/phrases.js`)が、全ブラウザで
+   同じになるよう日本語は<wbr>・英語はノーブレークスペースで入れている。以下はその補助:
+   - 日本語は<wbr>の位置でだけ折り返す(はみ出すときだけ文字の途中でも折る)
+   - 英語の設問・選択肢は、意味の区切り(.clause)ごとに行の長さをそろえて折り返す
+   - balance/prettyは未対応のブラウザでは無視され、区切りの工夫だけが効く */
+.ja-phrased {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.nobr {
+  white-space: nowrap;
+}
+
+.clause {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
 .scroll__question,
 .choice-button,
-.start-screen__lead {
-  word-break: auto-phrase;
-  text-wrap: pretty;
+.start-screen__lead-line {
+  text-wrap: balance;
+}
+
+.start-screen__lead-line {
+  display: block;
+  overflow-wrap: break-word;
 }
 
 .result-card__description,
 .gallery__desc {
+  overflow-wrap: break-word;
   text-wrap: pretty;
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import ProgressBar from './ProgressBar.jsx'
+import Typeset from './Typeset.jsx'
 
 // 選んだ札が光るのを見せてから次の問いへ進むまでの間(ミリ秒)
 const SELECT_DELAY_MS = 320
@@ -16,20 +17,6 @@ function shuffle(array) {
     ;[result[i], result[j]] = [result[j], result[i]]
   }
   return result
-}
-
-/**
- * 英語版のtextEnに埋め込んだ改行(\n)を<br />に変換して描画する。
- * 日本語版のtextには\nを含めていないため、素通しでも見た目は変わらない。
- */
-function withLineBreaks(text) {
-  const lines = text.split('\n')
-  return lines.map((line, i) => (
-    <span key={i}>
-      {line}
-      {i < lines.length - 1 && <br />}
-    </span>
-  ))
 }
 
 export default function QuestionScreen({ lang, question, questionNumber, totalQuestions, onAnswer, onBack }) {
@@ -78,7 +65,7 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
         <div className="rod" aria-hidden="true" />
         <div className="scroll__body washi">
           <h2 className="scroll__question">
-            {isEn ? withLineBreaks(question.textEn) : question.text}
+            <Typeset lang={lang} text={isEn ? question.textEn : question.text} />
           </h2>
         </div>
         <div className="rod" aria-hidden="true" />
@@ -93,7 +80,7 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
               className={`choice-button${choice.id === selectedId ? ' is-selected' : ''}`}
               onClick={() => handleSelect(choice)}
             >
-              {isEn ? withLineBreaks(choice.textEn) : choice.text}
+              <Typeset lang={lang} text={isEn ? choice.textEn : choice.text} />
             </button>
           </li>
         ))}
