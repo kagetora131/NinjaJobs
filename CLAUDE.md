@@ -88,7 +88,7 @@ ninja-shindan/
   結果カード直下へ。十二タイプ一覧は1列のまま＝ユーザー判断)と、「戻る」ボタン・選択肢シャッフルのstate設計等の
   詳細な理由は`docs/実装ノート.md`を参照。
 - **スマホの改行(日英)**: 画面に出す文章は必ず`<Typeset>`(`src/components/Typeset.jsx`、区切りの求め方は
-  `src/lib/phrases.js`)を通す。日本語は文節の切れ目に`<wbr>`、英語は短い語を次の語とノーブレークスペースで
+  `src/lib/phrases.js`)を通す。日本語は文節の切れ目に`<wbr>`(設問・選択肢は読点の後ろで折り返す)、英語は短い語を次の語とノーブレークスペースで
   つなぐ(CSSの`auto-phrase`はSafariで効かないため使わない)。詳細・確認方法は`docs/実装ノート.md`。
 - キーボード操作(tab/enter)対応、`prefers-reduced-motion`尊重、WCAG AA相当の
   コントラスト比を目安にする。

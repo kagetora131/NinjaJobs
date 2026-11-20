@@ -106,6 +106,34 @@ export function splitJaPhrases(text) {
   return merged
 }
 
+// 全角1・半角0.5として数えた、表示上の幅(文字数)
+function displayWidth(s) {
+  return [...s].reduce((sum, c) => sum + (c.charCodeAt(0) < 0x80 ? 0.5 : 1), 0)
+}
+
+/**
+ * 日本語の文を、読点(、)・句点(。)の後ろで区切る。設問・選択肢が1行に収まらないとき、
+ * 読点の後ろで折り返す方が読みやすいため。例:
+ * 「心を落ち着かせ、自分の調子を整えてから取りかかる」→ 心を落ち着かせ、/ 自分の調子を整えてから取りかかる
+ *
+ * どれかの区切りがmaxWidth(1行に入る文字数の目安)を超えるときは区切らない。1行に収まらない
+ * 区切りを無理にかたまりにすると、かえって行数が増えて読みにくいため(その場合は、行の長さを
+ * そろえる通常の折り返しにまかせる)。
+ */
+export function splitJaClauses(text, maxWidth = Infinity) {
+  const chars = [...text]
+  const clauses = []
+  let start = 0
+  for (let i = 1; i < chars.length; i += 1) {
+    if ('、。'.includes(chars[i - 1]) && !STOP.includes(chars[i]) && !CLOSE.includes(chars[i])) {
+      clauses.push(chars.slice(start, i).join(''))
+      start = i
+    }
+  }
+  clauses.push(chars.slice(start).join(''))
+  return clauses.some((clause) => displayWidth(clause) > maxWidth) ? [text] : clauses
+}
+
 // 短い語のつなぎで作るまとまりの最大語数(長くしすぎると狭い幅で折り返せず、行が不揃いになる)
 const MAX_CHUNK_WORDS = 3
 // 改行されない空白(U+00A0)。ソース上で通常の空白と見分けがつくよう、文字コードで書く

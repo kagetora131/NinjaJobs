@@ -5,6 +5,9 @@ import Typeset from './Typeset.jsx'
 
 // 選んだ札が光るのを見せてから次の問いへ進むまでの間(ミリ秒)
 const SELECT_DELAY_MS = 320
+// 問題文(大きい文字)が、スマホ(幅375px前後)で1行に入る日本語の文字数の目安。
+// 読点までがこれを超える文は、読点で区切らず通常の折り返しにする(Typeset.jsx参照)
+const QUESTION_LINE_CHARS = 14
 
 /**
  * Fisher-Yatesで配列をシャッフルする(元の配列は変更しない)。
@@ -65,7 +68,7 @@ export default function QuestionScreen({ lang, question, questionNumber, totalQu
         <div className="rod" aria-hidden="true" />
         <div className="scroll__body washi">
           <h2 className="scroll__question">
-            <Typeset lang={lang} text={isEn ? question.textEn : question.text} />
+            <Typeset lang={lang} text={isEn ? question.textEn : question.text} maxClauseWidth={QUESTION_LINE_CHARS} />
           </h2>
         </div>
         <div className="rod" aria-hidden="true" />
