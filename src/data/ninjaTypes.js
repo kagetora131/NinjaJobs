@@ -24,7 +24,7 @@ import kusushi from '../assets/characters/kusushi.webp'
 // は一切変更していない(標準instruction「カード説明文には今後手を加えない」を
 // 厳守)。英語版はすべて新規追加フィールドで、和風の世界観を保つため
 // 「ローマ字名(nameEn) + 英語の一言添え名(epithetEn)」を併記する方式にした
-// (例: 名前=Shikyaku、添え名=The Assassin)。descriptionEn/keywordEnは
+// (例: 名前=Shikaku、添え名=The Assassin)。descriptionEn/keywordEnは
 // 日本語のdescription/keywordを意訳したもので、直訳ではなく雰囲気を優先。
 export const NINJA_TYPES = [
   {
@@ -135,7 +135,7 @@ export const NINJA_TYPES = [
   {
     id: 'shikaku',
     name: '刺客',
-    nameEn: 'Shikyaku',
+    nameEn: 'Shikaku',
     epithetEn: 'The Assassin',
     keyword: '冷徹・単独・目的遂行',
     keywordEn: 'Ruthlessness · Solitude · Resolve',
