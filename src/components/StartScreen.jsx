@@ -10,7 +10,7 @@ const LEAD_JA = [
 ]
 const LEAD_EN = [
   'Answer all ten questions.',
-  'Komuso, Shukke, Yamabushi, Akindo, Shikaku —',
+  'Komuso, Shukke, Yamabushi, Akindo, Shikyaku —',
   'from the twelve paths of the shinobi,',
   'we shall uncover the nature sleeping within you.',
 ]
